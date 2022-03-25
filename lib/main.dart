@@ -1,5 +1,7 @@
-import 'package:flutter/material.dart';
+import 'package:circle_coffee/page/home/home.dart';
 import 'package:circle_coffee/splashscreen_view.dart';
+import 'package:flutter/material.dart';
+
 void main() {
   runApp(const MyApp());
 }
@@ -10,13 +12,14 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Circle Coffee',
       theme: ThemeData(
         primarySwatch: Colors.blue,
         primaryColor: const Color(0xffFFC107),
-        fontFamily: 'Satisfy'
+        // fontFamily: 'Satisfy'
+        
       ),
-      home: const SplashScreenPage(),
+      home: const Home(),
       debugShowCheckedModeBanner: false,
     );
   }

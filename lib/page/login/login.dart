@@ -1,3 +1,4 @@
+import 'package:circle_coffee/page/home/home.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -24,7 +25,7 @@ class _LoginState extends State<Login> {
         width: double.infinity,
         decoration: const BoxDecoration(
           image: DecorationImage(
-            image: AssetImage('images/bgsplash.png'),
+            image: AssetImage('assets/images/bgsplash.png'),
             fit: BoxFit.fitHeight
             ) 
           ),
@@ -93,7 +94,7 @@ class _LoginState extends State<Login> {
                           ),
                     onPressed: () {
                       Navigator.push(context, 
-                        MaterialPageRoute(builder: (context) => const Login())
+                        MaterialPageRoute(builder: (context) => const Home())
                       );
                     }, 
                     child: const Text(

@@ -21,11 +21,11 @@ class _SplashScreenPageState extends State<SplashScreenPage> {
   }
 
   startSplashScreen() async {
-    var duration = const Duration(seconds : 1);
+    var duration = const Duration(seconds : 3);
     return Timer(duration, (){
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(builder: (_){
-          return const Home();
+          return const MainHome();
         })
       );
     });
@@ -37,7 +37,7 @@ class _SplashScreenPageState extends State<SplashScreenPage> {
       body: Container(
         width: double.infinity,
         decoration: const BoxDecoration(
-          image: DecorationImage(image: AssetImage("images/bgsplash.png",),
+          image: DecorationImage(image: AssetImage("assets/images/bgsplash.png",),
           fit: BoxFit.fitHeight
           )
         ),  
@@ -47,7 +47,7 @@ class _SplashScreenPageState extends State<SplashScreenPage> {
           mainAxisAlignment: MainAxisAlignment.end,
           
           children: [
-            Image.asset("images/loader.gif", width: 100,),
+            Image.asset("assets/images/loader.gif", width: 100,),
             const SizedBox(height: 100,)
           ],
           
@@ -60,15 +60,15 @@ class _SplashScreenPageState extends State<SplashScreenPage> {
 }
 
 
-class Home extends StatelessWidget {
-  const Home({ Key? key }) : super(key: key);
+class MainHome extends StatelessWidget {
+  const MainHome({ Key? key }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Container(
         width: double.infinity,
         decoration: const BoxDecoration(
-          image: DecorationImage(image: AssetImage("images/bgsplash.png",),
+          image: DecorationImage(image: AssetImage("assets/images/bgsplash.png",),
           fit: BoxFit.fitHeight
           )
         ),  
@@ -122,18 +122,18 @@ class Home extends StatelessWidget {
               margin: const EdgeInsets.symmetric(horizontal: 32.0),
               child: TextButton(
                 style: TextButton.styleFrom(
-                        padding: const EdgeInsets.all(20),
-                        backgroundColor: const Color(0x44FFC107),
-                        shape: RoundedRectangleBorder(
-                          side: const BorderSide(
-                            color: Color(0xFF000000),
-                            width: 1,
-                            style: BorderStyle.solid
-                          ),
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        // shape: StadiumBorder()
-                      ),
+                  padding: const EdgeInsets.all(20),
+                  backgroundColor: const Color(0x44FFC107),
+                  shape: RoundedRectangleBorder(
+                    side: const BorderSide(
+                      color: Color(0xFF000000),
+                      width: 1,
+                      style: BorderStyle.solid
+                    ),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  // shape: StadiumBorder()
+                ),
                 onPressed: () {
                   Navigator.push(context, 
                     MaterialPageRoute(builder: (context) => const Register())
