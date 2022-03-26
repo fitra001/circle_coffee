@@ -1,20 +1,28 @@
 import 'package:circle_coffee/page/category/category.dart';
 import 'package:circle_coffee/page/detail_item/detail_item.dart';
 import 'package:circle_coffee/page/list_item/list_item.dart';
+import 'package:circle_coffee/page/cart_item/cart_item.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import '../cart_item/cart_item.dart';
-
-
 class HomePage extends StatefulWidget {
-  const HomePage({ Key? key }) : super(key: key);
+  const HomePage({Key? key}) : super(key: key);
 
   @override
   _HomePageState createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
+  List<Map> kategori = [
+    {'kategori': 'Breakfast', 'icon': 'assets/images/bgsplash.png'},
+    {'kategori': 'Coffee Break', 'icon': 'assets/images/bgsplash.png'},
+  ];
+
+  List<Map> menu = [
+    {'image': 'assets/images/bgsplash.png', 'nama' : 'Nasi Goreng', 'id_menu': 1},
+    {'image': 'assets/images/bgsplash.png', 'nama' : 'Nasi Goreng', 'id_menu': 2},
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,9 +32,14 @@ class _HomePageState extends State<HomePage> {
           child: TextFormField(
             style: const TextStyle(fontFamily: 'sans serif'),
             decoration: const InputDecoration(
-              prefixIcon: Icon(CupertinoIcons.search),
-              labelText: 'Pencarian',
-              border: OutlineInputBorder(),
+              prefixIcon: Icon(CupertinoIcons.search, color: Color(0x99FFC107)),
+              hintText: 'Pencarian',
+              enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Color(0x99FFC107)),
+                  borderRadius: BorderRadius.all(Radius.circular(20.0))),
+              border: OutlineInputBorder(
+                  borderSide: BorderSide(color: Color(0x99FFC107)),
+                  borderRadius: BorderRadius.all(Radius.circular(20.0))),
             ),
           ),
         ),
@@ -34,74 +47,92 @@ class _HomePageState extends State<HomePage> {
           IconButton(
             color: Colors.black,
             icon: const Icon(CupertinoIcons.cart),
-            onPressed: ()=> Navigator.push(context, 
-              MaterialPageRoute(builder: (context) => const CartItem())
-            ),
+            onPressed: () => Navigator.push(context,
+                MaterialPageRoute(builder: (context) => const CartItem())),
           )
         ],
         backgroundColor: Colors.white,
         elevation: 0,
-        
       ),
       body: SingleChildScrollView(
-        child: Container(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: const [
-              HeadHome(),
-              SizedBox(height: 20,),
-              ListCategory(),
-              SizedBox(height: 20,),
-              Menu(),
-              SizedBox(height: 20,),
-              Menu()
-            ]
-          )   
-        ),
+        child: Column(children: [
+          const HeadHome(),
+          const SizedBox(
+            height: 20,
+          ),
+          ListCategory(
+            kategori: kategori,
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          Menu(
+            title: 'Menu Terlaris',
+            menu: menu,
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          Menu(
+            title: 'Paling Disukai Minggu Ini',
+            menu: menu,
+          )
+        ]),
       ),
     );
   }
 }
 
-
 class ListCategory extends StatelessWidget {
-  const ListCategory({
-    Key? key,
-  }) : super(key: key);
+  const ListCategory({Key? key, required this.kategori}) : super(key: key);
+
+  final List<Map>? kategori;
 
   @override
   Widget build(BuildContext context) {
     return Column(
+      mainAxisSize: MainAxisSize.max,
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            const Text('Kategori', style: TextStyle(fontSize: 18),),
-            InkWell(
-              child: Text('Lihat Semua', style: TextStyle(fontSize: 12)),
-              onTap: () {
-                Navigator.push(context, 
-                  MaterialPageRoute(builder: (context) => const Category())
-                );
-              },
-            ),
-          ],
+        Container(
+          margin: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                'Kategori',
+                style: TextStyle(fontSize: 18),
+              ),
+              InkWell(
+                child:
+                    const Text('Lihat Semua', style: TextStyle(fontSize: 12)),
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const Category()));
+                },
+              ),
+            ],
+          ),
         ),
         Container(
-          height: 90,
+          height: 100,
           child: ListView.builder(
-            itemCount: 10,
+            padding: EdgeInsets.symmetric(horizontal: 16.0),
+            clipBehavior: Clip.none,
+            itemCount: kategori?.length,
             scrollDirection: Axis.horizontal,
             itemBuilder: (context, index) {
               return InkWell(
-                onTap: () { 
-                  Navigator.push(context, 
-                    MaterialPageRoute(builder: (context) => const ListItem())
-                  );
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const ListItem()));
                 },
                 child: Container(
-                  height: 80,
-                  width: 80,
+                  height: 100,
+                  width: 100,
                   child: Card(
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(15.0),
@@ -110,8 +141,11 @@ class ListCategory extends StatelessWidget {
                       mainAxisSize: MainAxisSize.max,
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        Image.asset('assets/images/bgsplash.png', height: 40,),
-                        Text('data')
+                        Image.asset(
+                          '${kategori?[index]['icon']}',
+                          height: 40,
+                        ),
+                        Text('${kategori?[index]['kategori']}')
                       ],
                     ),
                   ),
@@ -128,30 +162,43 @@ class ListCategory extends StatelessWidget {
 class Menu extends StatelessWidget {
   const Menu({
     Key? key,
+    required this.title,
+    required this.menu
   }) : super(key: key);
+
+  final String? title;
+  final List<Map>? menu;
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            const Text('Menu', style: TextStyle(fontSize: 18),),
-            InkWell(
-              child: Text('Lihat Semua', style: TextStyle(fontSize: 12)),
-              onTap: () {
-                Navigator.push(context, 
-                  MaterialPageRoute(builder: (context) => const ListItem())
-                );
-              },
-            ),
-          ],
+        Container(
+          margin: const EdgeInsets.symmetric(horizontal: 16),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                title!,
+                style: TextStyle(fontSize: 18),
+              ),
+              InkWell(
+                child: Text('Lihat Semua', style: TextStyle(fontSize: 12)),
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const ListItem()));
+                },
+              ),
+            ],
+          ),
         ),
         Container(
           height: 200,
           child: ListView.builder(
-            itemCount: 10,
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            itemCount: menu?.length,
             scrollDirection: Axis.horizontal,
             itemBuilder: (context, index) {
               return Container(
@@ -159,9 +206,10 @@ class Menu extends StatelessWidget {
                 // height: 80,
                 child: InkWell(
                   onTap: () {
-                    Navigator.push(context, 
-                      MaterialPageRoute(builder: (context) => const DetailItem())
-                    );
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const DetailItem()));
                   },
                   child: Card(
                     shape: RoundedRectangleBorder(
@@ -173,14 +221,15 @@ class Menu extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Image.asset('assets/images/bgsplash.png',),
-                        Expanded(child: Center(child: Text('Nasi Goreng')))
+                        Image.asset(
+                          menu?[index]['image'],
+                        ),
+                        Expanded(child: Center(child: Text(menu?[index]['nama'])))
                       ],
                     ),
                   ),
                 ),
               );
-        
             },
           ),
         ),
@@ -196,23 +245,33 @@ class HeadHome extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-    children: [
-      Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.max,
-        children: const [
-          Text('Selamat Malam, BAC', style: TextStyle(fontSize: 18),),
-          Text('Mau pesan apa hari ini?', style: TextStyle(fontSize: 18))
+    return Container(
+      margin: const EdgeInsets.all(16),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.max,
+            children: const [
+              Text(
+                'Selamat Malam, BAC',
+                style: TextStyle(fontSize: 18),
+              ),
+              Text('Mau pesan apa hari ini?', style: TextStyle(fontSize: 18))
+            ],
+          ),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(20),
+            child: Image.asset(
+              'assets/images/bgsplash.png',
+              height: 40,
+              width: 40,
+            ),
+          )
         ],
       ),
-      ClipRRect(
-        borderRadius: BorderRadius.circular(20),
-        child: Image.asset('assets/images/bgsplash.png', height: 40, width: 40,),
-      )
-    ],
-  );
+    );
   }
 }
