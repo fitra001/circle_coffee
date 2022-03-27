@@ -1,9 +1,13 @@
+import 'package:circle_coffee/models/kategori_model.dart';
+import 'package:circle_coffee/models/menu_model.dart';
 import 'package:circle_coffee/page/category/category.dart';
 import 'package:circle_coffee/page/detail_item/detail_item.dart';
 import 'package:circle_coffee/page/list_item/list_item.dart';
 import 'package:circle_coffee/page/cart_item/cart_item.dart';
+import 'package:circle_coffee/services/api_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -13,18 +17,19 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  List<Map> kategori = [
-    {'kategori': 'Breakfast', 'icon': 'assets/images/bgsplash.png'},
-    {'kategori': 'Coffee Break', 'icon': 'assets/images/bgsplash.png'},
-  ];
 
-  List<Map> menu = [
-    {'image': 'assets/images/bgsplash.png', 'nama' : 'Nasi Goreng', 'id_menu': 1},
-    {'image': 'assets/images/bgsplash.png', 'nama' : 'Nasi Goreng', 'id_menu': 2},
-  ];
+  late ApiService apiService;
+  
+  @override
+  void initState() {
+    super.initState();
+
+    apiService = ApiService();
+  }
 
   @override
   Widget build(BuildContext context) {
+    // ApiService().getAllKategori().then((value) => print(value));
     return Scaffold(
       appBar: AppBar(
         title: Container(
@@ -60,23 +65,55 @@ class _HomePageState extends State<HomePage> {
           const SizedBox(
             height: 20,
           ),
-          ListCategory(
-            kategori: kategori,
+          FutureBuilder(
+            future: apiService.getAllKategori(),
+            builder: (context, snapshot) {
+              if (snapshot.hasError) {
+                return Center(
+                  child: Text(
+                      "Something wrong with message: ${snapshot.error.toString()}"),
+                );
+              } else if (snapshot.connectionState == ConnectionState.done) {
+                List<Kategori> kategori = snapshot.data as List<Kategori>;
+                return ListCategory(kategori: kategori);
+              } else {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+            },
           ),
           const SizedBox(
             height: 20,
           ),
-          Menu(
-            title: 'Menu Terlaris',
-            menu: menu,
+          FutureBuilder(
+            future: apiService.getAllMenu(),
+            builder: (context, snapshot) {
+              if (snapshot.hasError) {
+                return Center(
+                  child: Text(
+                      "Something wrong with message: ${snapshot.error.toString()}"),
+                );
+              } else if (snapshot.connectionState == ConnectionState.done){
+                List<Menu> menu = snapshot.data as List<Menu>;
+                return Menus(
+                  title: 'Menu Terlaris',
+                  menu: menu,
+                );
+              } else {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                ); 
+              }
+            }
           ),
           const SizedBox(
             height: 20,
           ),
-          Menu(
-            title: 'Paling Disukai Minggu Ini',
-            menu: menu,
-          )
+          // Menu(
+          //   title: 'Paling Disukai Minggu Ini',
+          //   menu: menu,
+          // )
         ]),
       ),
     );
@@ -86,7 +123,7 @@ class _HomePageState extends State<HomePage> {
 class ListCategory extends StatelessWidget {
   const ListCategory({Key? key, required this.kategori}) : super(key: key);
 
-  final List<Map>? kategori;
+  final List<Kategori>? kategori;
 
   @override
   Widget build(BuildContext context) {
@@ -141,11 +178,11 @@ class ListCategory extends StatelessWidget {
                       mainAxisSize: MainAxisSize.max,
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        Image.asset(
-                          '${kategori?[index]['icon']}',
+                        SvgPicture.network(
+                          ApiService.imageKategoriUrl +'${kategori?[index].icon}',
                           height: 40,
                         ),
-                        Text('${kategori?[index]['kategori']}')
+                        Text('${kategori?[index].kategori}', style: const TextStyle(fontSize: 12.0),)
                       ],
                     ),
                   ),
@@ -159,18 +196,19 @@ class ListCategory extends StatelessWidget {
   }
 }
 
-class Menu extends StatelessWidget {
-  const Menu({
+class Menus extends StatelessWidget {
+  const Menus({
     Key? key,
     required this.title,
     required this.menu
   }) : super(key: key);
 
   final String? title;
-  final List<Map>? menu;
+  final List<Menu>? menu;
 
   @override
   Widget build(BuildContext context) {
+    print(menu);
     return Column(
       children: [
         Container(
@@ -221,10 +259,16 @@ class Menu extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Image.asset(
-                          menu?[index]['image'],
+                        Image.network(
+                          ApiService.imageMenuUrl + '${menu?[index].photo}',
+                          height: 120,
+                          fit: BoxFit.cover,
                         ),
-                        Expanded(child: Center(child: Text(menu?[index]['nama'])))
+                        Expanded(child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal : 8.0),
+                          child: Center(child: Text('${menu?[index].menu}', overflow: TextOverflow.ellipsis)),
+                        )),
+                        Text('Rp.${menu?[index].harga}', style: const TextStyle(fontFamily: 'Satisfy', fontSize: 24, color: Color(0x99FFC107))),
                       ],
                     ),
                   ),
