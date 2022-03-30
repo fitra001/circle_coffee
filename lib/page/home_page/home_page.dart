@@ -8,6 +8,7 @@ import 'package:circle_coffee/services/api_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:circle_coffee/helpers/currency_format.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -29,7 +30,6 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    // ApiService().getAllKategori().then((value) => print(value));
     return Scaffold(
       appBar: AppBar(
         title: Container(
@@ -208,7 +208,6 @@ class Menus extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print(menu);
     return Column(
       children: [
         Container(
@@ -268,7 +267,7 @@ class Menus extends StatelessWidget {
                           padding: const EdgeInsets.symmetric(horizontal : 8.0),
                           child: Center(child: Text('${menu?[index].menu}', overflow: TextOverflow.ellipsis)),
                         )),
-                        Text('Rp.${menu?[index].harga}', style: const TextStyle(fontFamily: 'Satisfy', fontSize: 24, color: Color(0x99FFC107))),
+                        Text(CurrencyFormat.convertToIdr(menu?[index].harga, 0), style: const TextStyle(fontFamily: 'Satisfy', fontSize: 18, color: Color(0x99FFC107))),
                       ],
                     ),
                   ),

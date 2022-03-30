@@ -1,3 +1,4 @@
+import 'package:circle_coffee/helpers/currency_format.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -61,7 +62,7 @@ class _DetailItemState extends State<DetailItem> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text('Nasi Goreng GOreng goreng', style: TextStyle(fontFamily: 'Satisfy', fontSize: 24),),
-                        Text('Rp. 20.000', style: TextStyle(fontFamily: 'Satisfy', fontSize: 24, color: Color(0x99FFC107)))
+                        Text(CurrencyFormat.convertToIdr(20000, 0), style: TextStyle(fontFamily: 'Satisfy', fontSize: 24, color: Color(0x99FFC107)))
                       ],
                     ),
                   ),
