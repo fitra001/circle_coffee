@@ -75,7 +75,7 @@ class _HomePageState extends State<HomePage> {
                 );
               } else if (snapshot.connectionState == ConnectionState.done) {
                 List<Kategori> kategori = snapshot.data as List<Kategori>;
-                return ListCategory(kategori: kategori);
+                return ListCategory(kategori: kategori,apiService: apiService,);
               } else {
                 return const Center(
                   child: CircularProgressIndicator(),
@@ -99,6 +99,7 @@ class _HomePageState extends State<HomePage> {
                 return Menus(
                   title: 'Menu Terlaris',
                   menu: menu,
+                  apiService: apiService,
                 );
               } else {
                 return const Center(
@@ -121,9 +122,10 @@ class _HomePageState extends State<HomePage> {
 }
 
 class ListCategory extends StatelessWidget {
-  const ListCategory({Key? key, required this.kategori}) : super(key: key);
+  const ListCategory({Key? key, required this.kategori, required this.apiService}) : super(key: key);
 
   final List<Kategori>? kategori;
+  final ApiService apiService;
 
   @override
   Widget build(BuildContext context) {
@@ -165,7 +167,10 @@ class ListCategory extends StatelessWidget {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => const ListItem()));
+                          builder: (context) => ListItem(
+                            title: '${kategori?[index].kategori}',
+                            future: apiService.getMenuByIdKategori('${kategori?[index].id_kategori}')
+                          )));
                 },
                 child: Container(
                   height: 100,
@@ -200,11 +205,13 @@ class Menus extends StatelessWidget {
   const Menus({
     Key? key,
     required this.title,
-    required this.menu
+    required this.menu,
+    required this.apiService
   }) : super(key: key);
 
   final String? title;
   final List<Menu>? menu;
+  final ApiService apiService;
 
   @override
   Widget build(BuildContext context) {
@@ -217,15 +224,18 @@ class Menus extends StatelessWidget {
             children: [
               Text(
                 title!,
-                style: TextStyle(fontSize: 18),
+                style: const TextStyle(fontSize: 18),
               ),
               InkWell(
-                child: Text('Lihat Semua', style: TextStyle(fontSize: 12)),
+                child: const Text('Lihat Semua', style: TextStyle(fontSize: 12)),
                 onTap: () {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => const ListItem()));
+                          builder: (context) => ListItem(
+                            title: title,
+                            future: apiService.getAllMenu(),
+                          )));
                 },
               ),
             ],
@@ -246,7 +256,9 @@ class Menus extends StatelessWidget {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => const DetailItem()));
+                            builder: (context) => DetailItem(
+                              idMenu: '${menu?[index].id_menu}',
+                            )));
                   },
                   child: Card(
                     shape: RoundedRectangleBorder(

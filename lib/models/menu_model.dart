@@ -40,6 +40,11 @@ List<Menu> menuFromJson(String jsonData){
   return List<Menu>.from(data['data'].map((json)=> Menu.fromJson(json)));
 }
 
+Menu singleMenuFromJson(String jsonData){
+  final data = json.decode(jsonData);
+  return Menu.fromJson(data['data']);
+}
+
 String menuToJson(Menu data){
   final jsonData = data.toJson();
   return json.encode(jsonData);
