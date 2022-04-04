@@ -1,5 +1,9 @@
+import 'package:circle_coffee/models/user_model.dart';
+import 'package:circle_coffee/page/login/login.dart';
+import 'package:circle_coffee/services/api_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class Register extends StatefulWidget {
   const Register({ Key? key }) : super(key: key);
@@ -9,6 +13,10 @@ class Register extends StatefulWidget {
 }
 
 class _RegisterState extends State<Register> {
+  final _namaController = TextEditingController();
+  final _noTelpController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _passController = TextEditingController();
   bool _isHidden = true;
 
   void _togglePasswordView() {
@@ -50,38 +58,70 @@ class _RegisterState extends State<Register> {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 TextFormField(
+                  controller: _namaController,
                   style: const TextStyle(fontFamily: 'sans serif'),
                   decoration: const InputDecoration(
-                    labelText: 'Username',
+                    labelText: 'Nama',
                     prefixIcon: Icon(CupertinoIcons.person),
-                    border: OutlineInputBorder(),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Color(0x99FFC107)),
+                      borderRadius: BorderRadius.all(Radius.circular(20.0))
+                    ),
+                    border: OutlineInputBorder(
+                      borderSide: BorderSide(color: Color(0x99FFC107)),
+                      borderRadius: BorderRadius.all(Radius.circular(20.0))
+                    ),
                   ),
                 ),
                 const SizedBox(height: 16,),
                 TextFormField(
+                  controller: _noTelpController,
                   style: const TextStyle(fontFamily: 'sans serif'),
                   decoration: const InputDecoration(
                     labelText: 'No Telpon',
                     prefixIcon: Icon(CupertinoIcons.phone),
-                    border: OutlineInputBorder(),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Color(0x99FFC107)),
+                      borderRadius: BorderRadius.all(Radius.circular(20.0))
+                    ),
+                    border: OutlineInputBorder(
+                      borderSide: BorderSide(color: Color(0x99FFC107)),
+                      borderRadius: BorderRadius.all(Radius.circular(20.0))
+                    ),
                   ),
                 ),
                 const SizedBox(height: 16,),
                 TextFormField(
+                  controller: _emailController,
                   style: const TextStyle(fontFamily: 'sans serif'),
                   decoration: const InputDecoration(
                     labelText: 'Email',
                     prefixIcon: Icon(CupertinoIcons.mail),
-                    border: OutlineInputBorder(),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Color(0x99FFC107)),
+                      borderRadius: BorderRadius.all(Radius.circular(20.0))
+                    ),
+                    border: OutlineInputBorder(
+                      borderSide: BorderSide(color: Color(0x99FFC107)),
+                      borderRadius: BorderRadius.all(Radius.circular(20.0))
+                    ),
                   ),
                 ),
                 const SizedBox(height: 16,),
                 TextFormField(
+                  controller: _passController,
                   style: const TextStyle(fontFamily: 'sans serif'),
                   decoration: InputDecoration(
                     labelText: 'Password',
                     prefixIcon: const Icon(CupertinoIcons.lock),
-                    border: const OutlineInputBorder(),
+                    enabledBorder: const OutlineInputBorder(
+                      borderSide: BorderSide(color: Color(0x99FFC107)),
+                      borderRadius: BorderRadius.all(Radius.circular(20.0))
+                    ),
+                    border: const OutlineInputBorder(
+                      borderSide: BorderSide(color: Color(0x99FFC107)),
+                      borderRadius: BorderRadius.all(Radius.circular(20.0))
+                    ),
                     suffixIcon: InkWell(
                       onTap: _togglePasswordView,
                       child: Icon(
@@ -110,9 +150,27 @@ class _RegisterState extends State<Register> {
                             ),
                             // shape: StadiumBorder()
                           ),
-                    onPressed: () {
-                      Navigator.push(context, 
-                        MaterialPageRoute(builder: (context) => const Register())
+                    onPressed: () {                     
+                      ApiService().register(
+                        nama: _namaController.text,
+                        no_telp: _noTelpController.text,
+                        email: _emailController.text,
+                        password: _passController.text
+                      ).then(
+                        (value) => {
+                          if (value['success']) {
+                            Navigator.pushReplacement(context,
+                              MaterialPageRoute(builder: (context) => Login())
+                            ),
+                            Fluttertoast.showToast(
+                              msg: value[
+                                  'message']),
+                          }else{
+                            Fluttertoast.showToast(
+                              msg: value[
+                                  'message'])
+                          }
+                        }
                       );
                     }, 
                     child: const Text(

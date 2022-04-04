@@ -1,5 +1,7 @@
 import 'package:circle_coffee/helpers/currency_format.dart';
+import 'package:circle_coffee/library/my_shared_pref.dart';
 import 'package:circle_coffee/models/keranjang_model.dart';
+import 'package:circle_coffee/models/user_model.dart';
 import 'package:circle_coffee/page/detail_item/detail_item.dart';
 import 'package:circle_coffee/services/api_service.dart';
 import 'package:flutter/cupertino.dart';
@@ -15,12 +17,36 @@ class CartItem extends StatefulWidget {
 
 class _CartItemState extends State<CartItem> {
   late ApiService apiService;
+  late List<Keranjang?> listKeranjang;
+  bool isLoading = true;
+  final List<TextEditingController> _qtyControllerList = [];
+  late int total;
+  late User user;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     apiService = ApiService();
+    _fetchKeranjang();
+  }
+
+  _fetchKeranjang() async {
+    total = 0;
+    final getUser = await MySharedPref().getModel();
+    final getKeranjang = await apiService.getKeranjang(getUser!.id_user.toString());
+
+    if (getKeranjang != null) {
+      for (var item in getKeranjang) {
+        total += item.harga * item.qty;
+      }
+      setState(() {
+        listKeranjang = getKeranjang;
+        total = total;
+        user = getUser;
+        isLoading = false;
+      });
+    }
   }
 
   @override
@@ -41,126 +67,7 @@ class _CartItemState extends State<CartItem> {
           backgroundColor: Colors.white,
           elevation: 0,
         ),
-        body: FutureBuilder(
-            future: apiService.getKeranjang(1.toString()),
-            builder: (context, snapshot) {
-              if (snapshot.hasError) {
-                return Center(
-                  child: Text(
-                      "Something wrong with message: ${snapshot.error.toString()}"),
-                );
-              } else if (snapshot.connectionState == ConnectionState.done) {
-                List<Keranjang> keranjang = snapshot.data as List<Keranjang>;
-                return ListView.builder(
-                  itemCount: keranjang.length,
-                  itemBuilder: (context, index) {
-                    return Container(
-                      margin: const EdgeInsets.symmetric(
-                          horizontal: 16.0, vertical: 4.0),
-                      child: Slidable(
-                        endActionPane:
-                            ActionPane(motion: const ScrollMotion(), children: [
-                          SlidableAction(
-                            backgroundColor: Colors.red,
-                            onPressed: (_) {},
-                            icon: CupertinoIcons.delete,
-                          ),
-                        ]),
-                        child: InkWell(
-                          onTap: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => DetailItem(
-                                          idMenu: keranjang[index]
-                                              .id_menu
-                                              .toString(),
-                                        )));
-                          },
-                          child: SizedBox(
-                            height: 120,
-                            // width: 80,
-                            child: Card(
-                              clipBehavior: Clip.antiAliasWithSaveLayer,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(15.0),
-                              ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.max,
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Image.network(
-                                    ApiService.imageMenuUrl +
-                                        keranjang[index].photo,
-                                    height: 120,
-                                    width: 120,
-                                    fit: BoxFit.cover,
-                                  ),
-                                  Expanded(
-                                    flex: 1,
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 16.0),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceAround,
-                                        mainAxisSize: MainAxisSize.max,
-                                        children: [
-                                          Text(
-                                            keranjang[index].menu,
-                                            overflow: TextOverflow.ellipsis,
-                                            style: const TextStyle(
-                                                fontFamily: 'Satisfy',
-                                                fontSize: 24),
-                                          ),
-                                          Text(
-                                              CurrencyFormat.convertToIdr(
-                                                  keranjang[index].harga, 0),
-                                              style: const TextStyle(
-                                                  fontFamily: 'Satisfy',
-                                                  fontSize: 24,
-                                                  color: Color(0x99FFC107))),
-                                          Container(
-                                            child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.end,
-                                              children: [
-                                                TextButton(
-                                                    onPressed: () {},
-                                                    child: const Icon(
-                                                        CupertinoIcons.plus)),
-                                                Text(keranjang[index]
-                                                    .qty
-                                                    .toString()),
-                                                TextButton(
-                                                    onPressed: () {},
-                                                    child: const Icon(
-                                                        CupertinoIcons.minus))
-                                              ],
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  )
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    );
-                  },
-                );
-              } else {
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
-              }
-            }),
+        body: isLoading ? loading() : item(),
         bottomNavigationBar: SizedBox(
           height: 50,
           child: Row(
@@ -175,8 +82,8 @@ class _CartItemState extends State<CartItem> {
                       color: Colors.deepOrange,
                       borderRadius: BorderRadius.all(Radius.circular(4))),
                   child: Text(
-                    'Rp. 20.000',
-                    style: TextStyle(
+                    CurrencyFormat.convertToIdr(total,0),
+                    style: const TextStyle(
                       color: Colors.white,
                     ),
                   )),
@@ -186,136 +93,9 @@ class _CartItemState extends State<CartItem> {
                       backgroundColor: const Color(0xff404040),
                     ),
                     onPressed: () {
-                      showDialog(
-                        context: context,
-                        builder: (context) {
-                          return SimpleDialog(
-                            children: [
-                              Container(
-                                height: 300,
-                                width: 300,
-                                child: ListView.builder(
-                                  itemCount: 2,
-                                  itemBuilder: (context, index) {
-                                    return Card(
-                                      clipBehavior: Clip.antiAliasWithSaveLayer,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(15.0),
-                                      ),
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Column(
-                                          children: [
-                                            Text(
-                                              'Nasi Goreng sambal ikan mata mata',
-                                              style: TextStyle(
-                                                  fontFamily: 'Satisfy',
-                                                  fontSize: 24),
-                                            ),
-                                            Row(
-                                              mainAxisSize: MainAxisSize.max,
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.spaceEvenly,
-                                              children: [
-                                                // Image.asset('assets/images/bgsplash.png', height: 120,),
-                                                Padding(
-                                                  padding: const EdgeInsets
-                                                          .symmetric(
-                                                      horizontal: 16.0),
-                                                  child: Column(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceAround,
-                                                    mainAxisSize:
-                                                        MainAxisSize.max,
-                                                    children: [
-                                                      Text('Rp. 20.000',
-                                                          style: TextStyle(
-                                                              fontFamily:
-                                                                  'Satisfy',
-                                                              fontSize: 18,
-                                                              color: Color(
-                                                                  0x99FFC107))),
-                                                    ],
-                                                  ),
-                                                ),
-                                                Text('X3',
-                                                    style: TextStyle(
-                                                        fontFamily: 'Satisfy',
-                                                        fontSize: 18,
-                                                        color:
-                                                            Color(0x99FFC107))),
-                                                Text('Rp. 20.000',
-                                                    style: TextStyle(
-                                                        fontFamily: 'Satisfy',
-                                                        fontSize: 18,
-                                                        color:
-                                                            Color(0x99FFC107))),
-                                              ],
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                ),
-                              ),
-                              OutlinedButton.icon(
-                                icon: Icon(CupertinoIcons.clear),
-                                onPressed: () => Navigator.pop(context),
-                                label: Text('BATAL'),
-                                style: OutlinedButton.styleFrom(
-                                    padding: EdgeInsets.all(24)),
-                              ),
-                              OutlinedButton.icon(
-                                icon: Icon(CupertinoIcons.cart),
-                                onPressed: () {
-                                  showDialog(
-                                      context: context,
-                                      builder: (context) {
-                                        return SimpleDialog(
-                                          children: [
-                                            Padding(
-                                              padding:
-                                                  const EdgeInsets.all(16.0),
-                                              child: Text(
-                                                'Pesan ? ',
-                                                style: TextStyle(fontSize: 18),
-                                              ),
-                                            ),
-                                            OutlinedButton.icon(
-                                              icon: Icon(CupertinoIcons.clear),
-                                              onPressed: () =>
-                                                  Navigator.pop(context),
-                                              label: Text('BATAL'),
-                                              style: OutlinedButton.styleFrom(
-                                                  padding: EdgeInsets.all(24)),
-                                            ),
-                                            OutlinedButton.icon(
-                                              icon: Icon(CupertinoIcons.cart),
-                                              onPressed: () => {},
-                                              label: Text('PESAN'),
-                                              style: OutlinedButton.styleFrom(
-                                                  padding: EdgeInsets.all(24)),
-                                            ),
-                                          ],
-                                        );
-                                      });
-                                },
-                                label: Text('PESAN'),
-                                style: OutlinedButton.styleFrom(
-                                    padding: EdgeInsets.all(24)),
-                              ),
-                            ],
-                          );
-                        },
-                      );
+                      modalPesan(context);
                     },
-                    child: Text(
+                    child:const Text(
                       'PESAN',
                       style: TextStyle(color: Color(0xffFFC107)),
                     )),
@@ -323,5 +103,309 @@ class _CartItemState extends State<CartItem> {
             ],
           ),
         ));
+
+  }
+
+  Future<dynamic> modalPesan(BuildContext context) {
+    return showDialog(
+      context: context,
+      builder: (context) {
+        return SimpleDialog(
+          children: [
+            Container(
+              height: 300,
+              width: 300,
+              child: ListView.builder(
+                itemCount: listKeranjang.length,
+                itemBuilder: (context, index) {
+                  return Card(
+                    clipBehavior: Clip.antiAliasWithSaveLayer,
+                    shape: RoundedRectangleBorder(
+                      borderRadius:
+                          BorderRadius.circular(15.0),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            listKeranjang[index]!.menu,
+                            style: const TextStyle(
+                              fontSize: 18),
+                            textAlign: TextAlign.start,
+                          ),
+                          Row(
+                            mainAxisSize: MainAxisSize.max,
+                            mainAxisAlignment:
+                                MainAxisAlignment.spaceEvenly,
+                            children: [
+                              // Image.asset('assets/images/bgsplash.png', height: 120,),
+                              Padding(
+                                padding: const EdgeInsets
+                                        .symmetric(
+                                    horizontal: 16.0),
+                                child: Column(
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment
+                                          .start,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment
+                                          .spaceAround,
+                                  mainAxisSize:
+                                      MainAxisSize.max,
+                                  children: [
+                                    Text(CurrencyFormat.convertToIdr(
+                                      listKeranjang[index]!.harga, 0),
+                                        style: const TextStyle(
+                                            fontSize: 18,
+                                            color: Color(
+                                                0x99FFC107))),
+                                  ],
+                                ),
+                              ),
+                              Text('X${listKeranjang[index]!.qty}',
+                                  style: const TextStyle(
+                                      fontSize: 18,
+                                      color:
+                                          Color(0x99FFC107))),
+                              Text(CurrencyFormat.convertToIdr(
+                                      listKeranjang[index]!.harga * listKeranjang[index]!.qty, 0),
+                                  style: const TextStyle(
+                                      fontSize: 18,
+                                      color:
+                                          Color(0x99FFC107))),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+            OutlinedButton.icon(
+              icon: const Icon(CupertinoIcons.clear),
+              onPressed: () => Navigator.pop(context),
+              label: const Text('BATAL'),
+              style: OutlinedButton.styleFrom(
+                  padding: const EdgeInsets.all(24)),
+            ),
+            OutlinedButton.icon(
+              icon: const Icon(CupertinoIcons.cart),
+              onPressed: () {
+                modalConfirmPesanan(context);
+              },
+              label: const Text('PESAN'),
+              style: OutlinedButton.styleFrom(
+                  padding: const EdgeInsets.all(24)),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<dynamic> modalConfirmPesanan(BuildContext context) {
+    return showDialog(
+    context: context,
+    builder: (context) {
+      return SimpleDialog(
+        children: [
+          const Padding(
+            padding:
+                EdgeInsets.all(16.0),
+            child: Text(
+              'Pesan ? ',
+              style: TextStyle(fontSize: 18),
+            ),
+          ),
+          OutlinedButton.icon(
+            icon: const Icon(CupertinoIcons.clear),
+            onPressed: () =>
+                Navigator.pop(context),
+            label: const Text('BATAL'),
+            style: OutlinedButton.styleFrom(
+                padding: const EdgeInsets.all(24)),
+          ),
+          OutlinedButton.icon(
+            icon: const Icon(CupertinoIcons.cart),
+            onPressed: () => {
+              print(listKeranjang.length)
+            },
+            label: const Text('PESAN'),
+            style: OutlinedButton.styleFrom(
+                padding: const EdgeInsets.all(24)),
+          ),
+        ],
+      );
+    });
+  }
+
+  Widget loading(){
+    return const Center(
+      child: CircularProgressIndicator(),
+    );
+  }
+
+  Widget item(){
+    return ListView.builder(
+      itemCount: listKeranjang.length,
+      itemBuilder: (context, index) {
+        _qtyControllerList.add(TextEditingController());
+        _qtyControllerList[index].text = listKeranjang[index]!.qty.toString() ;
+        return Container(
+          margin: const EdgeInsets.symmetric(
+              horizontal: 16.0, vertical: 4.0),
+          child: Slidable(
+            endActionPane:
+                ActionPane(motion: const ScrollMotion(), children: [
+              SlidableAction(
+                backgroundColor: Colors.red,
+                onPressed: (_) async {
+                  final deleteKeranjang = await ApiService().deleteKeranjang(
+                    idUser: user.id_user,
+                    idMenu: listKeranjang[index]!.id_menu
+                  );
+                  if (deleteKeranjang['success']) {
+                    setState(() {
+                      _fetchKeranjang();
+                    });
+                  }
+                },
+                icon: CupertinoIcons.delete,
+              ),
+            ]),
+            child: InkWell(
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => DetailItem(
+                              idMenu: listKeranjang[index]!.id_menu
+                                  .toString(),
+                            )));
+              },
+              child: SizedBox(
+                height: 120,
+                // width: 80,
+                child: Card(
+                  clipBehavior: Clip.antiAliasWithSaveLayer,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15.0),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment:
+                        MainAxisAlignment.spaceBetween,
+                    children: [
+                      Image.network(
+                        ApiService.imageMenuUrl +
+                            listKeranjang[index]!.photo,
+                        height: 120,
+                        width: 120,
+                        fit: BoxFit.cover,
+                      ),
+                      Expanded(
+                        flex: 1,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16.0),
+                          child: Column(
+                            crossAxisAlignment:
+                                CrossAxisAlignment.start,
+                            mainAxisAlignment:
+                                MainAxisAlignment.spaceAround,
+                            mainAxisSize: MainAxisSize.max,
+                            children: [
+                              Text(
+                                listKeranjang[index]!.menu,
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(
+                                    fontSize: 24),
+                              ),
+                              Text(
+                                  CurrencyFormat.convertToIdr(
+                                      listKeranjang[index]!.harga, 0),
+                                  style: const TextStyle(
+                                      fontSize: 24,
+                                      color: Color(0x99FFC107))),
+                              Container(
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                    width: 1,
+                                    color: Colors.black
+                                  )
+                                ),
+                                width: MediaQuery.of(context).size.width * 0.30,
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.center,
+                                      crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    TextButton(
+                                        onPressed: () async{
+                                          int currentValue = int.parse(_qtyControllerList[index].text);
+                                            currentValue--;
+                                            if(currentValue >= 1){
+                                              final updateQty = await ApiService().updateQtyKeranjang(
+                                                idMenu: listKeranjang[index]!.id_menu,
+                                                idUser: user.id_user,
+                                                qty: currentValue
+                                              );
+                                              if (updateQty['success']) {
+                                                setState(() {
+                                                  _fetchKeranjang();
+                                                  _qtyControllerList[index].text = currentValue.toString();
+                                                });
+                                              }
+                                              
+                                            }
+                                        },
+                                        child: const Icon(
+                                            CupertinoIcons.minus)),
+                                    Expanded(
+                                      child: TextFormField(
+                                        enabled: false,
+                                        textAlign: TextAlign.center,
+                                        controller: _qtyControllerList[index],
+                                      ),
+                                    ),
+                                    TextButton(
+                                        onPressed: () async {
+                                          int currentValue = int.parse(_qtyControllerList[index].text);
+                                          currentValue++;
+                                          if(currentValue <= listKeranjang[index]!.stok){
+                                            final updateQty = await ApiService().updateQtyKeranjang(
+                                              idMenu: listKeranjang[index]!.id_menu,
+                                              idUser: user.id_user,
+                                              qty: currentValue
+                                            );
+                                            if (updateQty['success']) {
+                                              setState(() {
+                                                _fetchKeranjang();
+                                                _qtyControllerList[index].text = currentValue.toString();
+                                              });
+                                            }
+                                          }
+                                        },
+                                        child: const Icon(
+                                            CupertinoIcons.plus))
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
   }
 }

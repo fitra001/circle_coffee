@@ -1,5 +1,7 @@
+import 'package:circle_coffee/library/my_shared_pref.dart';
 import 'package:circle_coffee/models/kategori_model.dart';
 import 'package:circle_coffee/models/menu_model.dart';
+import 'package:circle_coffee/models/user_model.dart';
 import 'package:circle_coffee/page/category/category.dart';
 import 'package:circle_coffee/page/detail_item/detail_item.dart';
 import 'package:circle_coffee/page/list_item/list_item.dart';
@@ -20,12 +22,24 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
 
   late ApiService apiService;
+  User? user;
   
   @override
   void initState() {
     super.initState();
-
+    
+    user = User();
     apiService = ApiService();
+    _login();
+  }
+
+  _login() async{
+    final getUser = await MySharedPref().getModel();
+    if (getUser != null) {
+      setState(() {
+        user = getUser;
+      });
+    }
   }
 
   @override
@@ -48,6 +62,7 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
         ),
+        automaticallyImplyLeading: false,
         actions: [
           IconButton(
             color: Colors.black,
@@ -61,7 +76,7 @@ class _HomePageState extends State<HomePage> {
       ),
       body: SingleChildScrollView(
         child: Column(children: [
-          const HeadHome(),
+          (user!.nama == null) ? const CircularProgressIndicator() :HeadHome(user: user!,),
           const SizedBox(
             height: 20,
           ),
@@ -296,7 +311,10 @@ class Menus extends StatelessWidget {
 class HeadHome extends StatelessWidget {
   const HeadHome({
     Key? key,
+    required this.user
   }) : super(key: key);
+
+  final User user;
 
   @override
   Widget build(BuildContext context) {
@@ -309,12 +327,12 @@ class HeadHome extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.max,
-            children: const [
+            children: [
               Text(
-                'Selamat Malam, BAC',
-                style: TextStyle(fontSize: 18),
+                'Selamat Datang, ${user.nama}',
+                style: const TextStyle(fontSize: 18),
               ),
-              Text('Mau pesan apa hari ini?', style: TextStyle(fontSize: 18))
+              const Text('Mau pesan apa hari ini?', style: TextStyle(fontSize: 18))
             ],
           ),
           ClipRRect(

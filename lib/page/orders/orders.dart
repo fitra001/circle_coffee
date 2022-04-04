@@ -18,6 +18,7 @@ class _OrdersState extends State<Orders> {
         appBar: AppBar(backgroundColor: Colors.white,
           elevation: 0,
           centerTitle: true,
+          automaticallyImplyLeading: false,
           title: Container(
               margin: const EdgeInsets.all(8.0),
               decoration: BoxDecoration(

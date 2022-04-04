@@ -1,6 +1,12 @@
+import 'dart:convert';
+
+import 'package:circle_coffee/library/my_shared_pref.dart';
+import 'package:circle_coffee/models/user_model.dart';
 import 'package:circle_coffee/page/home/home.dart';
+import 'package:circle_coffee/services/api_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class Login extends StatefulWidget {
   const Login({ Key? key }) : super(key: key);
@@ -10,13 +16,18 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
+  MySharedPref _mySharedPref = MySharedPref();
+
   bool _isHidden = true;
+  TextEditingController _emailController = TextEditingController();
+  TextEditingController _passController = TextEditingController();
 
   void _togglePasswordView() {
     setState(() {
       _isHidden = !_isHidden;
     });
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -50,20 +61,34 @@ class _LoginState extends State<Login> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 TextFormField(
+                  controller: _emailController,
                   style: const TextStyle(fontFamily: 'sans serif'),
                   decoration: const InputDecoration(
-                    labelText: 'Username',
+                    labelText: 'Email',
                     prefixIcon: Icon(CupertinoIcons.person),
-                    border: OutlineInputBorder(),
+                    enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Color(0x99FFC107)),
+                  borderRadius: BorderRadius.all(Radius.circular(20.0))),
+                  border: OutlineInputBorder(
+                      borderSide: BorderSide(color: Color(0x99FFC107)),
+                      borderRadius: BorderRadius.all(Radius.circular(20.0))),
                   ),
                 ),
                 const SizedBox(height: 16,),
                 TextFormField(
-                  style: const TextStyle(fontFamily: 'sans serif'),
+                  controller: _passController,
+                  style: const TextStyle(fontFamily: 'sans serif',),
                   decoration: InputDecoration(
                     labelText: 'Password',
                     prefixIcon: const Icon(CupertinoIcons.lock),
-                    border: const OutlineInputBorder(),
+                    enabledBorder: const OutlineInputBorder(
+                      borderSide: BorderSide(color: Color(0x99FFC107)),
+                      borderRadius: BorderRadius.all(Radius.circular(20.0))
+                    ),
+                    border: const OutlineInputBorder(
+                      borderSide: BorderSide(color: Color(0x99FFC107)),
+                      borderRadius: BorderRadius.all(Radius.circular(20.0))
+                    ),
                     suffixIcon: InkWell(
                       onTap: _togglePasswordView,
                       child: Icon(
@@ -93,8 +118,27 @@ class _LoginState extends State<Login> {
                             // shape: StadiumBorder()
                           ),
                     onPressed: () {
-                      Navigator.push(context, 
-                        MaterialPageRoute(builder: (context) => const Home())
+                      User user;
+                      ApiService().login(email: _emailController.text, pass:_passController.text).then(
+                        (value) => {
+                          if (value['success']) {
+                            user = userFromJson(value['data']),
+                            _mySharedPref.setModel(user),
+                            // print(_mySharedPref.getLogin().then((value) => print("SEBELUM ${value}"))),
+                            _mySharedPref.setLogin(true),
+                            // print(_mySharedPref.getLogin().then((value) => print("SESUDAH ${value}"))),
+                            Fluttertoast.showToast(
+                              msg: value[
+                                  'message']),
+                            Navigator.push(context, 
+                              MaterialPageRoute(builder: (context) => const Home())
+                            )
+                          }else{
+                            Fluttertoast.showToast(
+                              msg: value[
+                                  'message']),
+                          }
+                        }
                       );
                     }, 
                     child: const Text(

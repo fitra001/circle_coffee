@@ -19,7 +19,7 @@ class MyApp extends StatelessWidget {
         fontFamily: 'sans serif mono'
         
       ),
-      home: const Home(),
+      home: const SplashScreenPage(),
       debugShowCheckedModeBanner: false,
     );
   }

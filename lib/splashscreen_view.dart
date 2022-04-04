@@ -1,3 +1,6 @@
+import 'package:circle_coffee/library/my_shared_pref.dart';
+import 'package:circle_coffee/page/home/home.dart';
+import 'package:circle_coffee/page/home_page/home_page.dart';
 import 'package:circle_coffee/page/login/login.dart';
 import 'package:circle_coffee/page/register/register.dart';
 import 'package:flutter/material.dart';
@@ -21,11 +24,13 @@ class _SplashScreenPageState extends State<SplashScreenPage> {
   }
 
   startSplashScreen() async {
+    final isLogin = await MySharedPref().getLogin();
+    final user = await MySharedPref().getModel();
     var duration = const Duration(seconds : 3);
     return Timer(duration, (){
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(builder: (_){
-          return const MainHome();
+          return isLogin ? user!.role_id == 2 ?const Home():const HomePage() : const MainHome();
         })
       );
     });
