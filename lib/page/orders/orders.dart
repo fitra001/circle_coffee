@@ -105,37 +105,37 @@ class RiwayatPesanan extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.spaceAround,
                               mainAxisSize: MainAxisSize.max,
                               children: [
-                                Text('Nasi Goreng', style: TextStyle(fontFamily: 'Satisfy', fontSize: 24),),
-                                Text('Rp. 20.000', style: TextStyle(fontFamily: 'Satisfy', fontSize: 24, color: Color(0x99FFC107))),
+                                Text('Nasi Goreng', style: TextStyle(fontSize: 24),),
+                                Text('Rp. 20.000', style: TextStyle(fontFamily:'Satisfy',fontSize: 24, color: Color(0x99FFC107))),
                               ],
                             ),
                           ),
                         )
                       ],
                     ),Container(
-                      decoration: BoxDecoration(
+                      decoration: const BoxDecoration(
                         border: Border(
                           top: BorderSide(color: Colors.grey, width: 0.5)
                         )
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Text('Lihat Selengkapnya', style: TextStyle(fontFamily: 'Satisfy', fontSize: 12),),
+                    const Padding(
+                      padding: EdgeInsets.all(16.0),
+                      child: Text('Lihat Selengkapnya', style: TextStyle(fontSize: 12),),
                     ),
                     Container(
-                      decoration: BoxDecoration(
+                      decoration: const BoxDecoration(
                         border: Border(
                           top: BorderSide(color: Colors.grey, width: 0.5)
                         )
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Text('Menunggu Konfirmasi', style: TextStyle(fontFamily: 'Satisfy', fontSize: 18),),
+                    const Padding(
+                      padding: EdgeInsets.all(16.0),
+                      child: Text('Menunggu Konfirmasi', style: TextStyle(fontSize: 18),),
                     ),
                     Container(
-                      decoration: BoxDecoration(
+                      decoration: const BoxDecoration(
                         border: Border(
                           top: BorderSide(color: Colors.grey, width: 0.5)
                         )
@@ -147,8 +147,8 @@ class RiwayatPesanan extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         mainAxisSize: MainAxisSize.max,
                         children: [
-                          Text('Total Pesanan', style: TextStyle(fontFamily: 'Satisfy', fontSize: 18),),
-                          Text('Rp. 20.000', style: TextStyle(fontFamily: 'Satisfy', fontSize: 24, color: Color(0x99FFC107))),
+                          const Text('Total Pesanan', style: TextStyle(fontSize: 18),),
+                          Text('Rp. 20.000', style: const TextStyle(fontSize: 24, color: Color(0x99FFC107))),
                           
                         ],
                       ),
@@ -203,37 +203,37 @@ class PesananSaya extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.spaceAround,
                               mainAxisSize: MainAxisSize.max,
                               children: [
-                                Text('Nasi Goreng', style: TextStyle(fontFamily: 'Satisfy', fontSize: 24),),
-                                Text('Rp. 20.000', style: TextStyle(fontFamily: 'Satisfy', fontSize: 24, color: Color(0x99FFC107))),
+                                Text('Nasi Goreng', style: TextStyle(fontSize: 24),),
+                                Text('Rp. 20.000', style: TextStyle(fontFamily: 'Satisfy',fontSize: 24, color: Color(0x99FFC107))),
                               ],
                             ),
                           ),
                         )
                       ],
                     ),Container(
-                      decoration: BoxDecoration(
+                      decoration: const BoxDecoration(
                         border: Border(
                           top: BorderSide(color: Colors.grey, width: 0.5)
                         )
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Text('Lihat Selengkapnya', style: TextStyle(fontFamily: 'Satisfy', fontSize: 12),),
+                    const Padding(
+                      padding: EdgeInsets.all(16.0),
+                      child: Text('Lihat Selengkapnya', style: TextStyle(fontSize: 12),),
                     ),
                     Container(
-                      decoration: BoxDecoration(
+                      decoration: const BoxDecoration(
                         border: Border(
                           top: BorderSide(color: Colors.grey, width: 0.5)
                         )
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Text('Menunggu Konfirmasi', style: TextStyle(fontFamily: 'Satisfy', fontSize: 18),),
+                    const Padding(
+                      padding: EdgeInsets.all(16.0),
+                      child: Text('Menunggu Konfirmasi', style: TextStyle(fontSize: 18),),
                     ),
                     Container(
-                      decoration: BoxDecoration(
+                      decoration: const BoxDecoration(
                         border: Border(
                           top: BorderSide(color: Colors.grey, width: 0.5)
                         )
@@ -245,8 +245,8 @@ class PesananSaya extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         mainAxisSize: MainAxisSize.max,
                         children: [
-                          Text('Total Pesanan', style: TextStyle(fontFamily: 'Satisfy', fontSize: 18),),
-                          Text('Rp. 20.000', style: TextStyle(fontFamily: 'Satisfy', fontSize: 24, color: Color(0x99FFC107))),
+                          const Text('Total Pesanan', style: TextStyle(fontSize: 18),),
+                          Text('Rp. 20.000', style: const TextStyle(fontFamily: 'Satisfy', fontSize: 24, color: Color(0x99FFC107))),
                           
                         ],
                       ),

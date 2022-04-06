@@ -8,11 +8,38 @@ import 'package:circle_coffee/models/user_model.dart';
 import 'package:http/http.dart';
 
 class ApiService {
-  static const String baseUrl = "http://192.168.100.26:3000";
+  static const String baseUrl = "http://localhost:3000";
   static const String imageKategoriUrl = baseUrl + '/images/kategori/';
   static const String imageMenuUrl = baseUrl + '/images/menu/';
 
   Client client = Client();
+
+  Future<dynamic> login({String? email, String? pass}) async {
+    var data = {'email': email, 'password': pass};
+    final response = await client.post(Uri.parse(baseUrl + '/auth'),
+        headers: {'Content-Type': 'application/json'}, body: json.encode(data));
+
+    Map<String, dynamic> res = json.decode(response.body);
+    return res;
+  }
+
+  Future<dynamic> register(
+      {String? nama, String? no_telp, String? email, String? password}) async {
+    var data = {
+      'nama': nama,
+      'no_telp': no_telp,
+      'email': email,
+      'password': password,
+      'role_id': 2,
+      'is_active': 1
+    };
+
+    final response = await client.post(Uri.parse(baseUrl + '/auth/register'),
+        headers: {'Content-Type': 'application/json'}, body: json.encode(data));
+
+    Map<String, dynamic> res = json.decode(response.body);
+    return res;
+  }
 
   Future<List<Kategori>?> getAllKategori() async {
     final response = await client.get(Uri.parse(baseUrl + '/kategori'));
@@ -65,20 +92,19 @@ class ApiService {
   Future<dynamic> addKeranjang({int? idUser, int? idMenu, int? qty}) async {
     var data = {'id_user': idUser, 'id_menu': idMenu, 'qty': qty};
     final response = await client.post(Uri.parse(baseUrl + '/keranjang/add'),
-        headers: {'Content-Type': 'application/json'}, 
-        body: json.encode(data)
-    );
+        headers: {'Content-Type': 'application/json'}, body: json.encode(data));
 
     Map<String, dynamic> res = json.decode(response.body);
     return res;
   }
 
-  Future<dynamic> updateQtyKeranjang({int? idUser, int? idMenu, int? qty}) async {
+  Future<dynamic> updateQtyKeranjang(
+      {int? idUser, int? idMenu, int? qty}) async {
     var data = {'id_user': idUser, 'id_menu': idMenu, 'qty': qty};
-    final response = await client.post(Uri.parse(baseUrl + '/keranjang/update_qty'),
-        headers: {'Content-Type': 'application/json'}, 
-        body: json.encode(data)
-    );
+    final response = await client.post(
+        Uri.parse(baseUrl + '/keranjang/update_qty'),
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode(data));
 
     Map<String, dynamic> res = json.decode(response.body);
     return res;
@@ -87,44 +113,45 @@ class ApiService {
   Future<dynamic> deleteKeranjang({int? idUser, int? idMenu}) async {
     var data = {'id_user': idUser, 'id_menu': idMenu};
     final response = await client.post(Uri.parse(baseUrl + '/keranjang/delete'),
-        headers: {'Content-Type': 'application/json'}, 
-        body: json.encode(data)
-    );
+        headers: {'Content-Type': 'application/json'}, body: json.encode(data));
 
     Map<String, dynamic> res = json.decode(response.body);
     return res;
   }
 
-  Future<dynamic> login({String? email, String? pass}) async {
-    var data = {'email': email, 'password':pass};
-    final response = await client.post(Uri.parse(baseUrl + '/auth'),
-      headers: {'Content-Type': 'application/json'},
-      body: json.encode(data)
-    );
+  Future<dynamic> deleteKeranjangByUser({required int? idUser}) async {
+    var data = {'id_user': idUser};
+    final response = await client.post(Uri.parse(baseUrl + '/keranjang/delete/user'),
+        headers: {'Content-Type': 'application/json'}, body: json.encode(data));
 
     Map<String, dynamic> res = json.decode(response.body);
     return res;
-    
   }
 
-  Future<dynamic> register({String? nama, String? no_telp, String? email, String? password}) async {
-    var data = {
-      'nama': nama,
-      'no_telp': no_telp,
-      'email': email,
-      'password': password,
-      'role_id' : 2,
-      'is_active' : 1
-
-    };
-    
-    final response = await client.post(Uri.parse(baseUrl + '/auth/register'),
-      headers: {'Content-Type': 'application/json'},
-      body: json.encode(data)
-    );
+  Future<dynamic> addOrder({required int? idUser, required int total}) async {
+    var data = {'id_user': idUser, 'total': total};
+    final response = await client.post(Uri.parse(baseUrl + '/order/add'),
+        headers: {'Content-Type': 'application/json'}, body: json.encode(data));
 
     Map<String, dynamic> res = json.decode(response.body);
     return res;
-    
+  }
+
+  Future<dynamic> addDetailOrder({required int? lastId, required int? idMenu, required int? harga, required int? qty}) async {
+    var data = {'id_transaksi': lastId, 'id_menu': idMenu, 'harga': harga, 'qty': qty};
+    final response = await client.post(Uri.parse(baseUrl + '/order/add/detail'),
+        headers: {'Content-Type': 'application/json'}, body: json.encode(data));
+
+    Map<String, dynamic> res = json.decode(response.body);
+    return res;
+  }
+
+  Future<dynamic> getRiwayatOrder(String idUser) async {
+    final response = await client.post(Uri.parse(baseUrl + '/order/riwayat'),
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode({'id_user': idUser}));
+
+    Map<String, dynamic> res = json.decode(response.body);
+    return res;
   }
 }

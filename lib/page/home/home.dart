@@ -11,7 +11,7 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  int _selectedNavbar = 0;
+  int _selectedNavbar = 2;
   final List _children = [
     HomePage(),
     HomePage(),
