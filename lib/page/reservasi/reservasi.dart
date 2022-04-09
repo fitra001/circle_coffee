@@ -1,21 +1,23 @@
-import 'package:circle_coffee/page/orders/pesanan/pesanan.dart';
-import 'package:circle_coffee/page/orders/riwayat/riwayat.dart';
+
+import 'package:circle_coffee/page/reservasi/pesanan/pesanan_reservasi.dart';
+import 'package:circle_coffee/page/reservasi/reservasi/reservasi.dart';
+import 'package:circle_coffee/page/reservasi/riwayat/riwayat_reservasi.dart';
 import 'package:flutter/material.dart';
 
-class Orders extends StatefulWidget {
-  const Orders({ Key? key }) : super(key: key);
+class ReservasiHome extends StatefulWidget {
+  const ReservasiHome({ Key? key }) : super(key: key);
 
   @override
-  _OrdersState createState() => _OrdersState();
+  _ReservasiHomeState createState() => _ReservasiHomeState();
 }
 
-class _OrdersState extends State<Orders> {
+class _ReservasiHomeState extends State<ReservasiHome> {
   
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
       initialIndex: 0,
-      length: 2,
+      length: 3,
       child: Scaffold(
         appBar: AppBar(backgroundColor: Colors.white,
           elevation: 0,
@@ -41,6 +43,10 @@ class _OrdersState extends State<Orders> {
                 tabs: [
                   Padding(
                     padding: EdgeInsets.all(8.0),
+                    child: Text('Reservasi'),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.all(8.0),
                     child: Text('Pesanan Saya'),
                   ),
                   Padding(
@@ -53,12 +59,13 @@ class _OrdersState extends State<Orders> {
         ),
         body: Container(
           decoration: const BoxDecoration(
-            // border: Border(top: BorderSide(color: Colors.grey, width: 0.5))
+            // border: Border(top: BReservasiHomeide(color: Colors.grey, width: 0.5))
           ),
           child: const TabBarView(
             children: [
-              PesananSaya(),
-              RiwayatPesanan(),
+              Reservasi(),
+              PesananReservasiSaya(),
+              RiwayatReservasi()
             ]
           ),
         ),

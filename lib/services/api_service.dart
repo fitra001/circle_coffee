@@ -8,7 +8,8 @@ import 'package:circle_coffee/models/user_model.dart';
 import 'package:http/http.dart';
 
 class ApiService {
-  static const String baseUrl = "http://localhost:3000";
+  // static const String baseUrl = "http://localhost:3000";
+  static const String baseUrl = "https://circle-coffee-001.herokuapp.com";
   static const String imageKategoriUrl = baseUrl + '/images/kategori/';
   static const String imageMenuUrl = baseUrl + '/images/menu/';
 
@@ -146,8 +147,26 @@ class ApiService {
     return res;
   }
 
+  Future<dynamic> getDetailOrder({required int? idTransaksi}) async {
+    var data = {'id_transaksi': idTransaksi};
+    final response = await client.post(Uri.parse(baseUrl + '/order/detail'),
+        headers: {'Content-Type': 'application/json'}, body: json.encode(data));
+
+    Map<String, dynamic> res = json.decode(response.body);
+    return res;
+  }
+
   Future<dynamic> getRiwayatOrder(String idUser) async {
     final response = await client.post(Uri.parse(baseUrl + '/order/riwayat'),
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode({'id_user': idUser}));
+
+    Map<String, dynamic> res = json.decode(response.body);
+    return res;
+  }
+
+  Future<dynamic> getPesananOrder(String idUser) async {
+    final response = await client.post(Uri.parse(baseUrl + '/order/pesanan'),
         headers: {'Content-Type': 'application/json'},
         body: json.encode({'id_user': idUser}));
 

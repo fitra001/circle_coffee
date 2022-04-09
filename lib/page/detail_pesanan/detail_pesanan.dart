@@ -1,16 +1,40 @@
+import 'package:circle_coffee/helpers/currency_format.dart';
+import 'package:circle_coffee/services/api_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import '../detail_item/detail_item.dart';
-
 class DetailPesanan extends StatefulWidget {
-  const DetailPesanan({Key? key}) : super(key: key);
+   DetailPesanan({Key? key, required this.idTransaksi}) : super(key: key);
+  int? idTransaksi;
 
   @override
   _DetailPesananState createState() => _DetailPesananState();
 }
 
 class _DetailPesananState extends State<DetailPesanan> {
+
+  Map<String, dynamic> transaksi = <String, dynamic>{};
+  List<dynamic> item = <dynamic>[];
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    _fetchDetail();
+    
+  }
+
+  _fetchDetail() async{
+    final data = await ApiService().getDetailOrder(idTransaksi: widget.idTransaksi);
+    setState(() {
+      item = data['data'];
+      transaksi = data['transaksi'];
+      isLoading = false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -29,14 +53,14 @@ class _DetailPesananState extends State<DetailPesanan> {
         backgroundColor: Colors.white,
         elevation: 0,
       ),
-      body: SingleChildScrollView(
+      body: isLoading ? const Center(child: CircularProgressIndicator()) : SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.max,
           children: [
             ListView.builder(
               physics: NeverScrollableScrollPhysics(),
               shrinkWrap: true,
-              itemCount: 10,
+              itemCount: item.length,
               itemBuilder: (context, index) {
                 return InkWell(
                   onTap: () {
@@ -53,9 +77,11 @@ class _DetailPesananState extends State<DetailPesanan> {
                       mainAxisSize: MainAxisSize.max,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Image.asset(
-                          'assets/images/bgsplash.png',
+                        Image.network(
+                          ApiService.imageMenuUrl + item[index]['photo'],
+                          width: 120,
                           height: 120,
+                          fit: BoxFit.cover,
                         ),
                         Expanded(
                           flex: 1,
@@ -68,14 +94,14 @@ class _DetailPesananState extends State<DetailPesanan> {
                               mainAxisSize: MainAxisSize.max,
                               children: [
                                 Text(
-                                  'Nasi Goreng',
-                                  style: TextStyle(
-                                      fontFamily: 'Satisfy', fontSize: 24),
+                                  item[index]['menu'],
+                                  overflow: TextOverflow.ellipsis,
+                                  style: const TextStyle(
+                                      fontSize: 24),
                                 ),
-                                Text('Rp. 20.000',
-                                    style: TextStyle(
-                                        fontFamily: 'Satisfy',
-                                        fontSize: 24,
+                                Text(CurrencyFormat.convertToIdr(item[index]['harga'], 0),
+                                    style: const TextStyle(
+                                        fontFamily: 'Satisfy',                                    fontSize: 24,
                                         color: Color(0x99FFC107))),
                                 Row(
                                   mainAxisSize: MainAxisSize.max,
@@ -83,14 +109,13 @@ class _DetailPesananState extends State<DetailPesanan> {
                                       MainAxisAlignment.spaceAround,
                                   children: [
                                     Text(
-                                      'X1',
-                                      style: TextStyle(
-                                          fontFamily: 'Satisfy', fontSize: 24),
+                                      'X${item[index]['qty']}',
+                                      style: const TextStyle(
+                                          fontSize: 24),
                                     ),
-                                    Text('Rp. 20.000',
-                                        style: TextStyle(
-                                            fontFamily: 'Satisfy',
-                                            fontSize: 24,
+                                    Text(CurrencyFormat.convertToIdr(item[index]['qty'] * item[index]['harga'], 0),
+                                        style: const TextStyle(
+                                            fontFamily: 'Satisfy',                                     fontSize: 24,
                                             color: Color(0x99FFC107))),
                                   ],
                                 )
@@ -118,39 +143,36 @@ class _DetailPesananState extends State<DetailPesanan> {
                             BorderSide(width: 0.5, color: Colors.grey)),
                     children: [
                       TableRow(children: [
-                        Text(
+                        const Text(
                           'Tanggal Pesan',
-                          style: TextStyle(fontFamily: 'Satisfy', fontSize: 24),
+                          style: TextStyle(fontSize: 24),
                         ),
                         Text(':'),
-                        Text('21/22/23',
+                        Text(transaksi['tgl_transaksi'],
                             style: TextStyle(
-                                fontFamily: 'Satisfy',
-                                fontSize: 24,
+                                                                fontSize: 24,
                                 color: Color(0x99FFC107))),
                       ]),
                       TableRow(children: [
                         Text(
                           'Status Pesanan',
-                          style: TextStyle(fontFamily: 'Satisfy', fontSize: 24),
+                          style: TextStyle(fontSize: 24),
                         ),
                         Text(':'),
-                        Text('Dibatalkan',
+                        Text(transaksi['status'],
                             style: TextStyle(
-                                fontFamily: 'Satisfy',
-                                fontSize: 24,
+                                                                fontSize: 24,
                                 color: Color(0x99FFC107))),
                       ]),
                       TableRow(children: [
                         Text(
                           'Pemesan',
-                          style: TextStyle(fontFamily: 'Satisfy', fontSize: 24),
+                          style: TextStyle(fontSize: 24),
                         ),
                         Text(':'),
-                        Text('BAC',
+                        Text(transaksi['nama'],
                             style: TextStyle(
-                                fontFamily: 'Satisfy',
-                                fontSize: 24,
+                                                                fontSize: 24,
                                 color: Color(0x99FFC107))),
                       ])
                     ],
@@ -167,13 +189,13 @@ class _DetailPesananState extends State<DetailPesanan> {
                   child: Table(
                     children: [
                       TableRow(children: [
-                        Text(
+                        const Text(
                           'Total Pesanan',
-                          style: TextStyle(fontFamily: 'Satisfy', fontSize: 24),
+                          style: TextStyle(fontSize: 24),
                         ),
-                        Text(''),
-                        Text('Rp. 20.000',
-                            style: TextStyle(
+                        const Text(''),
+                        Text(CurrencyFormat.convertToIdr(transaksi['total'], 0),
+                            style: const TextStyle(
                               fontFamily: 'Satisfy',
                               fontSize: 24,
                               color: Color(0x99FFC107),

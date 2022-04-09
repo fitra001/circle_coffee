@@ -172,7 +172,7 @@ class ListCategory extends StatelessWidget {
         Container(
           height: 100,
           child: ListView.builder(
-            padding: EdgeInsets.symmetric(horizontal: 16.0),
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
             clipBehavior: Clip.none,
             itemCount: kategori?.length,
             scrollDirection: Axis.horizontal,

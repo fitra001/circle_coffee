@@ -1,5 +1,7 @@
 import 'package:circle_coffee/page/home_page/home_page.dart';
 import 'package:circle_coffee/page/orders/orders.dart';
+import 'package:circle_coffee/page/profil/profil.dart';
+import 'package:circle_coffee/page/reservasi/reservasi.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -11,12 +13,12 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  int _selectedNavbar = 2;
+  int _selectedNavbar = 0;
   final List _children = [
-    HomePage(),
-    HomePage(),
-    Orders(),
-    HomePage(),
+    const HomePage(),
+    const ReservasiHome(),
+    const Orders(),
+    const Profil(),
   ];
 
   void _changeSelectedNavBar(int index) {
