@@ -13,6 +13,7 @@ class Register extends StatefulWidget {
 }
 
 class _RegisterState extends State<Register> {
+  bool isLoading = false;
   final _namaController = TextEditingController();
   final _noTelpController = TextEditingController();
   final _emailController = TextEditingController();
@@ -136,7 +137,7 @@ class _RegisterState extends State<Register> {
                 const SizedBox(height: 16,),
                 Container(
                   width: double.infinity,
-                  child: TextButton(
+                  child: isLoading ? const Center(child: CircularProgressIndicator(),) : TextButton(
                     style: TextButton.styleFrom(
                             padding: const EdgeInsets.all(20),
                             backgroundColor: const Color(0x44FFC107),
@@ -150,28 +151,33 @@ class _RegisterState extends State<Register> {
                             ),
                             // shape: StadiumBorder()
                           ),
-                    onPressed: () {                     
-                      ApiService().register(
-                        nama: _namaController.text,
-                        no_telp: _noTelpController.text,
-                        email: _emailController.text,
-                        password: _passController.text
-                      ).then(
-                        (value) => {
-                          if (value['success']) {
-                            Navigator.pushReplacement(context,
-                              MaterialPageRoute(builder: (context) => Login())
-                            ),
-                            Fluttertoast.showToast(
-                              msg: value[
-                                  'message']),
-                          }else{
-                            Fluttertoast.showToast(
-                              msg: value[
-                                  'message'])
-                          }
-                        }
+                    onPressed: () async{  
+                      setState(() {
+                        isLoading = true;
+                      });                   
+                      final res = await ApiService().register(
+                      nama: _namaController.text,
+                      no_telp: _noTelpController.text,
+                      email: _emailController.text,
+                      password: _passController.text
+                    );
+                    
+                    if (res['success']) {
+                      Navigator.pushReplacement(context,
+                        MaterialPageRoute(builder: (context) => Login())
                       );
+                      Fluttertoast.showToast(
+                        msg: res[
+                            'message']);
+                    }else{
+                      setState(() {
+                        isLoading = false;
+                      });
+                      Fluttertoast.showToast(
+                        msg: res[
+                            'message']);
+                    }
+                        
                     }, 
                     child: const Text(
                       "DAFTAR", 
