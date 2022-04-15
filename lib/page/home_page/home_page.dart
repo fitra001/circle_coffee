@@ -67,19 +67,23 @@ class _HomePageState extends State<HomePage> {
     final getUser = await MySharedPref().getModel();
     if (getUser != null) {
       final getJumlahKeranjang = await apiService.getJumlahKeranjang(getUser.id_user.toString());
-      setState(() {
-        jumlahKeranjang = getJumlahKeranjang['data']['jumlah'] ?? 0;
-        user = getUser;
-      });
+      if (mounted) {
+        setState(() {
+          jumlahKeranjang = getJumlahKeranjang['data']['jumlah'] ?? 0;
+          user = getUser;
+        });
+      }
     }
   }
 
   _getKategori() async {
     final kategori = await apiService.getAllKategori();
-    setState(() {
-      listKategori = kategori;
-      loadingKategori = false;
-    });
+    if (mounted) {
+      setState(() {
+        listKategori = kategori;
+        loadingKategori = false;
+      });
+    }
   }
 
   _getMenuTerlaris() async {
@@ -92,19 +96,23 @@ class _HomePageState extends State<HomePage> {
 
   _getAllMenu() async {
     final allMenu = await apiService.getAllMenu();
-    setState(() {
-      listAllMenu = allMenu;
-      loadingAllMenu = false;
-    });
+    if (mounted) {
+      setState(() {
+        listAllMenu = allMenu;
+        loadingAllMenu = false;
+      });
+    }
   }
 
   _searchList(String text) async {
     final getSearch = await apiService.getMenuByNama(text);
-    setState(() {
-      _searchingList = getSearch;
-      isLoadingSearch = false;
-      isSearching = true;
-    });
+    if (mounted) {
+      setState(() {
+        _searchingList = getSearch;
+        isLoadingSearch = false;
+        isSearching = true;
+      });
+    }
   }
 
   @override
