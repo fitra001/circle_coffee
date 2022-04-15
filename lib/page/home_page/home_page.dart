@@ -136,7 +136,7 @@ class _HomePageState extends State<HomePage> {
                 );
               } else if (snapshot.connectionState == ConnectionState.done){
                 List<Menu> menu = snapshot.data as List<Menu>;
-                return Menus(
+                return menu.isEmpty ? const SizedBox(height: 0,) : Menus(
                   title: 'Menu Terlaris',
                   menu: menu,
                   apiService: apiService,
@@ -238,7 +238,8 @@ class AllMenus extends StatelessWidget {
                 },
                 child: Column(
                   mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Image.network(
                       ApiService.imageMenuUrl + '${menu?[index].photo}',
@@ -247,14 +248,14 @@ class AllMenus extends StatelessWidget {
                       fit: BoxFit.fill,
                     ),
                     Expanded(
-                              child: Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 8.0),
-                            child: Center(
-                                child: Text(menu![index].menu.toString(),
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis)),
-                          )),
+                      child: Padding(
+                        padding:
+                            const EdgeInsets.symmetric(horizontal: 8.0),
+                        child: Center(
+                          child: Text(menu![index].menu.toString(),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis)),
+                    )),
                     Text(
                       CurrencyFormat.convertToIdr(
                           menu![index].harga, 0),
@@ -262,6 +263,7 @@ class AllMenus extends StatelessWidget {
                           fontFamily: 'Satisfy',
                           fontSize: 18,
                           color: Color(0x99FFC107))),
+                    const SizedBox(height: 10,)
                   ],
                 ),
               ),
@@ -432,6 +434,7 @@ class Menus extends StatelessWidget {
                           child: Center(child: Text('${menu?[index].menu}',maxLines: 2, overflow: TextOverflow.ellipsis)),
                         )),
                         Text(CurrencyFormat.convertToIdr(menu?[index].harga, 0), style: const TextStyle(fontFamily: 'Satisfy', fontSize: 18, color: Color(0x99FFC107))),
+                        const SizedBox(height: 10,)
                       ],
                     ),
                   ),
