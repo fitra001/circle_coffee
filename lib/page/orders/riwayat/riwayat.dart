@@ -35,12 +35,13 @@ class _RiwayatPesananState extends State<RiwayatPesanan> {
       final detailOrder = await _getDetail(item['id']);
       detail.add(detailOrder);
     }
-
-    setState(() {
-      data = riwayatOrder;
-      detailPesanan = detail;
-      isLoading = false;
-    });
+    if(mounted){
+      setState(() {
+        data = riwayatOrder;
+        detailPesanan = detail;
+        isLoading = false;
+      });
+    }
   }
 
   Future<dynamic> _getDetail(int idTransaksi) async {
@@ -97,6 +98,8 @@ class _RiwayatPesananState extends State<RiwayatPesanan> {
                                     children: [
                                       Text(
                                         detailPesanan[index][0]['menu'],
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
                                         style: const TextStyle(fontSize: 24),
                                       ),
                                       Text(CurrencyFormat.convertToIdr(detailPesanan[index][0]['harga'], 0),

@@ -152,94 +152,88 @@ class _DetailPaketState extends State<DetailPaket> {
       ),
       bottomNavigationBar: Container(
         height: 50,
-        child: Row(
-          children: [
-            Expanded(
-              child: TextButton(
-                  style: TextButton.styleFrom(
-                    backgroundColor: const Color(0xff404040),
-                  ),
-                  onPressed: () {
-                    showModalBottomSheet(
-                        shape: const RoundedRectangleBorder(
-                            borderRadius: BorderRadius.only(
-                                topRight: Radius.circular(20),
-                                topLeft: Radius.circular(20))),
-                        context: context,
-                        builder: (context) {
-                          return StatefulBuilder(
-                            
-                            builder: (BuildContext context, void Function(void Function()) setState) {
-                              return Wrap(
+        child: TextButton(
+            style: TextButton.styleFrom(
+              backgroundColor: const Color(0xff404040),
+            ),
+            onPressed: () {
+              showModalBottomSheet(
+                  shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.only(
+                          topRight: Radius.circular(20),
+                          topLeft: Radius.circular(20))),
+                  context: context,
+                  builder: (context) {
+                    return StatefulBuilder(
+                      
+                      builder: (BuildContext context, void Function(void Function()) setState) {
+                        return Wrap(
+                          children: [
+                            Container(
+                              margin: const EdgeInsets.all(24),
+                              width: double.infinity,
+                              child: Column(
+                                mainAxisSize: MainAxisSize.max,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.center,
+                                crossAxisAlignment:
+                                    CrossAxisAlignment.center,
                                 children: [
                                   Container(
-                                    margin: const EdgeInsets.all(24),
-                                    width: double.infinity,
-                                    child: Column(
-                                      mainAxisSize: MainAxisSize.max,
+                                    margin:
+                                        const EdgeInsets.symmetric(
+                                            horizontal: 24),
+                                    width: MediaQuery.of(context)
+                                            .size
+                                            .width *
+                                        0.5,
+                                    child: Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
                                       children: [
-                                        Container(
-                                          margin:
-                                              const EdgeInsets.symmetric(
-                                                  horizontal: 24),
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.5,
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: [
-                                              
-                                              Expanded(
-                                                child: Text('Tanggal'),
-                                                // child: TextFormField(
-                                                //   textAlign:
-                                                //       TextAlign.center,
-                                                //   controller:
-                                                //       _qtyController,
-                                                // ),
-                                              ),
+                                        
+                                        Expanded(
+                                          child: Text('Tanggal'),
+                                          // child: TextFormField(
+                                          //   textAlign:
+                                          //       TextAlign.center,
+                                          //   controller:
+                                          //       _qtyController,
+                                          // ),
+                                        ),
 
-                                            ],
-                                          ),
-                                        ),
-                                        const SizedBox(
-                                          height: 40,
-                                        ),
-                                        OutlinedButton.icon(
-                                          icon: const Icon(
-                                              CupertinoIcons.cart),
-                                          onPressed: () {
-                                            modalConfirmPesanan(context);
-                                          },
-                                          label: const Text(
-                                              'PESAN SEKARANG'),
-                                          style: OutlinedButton.styleFrom(
-                                              padding:
-                                                  const EdgeInsets.all(
-                                                      24)),
-                                        ),
                                       ],
                                     ),
                                   ),
+                                  const SizedBox(
+                                    height: 40,
+                                  ),
+                                  OutlinedButton.icon(
+                                    icon: const Icon(
+                                        CupertinoIcons.cart),
+                                    onPressed: () {
+                                      modalConfirmPesanan(context);
+                                    },
+                                    label: const Text(
+                                        'PESAN SEKARANG'),
+                                    style: OutlinedButton.styleFrom(
+                                        padding:
+                                            const EdgeInsets.all(
+                                                24)),
+                                  ),
                                 ],
-                              );
-                            }
-                          );
-                        });
-                  },
-                  child: const Text(
-                    'PESAN SEKARANG',
-                    style: TextStyle(color: Color(0xffFFC107)),
-                  )),
-            ),
-          ],
-        ),
+                              ),
+                            ),
+                          ],
+                        );
+                      }
+                    );
+                  });
+            },
+            child: const Text(
+              'PESAN SEKARANG',
+              style: TextStyle(color: Color(0xffFFC107)),
+            )),
       ),
     );
     

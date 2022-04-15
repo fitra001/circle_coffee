@@ -282,7 +282,11 @@ class _CartItemState extends State<CartItem> {
   }
 
   Widget item() {
-    return ListView.builder(
+    return listKeranjang.isEmpty
+        ? const Center(
+            child: Text('Keranjang Kosong'),
+          )
+        : ListView.builder(
       itemCount: listKeranjang.length,
       itemBuilder: (context, index) {
         _qtyControllerList.add(TextEditingController());

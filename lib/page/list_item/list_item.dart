@@ -61,7 +61,7 @@ class _ListItemState extends State<ListItem> {
             );
           } else if (snapshot.connectionState == ConnectionState.done) {
             List<Menu> menu = snapshot.data as List<Menu>;
-            return ListView.builder(
+            return menu.isEmpty ? const Center(child: Text('Tidak Ada Data Ditemukan'),) : ListView.builder(
                   shrinkWrap: true,
                   itemCount: menu.length,
                   itemBuilder: (context, index) {

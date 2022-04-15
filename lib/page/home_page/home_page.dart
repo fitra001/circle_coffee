@@ -20,9 +20,12 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-
+  bool isSearching = false;
+  bool isLoadingSearch = false;
   late ApiService apiService;
   User? user;
+  final _searchController = TextEditingController();
+  List? _searchingList = [];
   
   @override
   void initState() {
@@ -30,6 +33,19 @@ class _HomePageState extends State<HomePage> {
     
     user = User();
     apiService = ApiService();
+    _searchController.addListener((){
+      if (_searchController.text.isNotEmpty) {
+        setState(() {
+          isLoadingSearch= true;
+        });
+        _searchList(_searchController.text);
+      }else{
+        setState(() {
+          isLoadingSearch = false;
+          isSearching = false;
+        });
+      }
+    });
     _login();
   }
 
@@ -42,27 +58,36 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  _searchList(String text) async {
+    final getSearch = await apiService.getMenuByNama(text);
+    setState(() {
+      _searchingList = getSearch;
+      isLoadingSearch = false;
+      isSearching = true;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Container(
-          height: 40,
-          child: TextFormField(
-            style: const TextStyle(fontFamily: 'sans serif'),
-            decoration: const InputDecoration(
-              prefixIcon: Icon(CupertinoIcons.search, color: Color(0x99FFC107)),
-              hintText: 'Pencarian',
-              enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Color(0x99FFC107)),
-                  borderRadius: BorderRadius.all(Radius.circular(20.0))),
-              border: OutlineInputBorder(
-                  borderSide: BorderSide(color: Color(0x99FFC107)),
-                  borderRadius: BorderRadius.all(Radius.circular(20.0))),
-            ),
-          ),
-        ),
-        automaticallyImplyLeading: false,
+            height: 40,
+            child: TextFormField(
+              controller: _searchController,
+              style: const TextStyle(fontFamily: 'sans serif'),
+              decoration: const InputDecoration(
+                prefixIcon:
+                    Icon(CupertinoIcons.search, color: Color(0x99FFC107)),
+                hintText: 'Pencarian',
+                enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Color(0x99FFC107)),
+                    borderRadius: BorderRadius.all(Radius.circular(20.0))),
+                border: OutlineInputBorder(
+                    borderSide: BorderSide(color: Color(0x99FFC107)),
+                    borderRadius: BorderRadius.all(Radius.circular(20.0))),
+              ),
+            )),
         actions: [
           IconButton(
             color: Colors.black,
@@ -75,7 +100,7 @@ class _HomePageState extends State<HomePage> {
         elevation: 0,
       ),
       body: SingleChildScrollView(
-        child: Column(children: [
+        child: isSearching ? SearchItem(menuSearch: _searchingList,) :Column(children: [
           (user!.nama == null) ? const CircularProgressIndicator() :HeadHome(user: user!,),
           const SizedBox(
             height: 20,
@@ -102,7 +127,7 @@ class _HomePageState extends State<HomePage> {
             height: 20,
           ),
           FutureBuilder(
-            future: apiService.getAllMenu(),
+            future: apiService.getMenuTerlaris(),
             builder: (context, snapshot) {
               if (snapshot.hasError) {
                 return Center(
@@ -126,11 +151,123 @@ class _HomePageState extends State<HomePage> {
           const SizedBox(
             height: 20,
           ),
-          // Menu(
-          //   title: 'Paling Disukai Minggu Ini',
-          //   menu: menu,
-          // )
+          Container(
+            decoration: const BoxDecoration(
+              color: Colors.grey,
+            ),
+            margin: const EdgeInsets.symmetric(horizontal: 16),
+            height: 2,
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          FutureBuilder(
+            future: apiService.getAllMenu(),
+            builder: (context, snapshot) {
+              if (snapshot.hasError) {
+                return Center(
+                  child: Text(
+                      "Something wrong with message: ${snapshot.error.toString()}"),
+                );
+              } else if (snapshot.connectionState == ConnectionState.done){
+                List<Menu> menu = snapshot.data as List<Menu>;
+                return AllMenus(
+                  menu: menu,
+                  apiService: apiService,
+                );
+              } else {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                ); 
+              }
+            }
+          
+          )
+          
         ]),
+      ),
+    );
+  }
+}
+
+class AllMenus extends StatelessWidget {
+  const AllMenus({
+    Key? key,
+    required this.menu,
+    required this.apiService
+  }) : super(key: key);
+
+  final List<Menu>? menu;
+  final ApiService apiService;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width *0.1),
+      child: Column(
+        children: [
+          const Text(
+            'Semua Menu',
+            style: TextStyle(fontSize: 18),
+          ),
+          const SizedBox(height: 16,),
+          GridView.builder(
+            physics: const NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+            
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              mainAxisSpacing: 12.0,
+              crossAxisSpacing: 12.0,
+              childAspectRatio: 0.8
+            ), 
+            itemCount: menu?.length,
+            itemBuilder: (_, index) => Card(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15.0),
+              ),
+              clipBehavior: Clip.antiAliasWithSaveLayer,
+              child: InkWell(
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => DetailItem(
+                                idMenu: '${menu?[index].id_menu}',
+                              )));
+                },
+                child: Column(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Image.network(
+                      ApiService.imageMenuUrl + '${menu?[index].photo}',
+                      width: double.infinity,
+                      height:150,
+                      fit: BoxFit.fill,
+                    ),
+                    Expanded(
+                              child: Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 8.0),
+                            child: Center(
+                                child: Text(menu![index].menu.toString(),
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis)),
+                          )),
+                    Text(
+                      CurrencyFormat.convertToIdr(
+                          menu![index].harga, 0),
+                      style: const TextStyle(
+                          fontFamily: 'Satisfy',
+                          fontSize: 18,
+                          color: Color(0x99FFC107))),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -249,7 +386,7 @@ class Menus extends StatelessWidget {
                       MaterialPageRoute(
                           builder: (context) => ListItem(
                             title: title,
-                            future: apiService.getAllMenu(),
+                            future: apiService.getMenuTerlaris(),
                           )));
                 },
               ),
@@ -292,7 +429,7 @@ class Menus extends StatelessWidget {
                         ),
                         Expanded(child: Padding(
                           padding: const EdgeInsets.symmetric(horizontal : 8.0),
-                          child: Center(child: Text('${menu?[index].menu}', overflow: TextOverflow.ellipsis)),
+                          child: Center(child: Text('${menu?[index].menu}',maxLines: 2, overflow: TextOverflow.ellipsis)),
                         )),
                         Text(CurrencyFormat.convertToIdr(menu?[index].harga, 0), style: const TextStyle(fontFamily: 'Satisfy', fontSize: 18, color: Color(0x99FFC107))),
                       ],
@@ -338,13 +475,84 @@ class HeadHome extends StatelessWidget {
           ClipRRect(
             borderRadius: BorderRadius.circular(20),
             child: Image.asset(
-              'assets/images/bgsplash.png',
+              'assets/images/profile.png',
               height: 40,
               width: 40,
             ),
           )
         ],
       ),
+    );
+  }
+}
+
+class SearchItem extends StatelessWidget {
+  const SearchItem({ Key? key, required this.menuSearch }) : super(key: key);
+  final List? menuSearch;
+
+  @override
+  Widget build(BuildContext context) {
+    return menuSearch!.isEmpty ? const Center(child: Text('Tidak Ditemukan'))  : ListView.builder(
+      shrinkWrap: true,
+      itemCount: menuSearch?.length,
+      itemBuilder: (context, index) {
+        return Container(
+          margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
+          child: InkWell(
+            onTap: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => DetailItem(
+                            idMenu: menuSearch?[index].id_menu.toString(),
+                          )));
+            },
+            child: Card(
+              clipBehavior: Clip.antiAliasWithSaveLayer,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15.0),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Image.network(
+                    ApiService.imageMenuUrl + menuSearch?[index].photo,
+                    height: 120,
+                    width: 120,
+                    fit: BoxFit.cover,
+                  ),
+                  Expanded(
+                    flex: 1,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        mainAxisSize: MainAxisSize.max,
+                        children: [
+                          Text(
+                            menuSearch?[index].menu,
+                            overflow: TextOverflow.ellipsis,
+                            style:
+                                const TextStyle(fontFamily: 'Satisfy', fontSize: 24),
+                          ),
+                          Text(
+                              CurrencyFormat.convertToIdr(menuSearch?[index].harga, 0),
+                              style: const TextStyle(
+                                  fontFamily: 'Satisfy',
+                                  fontSize: 24,
+                                  color: Color(0x99FFC107))),
+                        ],
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 }

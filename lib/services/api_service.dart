@@ -8,8 +8,8 @@ import 'package:circle_coffee/models/user_model.dart';
 import 'package:http/http.dart';
 
 class ApiService {
-  // static const String baseUrl = "http://localhost:3000";
-  static const String baseUrl = "https://circle-coffee-001.herokuapp.com";
+  static const String baseUrl = "http://localhost:3000";
+  // static const String baseUrl = "https://circle-coffee-001.herokuapp.com";
   static const String imageKategoriUrl = baseUrl + '/images/kategori/';
   static const String imageMenuUrl = baseUrl + '/images/menu/';
 
@@ -60,9 +60,28 @@ class ApiService {
     }
   }
 
+  Future<List<Menu>?> getMenuTerlaris() async {
+    final response = await client.get(Uri.parse(baseUrl + '/menu_terlaris'));
+    if (response.statusCode == 200) {
+      return menuFromJson(response.body);
+    } else {
+      return null;
+    }
+  }
+
   Future<List<Menu>?> getMenuByIdKategori(String idKategori) async {
     final response =
         await client.get(Uri.parse(baseUrl + '/kategori/' + idKategori));
+    if (response.statusCode == 200) {
+      return menuFromJson(response.body);
+    } else {
+      return null;
+    }
+  }
+
+  Future<List<Menu>?> getMenuByNama(String text) async {
+    final response =
+      await client.get(Uri.parse(baseUrl + '/menu/search/' + text));
     if (response.statusCode == 200) {
       return menuFromJson(response.body);
     } else {
