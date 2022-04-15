@@ -31,7 +31,9 @@ class _DetailItemState extends State<DetailItem> {
   final controller = DetailItemC();
   final _qtyController = TextEditingController();
   User? user;
-
+  bool loadingKeranjang = false;
+  int jumlahKeranjang = 0;
+  
   @override
   void initState() {
     super.initState();
@@ -45,10 +47,18 @@ class _DetailItemState extends State<DetailItem> {
   _login() async {
     final getUser = await MySharedPref().getModel();
     if (getUser != null) {
+      _getJumlahKeranjang(getUser.id_user.toString());
       setState(() {
         user = getUser;
       });
     }
+  }
+
+  _getJumlahKeranjang(String idUser) async {
+    final getJumlahKeranjang = await apiService.getJumlahKeranjang(idUser);
+    setState(() {
+      jumlahKeranjang = getJumlahKeranjang['data']['jumlah'] ?? 0;
+    });
   }
 
   @override
@@ -89,18 +99,30 @@ class _DetailItemState extends State<DetailItem> {
                           ),
                         ),
                         actions: [
-                          IconButton(
-                            color: Colors.black,
-                            icon: const Icon(
-                              CupertinoIcons.cart,
-                              color: Color(0xFFFFC107),
-                            ),
-                            onPressed: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => const CartItem()));
-                            },
+                          Stack(
+                            children: [
+                              IconButton(
+                                color: Colors.black,
+                                icon: const Icon(
+                                  CupertinoIcons.cart,
+                                  color: Color(0xFFFFC107),
+                                ),
+                                onPressed: () => Navigator.push(context,
+                                  MaterialPageRoute(builder: (context) => const CartItem())),
+                              ),
+                              if(jumlahKeranjang > 0) Positioned(
+                                top: 2.0,
+                                right: 4.0,
+                                child: Container(
+                                  decoration: const BoxDecoration(
+                                    borderRadius: BorderRadius.all(Radius.circular(5)),
+                                    color: Colors.red
+                                  ),
+                                  height: 10,
+                                  width: 10,
+                                )
+                              )
+                            ]
                           )
                         ],
                       )
@@ -246,16 +268,36 @@ class _DetailItemState extends State<DetailItem> {
                                               OutlinedButton.icon(
                                                 icon: const Icon(
                                                     CupertinoIcons.cart),
-                                                onPressed: () {
-                                                  controller.addKeranjang(
+                                                onPressed: (loadingKeranjang)? (){}: () async{
+                                                  setState((){
+                                                    loadingKeranjang = true;
+                                                  });
+                                                  final addKeranjang = await controller.addKeranjang(
                                                       idUser: user!.id_user,
                                                       idMenu: int.parse(widget
                                                           .idMenu
                                                           .toString()),
                                                       qty: int.parse(
                                                           _qtyController.text));
+                                                  if(addKeranjang){
+                                                    Navigator.pop(context);
+
+                                                    setState(() {
+                                                      _getJumlahKeranjang(user!.id_user.toString());
+                                                            loadingKeranjang =
+                                                                false;
+                                                          });
+                                                  }else {
+                                                    setState(() {
+                                                            loadingKeranjang =
+                                                                false;
+                                                          });
+                                                  }
                                                 },
-                                                label: const Text(
+                                                label: (loadingKeranjang)
+                                                    ? const Text(
+                                                        '. . . . .')
+                                                    : const Text(
                                                     'TAMBAHKAN KE KERANJANG'),
                                                 style: OutlinedButton.styleFrom(
                                                     padding:

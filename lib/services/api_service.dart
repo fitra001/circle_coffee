@@ -109,6 +109,15 @@ class ApiService {
     }
   }
 
+  Future<dynamic> getJumlahKeranjang(String idUser) async {
+    final response = await client.post(Uri.parse(baseUrl + '/keranjang/jumlah'),
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode({'id_user': idUser}));
+    
+    Map<String, dynamic> res = json.decode(response.body);
+    return res;
+  }
+
   Future<dynamic> addKeranjang({int? idUser, int? idMenu, int? qty}) async {
     var data = {'id_user': idUser, 'id_menu': idMenu, 'qty': qty};
     final response = await client.post(Uri.parse(baseUrl + '/keranjang/add'),

@@ -13,5 +13,6 @@ class DetailItemC {
       Fluttertoast.showToast(msg: res['message']);
 
     }
+    return res['success'];
   }
 }

@@ -1,4 +1,5 @@
 import 'package:circle_coffee/models/kategori_model.dart';
+import 'package:circle_coffee/page/list_item/list_item.dart';
 import 'package:circle_coffee/services/api_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -61,17 +62,28 @@ class _CategoryState extends State<Category> {
                       borderRadius: BorderRadius.circular(15.0),
                     ),
                     clipBehavior: Clip.antiAliasWithSaveLayer,
-                    child: Column(
-                      mainAxisSize: MainAxisSize.max,
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        SvgPicture.network(
-                          ApiService.imageKategoriUrl + kategori[index].icon,
-                          width: 90,
-                          height: 90,
-                        ),
-                        Text(kategori[index].kategori)
-                      ],
+                    child: InkWell(
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => ListItem(
+                                  title: kategori[index].kategori,
+                                  future: apiService.getMenuByIdKategori('${kategori[index].id_kategori}')
+                                )));
+                      },
+                      child: Column(
+                        mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          SvgPicture.network(
+                            ApiService.imageKategoriUrl + kategori[index].icon,
+                            width: 90,
+                            height: 90,
+                          ),
+                          Text(kategori[index].kategori)
+                        ],
+                      ),
                     ),
                   ),
                 ),

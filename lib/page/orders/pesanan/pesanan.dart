@@ -30,7 +30,6 @@ class _PesananSayaState extends State<PesananSaya> {
     final order = await ApiService().getPesananOrder(user!.id_user.toString());
     var pesananOrder = order['data'];
 
-
     List detail = [];
     for (var item in pesananOrder) {
       final detailOrder = await _getDetail(item['id']);
@@ -57,9 +56,9 @@ class _PesananSayaState extends State<PesananSaya> {
     return isLoading
       ? const Center(child: CircularProgressIndicator())
       : Container(
-        margin: const EdgeInsets.all(16.0),
+        margin: const EdgeInsets.symmetric(horizontal: 16),
         child: data.isEmpty ? const Center(
-              child: Text('Keranjang Kosong'),
+              child: Text('Data Kosong'),
             )
           : ListView.builder(
           shrinkWrap: true,

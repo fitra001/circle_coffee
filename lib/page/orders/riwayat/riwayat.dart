@@ -54,8 +54,12 @@ class _RiwayatPesananState extends State<RiwayatPesanan> {
     return isLoading
         ? const Center(child: CircularProgressIndicator())
         : Container(
-            margin: const EdgeInsets.all(16),
-            child: ListView.builder(
+            margin: const EdgeInsets.symmetric(horizontal: 16),
+            child: data.isEmpty
+                ? const Center(
+                    child: Text('Data Kosong'),
+                  )
+                : ListView.builder(
                 shrinkWrap: true,
                 itemCount: data.length,
                 itemBuilder: (context, index) {

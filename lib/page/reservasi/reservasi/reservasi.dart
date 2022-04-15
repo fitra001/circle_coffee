@@ -15,7 +15,7 @@ class _PesananSayaState extends State<Reservasi> {
       margin: const EdgeInsets.all(16.0),
       child: ListView.builder(
         shrinkWrap: true,
-        itemCount: 3,
+        itemCount: 2,
         itemBuilder: (context, index) {
           return InkWell(
             onTap: () => Navigator.push(
@@ -50,7 +50,7 @@ class _PesananSayaState extends State<Reservasi> {
                             mainAxisSize: MainAxisSize.max,
                             children: [
                               Text(
-                                'Room',
+                                '2-5 Orang',
                                 style: TextStyle(fontSize: 24),
                               ),
                               Text('Rp. 20.000',

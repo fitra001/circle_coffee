@@ -13,7 +13,7 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  int _selectedNavbar = 0;
+  int _selectedNavbar = 3;
   final List _children = [
     const HomePage(),
     const ReservasiHome(),

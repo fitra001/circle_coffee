@@ -26,6 +26,13 @@ class _HomePageState extends State<HomePage> {
   User? user;
   final _searchController = TextEditingController();
   List? _searchingList = [];
+  int jumlahKeranjang = 0;
+  List<Kategori>? listKategori = [];
+  bool loadingKategori = true;
+  List<Menu>? listMenuTerlaris = [];
+  bool loadingMenuTerlaris = true;
+  List<Menu>? listAllMenu = [];
+  bool loadingAllMenu = true;
   
   @override
   void initState() {
@@ -46,16 +53,49 @@ class _HomePageState extends State<HomePage> {
         });
       }
     });
+    _getData();
+  }
+
+  _getData(){
     _login();
+    _getKategori();
+    _getMenuTerlaris();
+    _getAllMenu();
   }
 
   _login() async{
     final getUser = await MySharedPref().getModel();
     if (getUser != null) {
+      final getJumlahKeranjang = await apiService.getJumlahKeranjang(getUser.id_user.toString());
       setState(() {
+        jumlahKeranjang = getJumlahKeranjang['data']['jumlah'] ?? 0;
         user = getUser;
       });
     }
+  }
+
+  _getKategori() async {
+    final kategori = await apiService.getAllKategori();
+    setState(() {
+      listKategori = kategori;
+      loadingKategori = false;
+    });
+  }
+
+  _getMenuTerlaris() async {
+    final menuTerlaris = await apiService.getMenuTerlaris();
+    setState(() {
+      listMenuTerlaris = menuTerlaris;
+      loadingMenuTerlaris = false;
+    });
+  }
+
+  _getAllMenu() async {
+    final allMenu = await apiService.getAllMenu();
+    setState(() {
+      listAllMenu = allMenu;
+      loadingAllMenu = false;
+    });
   }
 
   _searchList(String text) async {
@@ -89,102 +129,78 @@ class _HomePageState extends State<HomePage> {
               ),
             )),
         actions: [
-          IconButton(
-            color: Colors.black,
-            icon: const Icon(CupertinoIcons.cart),
-            onPressed: () => Navigator.push(context,
-                MaterialPageRoute(builder: (context) => const CartItem())),
+          Stack(
+            children: [
+              IconButton(
+                color: Colors.black,
+                icon: const Icon(CupertinoIcons.cart),
+                onPressed: () => Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => const CartItem())),
+              ),
+              if(jumlahKeranjang > 0) Positioned(
+                top: 2.0,
+                right: 4.0,
+                child: Container(
+                  decoration: const BoxDecoration(
+                    borderRadius: BorderRadius.all(Radius.circular(5)),
+                    color: Colors.red
+                  ),
+                  height: 10,
+                  width: 10,
+                )
+              )
+            ]
           )
         ],
+        automaticallyImplyLeading: false,
         backgroundColor: Colors.white,
         elevation: 0,
       ),
-      body: SingleChildScrollView(
-        child: isSearching ? SearchItem(menuSearch: _searchingList,) :Column(children: [
-          (user!.nama == null) ? const CircularProgressIndicator() :HeadHome(user: user!,),
-          const SizedBox(
-            height: 20,
-          ),
-          FutureBuilder(
-            future: apiService.getAllKategori(),
-            builder: (context, snapshot) {
-              if (snapshot.hasError) {
-                return Center(
-                  child: Text(
-                      "Something wrong with message: ${snapshot.error.toString()}"),
-                );
-              } else if (snapshot.connectionState == ConnectionState.done) {
-                List<Kategori> kategori = snapshot.data as List<Kategori>;
-                return ListCategory(kategori: kategori,apiService: apiService,);
-              } else {
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
-              }
-            },
-          ),
-          const SizedBox(
-            height: 20,
-          ),
-          FutureBuilder(
-            future: apiService.getMenuTerlaris(),
-            builder: (context, snapshot) {
-              if (snapshot.hasError) {
-                return Center(
-                  child: Text(
-                      "Something wrong with message: ${snapshot.error.toString()}"),
-                );
-              } else if (snapshot.connectionState == ConnectionState.done){
-                List<Menu> menu = snapshot.data as List<Menu>;
-                return menu.isEmpty ? const SizedBox(height: 0,) : Menus(
-                  title: 'Menu Terlaris',
-                  menu: menu,
-                  apiService: apiService,
-                );
-              } else {
-                return const Center(
-                  child: CircularProgressIndicator(),
-                ); 
-              }
-            }
-          ),
-          const SizedBox(
-            height: 20,
-          ),
-          Container(
-            decoration: const BoxDecoration(
-              color: Colors.grey,
+      body: RefreshIndicator(
+        onRefresh: () async {
+          await Future.delayed(const Duration(seconds: 2));
+          _getData();
+        },
+        child: SingleChildScrollView(
+          child: isSearching ? SearchItem(menuSearch: _searchingList,) :Column(children: [
+            (user!.nama == null) ? const CircularProgressIndicator() :HeadHome(user: user!,),
+            const SizedBox(
+              height: 20,
             ),
-            margin: const EdgeInsets.symmetric(horizontal: 16),
-            height: 2,
-          ),
-          const SizedBox(
-            height: 20,
-          ),
-          FutureBuilder(
-            future: apiService.getAllMenu(),
-            builder: (context, snapshot) {
-              if (snapshot.hasError) {
-                return Center(
-                  child: Text(
-                      "Something wrong with message: ${snapshot.error.toString()}"),
-                );
-              } else if (snapshot.connectionState == ConnectionState.done){
-                List<Menu> menu = snapshot.data as List<Menu>;
-                return AllMenus(
-                  menu: menu,
-                  apiService: apiService,
-                );
-              } else {
-                return const Center(
-                  child: CircularProgressIndicator(),
-                ); 
-              }
-            }
-          
-          )
-          
-        ]),
+            (loadingKategori) ? const CircularProgressIndicator() :ListCategory(kategori: listKategori,apiService: apiService,),
+            const SizedBox(
+              height: 20,
+            ),
+            (loadingMenuTerlaris)
+              ? const CircularProgressIndicator()
+              : (listMenuTerlaris!.isEmpty) ? const SizedBox(height: 0,) : Menus(
+                title: 'Menu Terlaris',
+                menu: listMenuTerlaris,
+                apiService: apiService,
+              ),
+  
+            const SizedBox(
+              height: 20,
+            ),
+            Container(
+              decoration: const BoxDecoration(
+                color: Colors.grey,
+              ),
+              margin: const EdgeInsets.symmetric(horizontal: 16),
+              height: 2,
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            (loadingAllMenu)
+              ? const CircularProgressIndicator()
+              : AllMenus(
+                menu: listAllMenu,
+                apiService: apiService,
+              ),
+            
+          ]),
+        ),
       ),
     );
   }
@@ -203,7 +219,7 @@ class AllMenus extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width *0.1),
+      margin: const EdgeInsets.symmetric(horizontal: 16),
       child: Column(
         children: [
           const Text(
@@ -215,11 +231,9 @@ class AllMenus extends StatelessWidget {
             physics: const NeverScrollableScrollPhysics(),
             shrinkWrap: true,
             
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
-              mainAxisSpacing: 12.0,
-              crossAxisSpacing: 12.0,
-              childAspectRatio: 0.8
+              childAspectRatio: MediaQuery.of(context).size.width / (MediaQuery.of(context).size.height / 1.7)
             ), 
             itemCount: menu?.length,
             itemBuilder: (_, index) => Card(
@@ -244,7 +258,7 @@ class AllMenus extends StatelessWidget {
                     Image.network(
                       ApiService.imageMenuUrl + '${menu?[index].photo}',
                       width: double.infinity,
-                      height:150,
+                      height:120,
                       fit: BoxFit.fill,
                     ),
                     Expanded(
@@ -537,8 +551,9 @@ class SearchItem extends StatelessWidget {
                           Text(
                             menuSearch?[index].menu,
                             overflow: TextOverflow.ellipsis,
+                            maxLines: 2,
                             style:
-                                const TextStyle(fontFamily: 'Satisfy', fontSize: 24),
+                                const TextStyle( fontSize: 24),
                           ),
                           Text(
                               CurrencyFormat.convertToIdr(menuSearch?[index].harga, 0),

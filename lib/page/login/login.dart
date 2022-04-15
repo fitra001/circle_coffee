@@ -134,7 +134,7 @@ class _LoginState extends State<Login> {
                               _mySharedPref.setModel(user);
                               _mySharedPref.setLogin(true);
                               Fluttertoast.showToast(msg: res['message']);
-                              Navigator.push(context,
+                              Navigator.pushReplacement(context,
                                 MaterialPageRoute(builder: (context) => const Home())
                               );
                             }else{

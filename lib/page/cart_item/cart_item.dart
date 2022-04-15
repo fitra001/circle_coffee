@@ -349,6 +349,7 @@ class _CartItemState extends State<CartItem> {
                               Text(
                                 listKeranjang[index]!.menu,
                                 overflow: TextOverflow.ellipsis,
+                                maxLines: 2,
                                 style: const TextStyle(fontSize: 24),
                               ),
                               Text(
@@ -360,7 +361,6 @@ class _CartItemState extends State<CartItem> {
                                 decoration: BoxDecoration(
                                     border: Border.all(
                                         width: 1, color: Colors.black)),
-                                width: MediaQuery.of(context).size.width * 0.30,
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -423,6 +423,7 @@ class _CartItemState extends State<CartItem> {
                                   ],
                                 ),
                               ),
+                              const SizedBox(height: 4,)
                             ],
                           ),
                         ),

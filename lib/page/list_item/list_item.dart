@@ -99,8 +99,8 @@ class _ListItemState extends State<ListItem> {
                                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                                   mainAxisSize: MainAxisSize.max,
                                   children: [
-                                    Text(menu[index].menu, overflow: TextOverflow.ellipsis, style: TextStyle(fontFamily: 'Satisfy', fontSize: 24),),
-                                    Text(CurrencyFormat.convertToIdr(menu[index].harga, 0), style: TextStyle(fontFamily: 'Satisfy', fontSize: 24, color: Color(0x99FFC107))),
+                                    Text(menu[index].menu, overflow: TextOverflow.ellipsis, maxLines: 2, style: const TextStyle(fontSize: 24),),
+                                    Text(CurrencyFormat.convertToIdr(menu[index].harga, 0), style: const TextStyle(fontFamily: 'Satisfy', fontSize: 24, color: Color(0x99FFC107))),
                                   ],
                                 ),
                               ),
