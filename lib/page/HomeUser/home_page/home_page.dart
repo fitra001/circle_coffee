@@ -2,10 +2,10 @@ import 'package:circle_coffee/library/my_shared_pref.dart';
 import 'package:circle_coffee/models/kategori_model.dart';
 import 'package:circle_coffee/models/menu_model.dart';
 import 'package:circle_coffee/models/user_model.dart';
-import 'package:circle_coffee/page/category/category.dart';
-import 'package:circle_coffee/page/detail_item/detail_item.dart';
-import 'package:circle_coffee/page/list_item/list_item.dart';
-import 'package:circle_coffee/page/cart_item/cart_item.dart';
+import 'package:circle_coffee/page/HomeUser/category/category.dart';
+import 'package:circle_coffee/page/HomeUser/detail_item/detail_item.dart';
+import 'package:circle_coffee/page/HomeUser/list_item/list_item.dart';
+import 'package:circle_coffee/page/HomeUser/cart_item/cart_item.dart';
 import 'package:circle_coffee/services/api_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -232,7 +232,7 @@ class AllMenus extends StatelessWidget {
         children: [
           const Text(
             'Semua Menu',
-            style: TextStyle(fontSize: 18),
+            style: TextStyle(fontSize: 24),
           ),
           const SizedBox(height: 16,),
           GridView.builder(

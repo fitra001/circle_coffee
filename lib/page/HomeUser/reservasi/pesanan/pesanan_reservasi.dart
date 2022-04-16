@@ -1,15 +1,14 @@
-import 'package:circle_coffee/page/detail_pesanan/detail_pesanan.dart';
-import 'package:circle_coffee/page/reservasi/detail_pesanan_reservasi/detail_pesanan_reservasi.dart';
+import 'package:circle_coffee/page/HomeUser/reservasi/detail_pesanan_reservasi/detail_pesanan_reservasi.dart';
 import 'package:flutter/material.dart';
 
-class RiwayatReservasi extends StatefulWidget {
-  const RiwayatReservasi({ Key? key }) : super(key: key);
+class PesananReservasiSaya extends StatefulWidget {
+  const PesananReservasiSaya({ Key? key }) : super(key: key);
 
   @override
-  State<RiwayatReservasi> createState() => _RiwayatReservasiState();
+  State<PesananReservasiSaya> createState() => _PesananSayaState();
 }
 
-class _RiwayatReservasiState extends State<RiwayatReservasi> {
+class _PesananSayaState extends State<PesananReservasiSaya> {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -85,7 +84,7 @@ class _RiwayatReservasiState extends State<RiwayatReservasi> {
                   const Padding(
                     padding: EdgeInsets.all(16.0),
                     child: Text(
-                      'Selesai',
+                      'Bayar Sebelum 25-05-2022',
                       style: TextStyle(fontSize: 18),
                     ),
                   ),

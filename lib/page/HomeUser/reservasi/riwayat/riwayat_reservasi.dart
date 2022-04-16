@@ -1,27 +1,27 @@
-import 'package:circle_coffee/page/reservasi/detail_paket/detail_paket.dart';
+import 'package:circle_coffee/page/HomeUser/reservasi/detail_pesanan_reservasi/detail_pesanan_reservasi.dart';
 import 'package:flutter/material.dart';
 
-class Reservasi extends StatefulWidget {
-  const Reservasi({ Key? key }) : super(key: key);
+class RiwayatReservasi extends StatefulWidget {
+  const RiwayatReservasi({ Key? key }) : super(key: key);
 
   @override
-  State<Reservasi> createState() => _PesananSayaState();
+  State<RiwayatReservasi> createState() => _RiwayatReservasiState();
 }
 
-class _PesananSayaState extends State<Reservasi> {
+class _RiwayatReservasiState extends State<RiwayatReservasi> {
   @override
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.all(16.0),
       child: ListView.builder(
         shrinkWrap: true,
-        itemCount: 2,
+        itemCount: 3,
         itemBuilder: (context, index) {
           return InkWell(
             onTap: () => Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => const DetailPaket())),
+                    builder: (context) => const DetailPesananReservasi())),
             child: Card(
               clipBehavior: Clip.antiAliasWithSaveLayer,
               shape: RoundedRectangleBorder(
@@ -50,7 +50,7 @@ class _PesananSayaState extends State<Reservasi> {
                             mainAxisSize: MainAxisSize.max,
                             children: [
                               Text(
-                                '2-5 Orang',
+                                'Room',
                                 style: TextStyle(fontSize: 24),
                               ),
                               Text('Rp. 20.000',
@@ -72,7 +72,7 @@ class _PesananSayaState extends State<Reservasi> {
                   const Padding(
                     padding: EdgeInsets.all(16.0),
                     child: Text(
-                      'Breakfast, fast food, coffe break',
+                      'Breakfast, fast foot, coffee breaks',
                       style: TextStyle(fontSize: 12),
                     ),
                   ),
@@ -80,6 +80,13 @@ class _PesananSayaState extends State<Reservasi> {
                     decoration: const BoxDecoration(
                         border: Border(
                             top: BorderSide(color: Colors.grey, width: 0.5))),
+                  ),
+                  const Padding(
+                    padding: EdgeInsets.all(16.0),
+                    child: Text(
+                      'Selesai',
+                      style: TextStyle(fontSize: 18),
+                    ),
                   ),
                 ],
               ),

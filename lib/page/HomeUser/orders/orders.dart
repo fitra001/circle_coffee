@@ -1,23 +1,21 @@
-
-import 'package:circle_coffee/page/reservasi/pesanan/pesanan_reservasi.dart';
-import 'package:circle_coffee/page/reservasi/reservasi/reservasi.dart';
-import 'package:circle_coffee/page/reservasi/riwayat/riwayat_reservasi.dart';
+import 'package:circle_coffee/page/HomeUser/orders/pesanan/pesanan.dart';
+import 'package:circle_coffee/page/HomeUser/orders/riwayat/riwayat.dart';
 import 'package:flutter/material.dart';
 
-class ReservasiHome extends StatefulWidget {
-  const ReservasiHome({ Key? key }) : super(key: key);
+class Orders extends StatefulWidget {
+  const Orders({ Key? key }) : super(key: key);
 
   @override
-  _ReservasiHomeState createState() => _ReservasiHomeState();
+  _OrdersState createState() => _OrdersState();
 }
 
-class _ReservasiHomeState extends State<ReservasiHome> {
+class _OrdersState extends State<Orders> {
   
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
       initialIndex: 0,
-      length: 3,
+      length: 2,
       child: Scaffold(
         appBar: AppBar(backgroundColor: Colors.white,
           elevation: 0,
@@ -43,10 +41,6 @@ class _ReservasiHomeState extends State<ReservasiHome> {
                 tabs: [
                   Padding(
                     padding: EdgeInsets.all(8.0),
-                    child: Text('Reservasi'),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.all(8.0),
                     child: Text('Pesanan Saya'),
                   ),
                   Padding(
@@ -59,13 +53,12 @@ class _ReservasiHomeState extends State<ReservasiHome> {
         ),
         body: Container(
           decoration: const BoxDecoration(
-            // border: Border(top: BReservasiHomeide(color: Colors.grey, width: 0.5))
+            // border: Border(top: BorderSide(color: Colors.grey, width: 0.5))
           ),
           child: const TabBarView(
             children: [
-              Reservasi(),
-              PesananReservasiSaya(),
-              RiwayatReservasi()
+              PesananSaya(),
+              RiwayatPesanan(),
             ]
           ),
         ),

@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:circle_coffee/library/my_shared_pref.dart';
 import 'package:circle_coffee/models/user_model.dart';
-import 'package:circle_coffee/page/home/home.dart';
+import 'package:circle_coffee/page/HomeUser/home/home.dart';
 import 'package:circle_coffee/services/api_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -16,12 +16,12 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
-  MySharedPref _mySharedPref = MySharedPref();
+  final _mySharedPref = MySharedPref();
 
   bool _isHidden = true;
   bool isLoading = false;
-  TextEditingController _emailController = TextEditingController();
-  TextEditingController _passController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _passController = TextEditingController();
 
   void _togglePasswordView() {
     setState(() {

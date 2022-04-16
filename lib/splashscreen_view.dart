@@ -1,6 +1,6 @@
 import 'package:circle_coffee/library/my_shared_pref.dart';
-import 'package:circle_coffee/page/home/home.dart';
-import 'package:circle_coffee/page/home_page/home_page.dart';
+import 'package:circle_coffee/page/HomeUser/home/home.dart';
+import 'package:circle_coffee/page/HomeUser/home_page/home_page.dart';
 import 'package:circle_coffee/page/login/login.dart';
 import 'package:circle_coffee/page/register/register.dart';
 import 'package:flutter/material.dart';

@@ -1,28 +1,27 @@
-import 'package:circle_coffee/page/detail_pesanan/detail_pesanan.dart';
-import 'package:circle_coffee/page/reservasi/detail_pesanan_reservasi/detail_pesanan_reservasi.dart';
+import 'package:circle_coffee/page/HomeUser/reservasi/detail_paket/detail_paket.dart';
 import 'package:flutter/material.dart';
 
-class PesananReservasiSaya extends StatefulWidget {
-  const PesananReservasiSaya({ Key? key }) : super(key: key);
+class Reservasi extends StatefulWidget {
+  const Reservasi({ Key? key }) : super(key: key);
 
   @override
-  State<PesananReservasiSaya> createState() => _PesananSayaState();
+  State<Reservasi> createState() => _PesananSayaState();
 }
 
-class _PesananSayaState extends State<PesananReservasiSaya> {
+class _PesananSayaState extends State<Reservasi> {
   @override
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.all(16.0),
       child: ListView.builder(
         shrinkWrap: true,
-        itemCount: 3,
+        itemCount: 2,
         itemBuilder: (context, index) {
           return InkWell(
             onTap: () => Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => const DetailPesananReservasi())),
+                    builder: (context) => const DetailPaket())),
             child: Card(
               clipBehavior: Clip.antiAliasWithSaveLayer,
               shape: RoundedRectangleBorder(
@@ -51,7 +50,7 @@ class _PesananSayaState extends State<PesananReservasiSaya> {
                             mainAxisSize: MainAxisSize.max,
                             children: [
                               Text(
-                                'Room',
+                                '2-5 Orang',
                                 style: TextStyle(fontSize: 24),
                               ),
                               Text('Rp. 20.000',
@@ -73,7 +72,7 @@ class _PesananSayaState extends State<PesananReservasiSaya> {
                   const Padding(
                     padding: EdgeInsets.all(16.0),
                     child: Text(
-                      'Breakfast, fast foot, coffee breaks',
+                      'Breakfast, fast food, coffe break',
                       style: TextStyle(fontSize: 12),
                     ),
                   ),
@@ -81,13 +80,6 @@ class _PesananSayaState extends State<PesananReservasiSaya> {
                     decoration: const BoxDecoration(
                         border: Border(
                             top: BorderSide(color: Colors.grey, width: 0.5))),
-                  ),
-                  const Padding(
-                    padding: EdgeInsets.all(16.0),
-                    child: Text(
-                      'Bayar Sebelum 25-05-2022',
-                      style: TextStyle(fontSize: 18),
-                    ),
                   ),
                 ],
               ),
