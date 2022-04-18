@@ -1,10 +1,8 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:circle_coffee/models/kategori_model.dart';
 import 'package:circle_coffee/models/keranjang_model.dart';
 import 'package:circle_coffee/models/menu_model.dart';
-import 'package:circle_coffee/models/user_model.dart';
 import 'package:http/http.dart';
 
 class ApiService {
@@ -25,10 +23,10 @@ class ApiService {
   }
 
   Future<dynamic> register(
-      {String? nama, String? no_telp, String? email, String? password}) async {
+      {String? nama, String? noTelp, String? email, String? password}) async {
     var data = {
       'nama': nama,
-      'no_telp': no_telp,
+      'no_telp': noTelp,
       'email': email,
       'password': password,
       'role_id': 2,
@@ -197,6 +195,49 @@ class ApiService {
     final response = await client.post(Uri.parse(baseUrl + '/order/pesanan'),
         headers: {'Content-Type': 'application/json'},
         body: json.encode({'id_user': idUser}));
+
+    Map<String, dynamic> res = json.decode(response.body);
+    return res;
+  }
+
+  Future<dynamic> getAllPesanan() async {
+    final response = await client.get(Uri.parse(baseUrl + '/order/pesanan'),
+        headers: {'Content-Type': 'application/json'});
+
+    Map<String, dynamic> res = json.decode(response.body);
+    return res;
+  }
+
+  Future<dynamic> getAllPesananSelesai() async {
+    final response = await client.get(Uri.parse(baseUrl + '/order/selesai'),
+        headers: {'Content-Type': 'application/json'});
+
+    Map<String, dynamic> res = json.decode(response.body);
+    return res;
+  }
+
+  Future<dynamic> getAllPesananSiap() async {
+    final response = await client.get(Uri.parse(baseUrl + '/order/siap'),
+        headers: {'Content-Type': 'application/json'});
+
+    Map<String, dynamic> res = json.decode(response.body);
+    return res;
+  }
+
+  Future<dynamic> getAllPesananProses() async {
+    final response = await client.get(Uri.parse(baseUrl + '/order/proses'),
+        headers: {'Content-Type': 'application/json'});
+
+    Map<String, dynamic> res = json.decode(response.body);
+    return res;
+  }
+
+  Future<dynamic> updateStatusPesanan({status, idTransaksi}) async {
+    var data = {'status': status, 'id_transaksi': idTransaksi};
+    final response = await client.post(Uri.parse(baseUrl + '/order/update_status'),
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode(data)
+      );
 
     Map<String, dynamic> res = json.decode(response.body);
     return res;

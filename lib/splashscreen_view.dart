@@ -1,4 +1,5 @@
 import 'package:circle_coffee/library/my_shared_pref.dart';
+import 'package:circle_coffee/page/Admin/admin.dart';
 import 'package:circle_coffee/page/HomeUser/home/home.dart';
 import 'package:circle_coffee/page/HomeUser/home_page/home_page.dart';
 import 'package:circle_coffee/page/login/login.dart';
@@ -30,7 +31,10 @@ class _SplashScreenPageState extends State<SplashScreenPage> {
     return Timer(duration, (){
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(builder: (_){
-          return isLogin ? user!.role_id == 2 ?const Home():const HomePage() : const MainHome();
+          return isLogin ? 
+          (user!.role_id) == 2 ? const Home()
+          : (user.role_id == 1) ?  const Admin() : const MainHome()  
+          : const MainHome();
         })
       );
     });
@@ -137,7 +141,6 @@ class MainHome extends StatelessWidget {
                     ),
                     borderRadius: BorderRadius.circular(20),
                   ),
-                  // shape: StadiumBorder()
                 ),
                 onPressed: () {
                   Navigator.push(context, 

@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:circle_coffee/library/my_shared_pref.dart';
 import 'package:circle_coffee/models/user_model.dart';
+import 'package:circle_coffee/page/Admin/admin.dart';
 import 'package:circle_coffee/page/HomeUser/home/home.dart';
 import 'package:circle_coffee/services/api_service.dart';
 import 'package:flutter/cupertino.dart';
@@ -134,9 +135,17 @@ class _LoginState extends State<Login> {
                               _mySharedPref.setModel(user);
                               _mySharedPref.setLogin(true);
                               Fluttertoast.showToast(msg: res['message']);
-                              Navigator.pushReplacement(context,
-                                MaterialPageRoute(builder: (context) => const Home())
-                              );
+                              _mySharedPref.getModel().then((value) => {
+                                if(value?.role_id == 2) {
+                                  Navigator.pushReplacement(context,
+                                    MaterialPageRoute(builder: (context) => const Home())
+                                  )
+                                }else if(value?.role_id == 1){
+                                  Navigator.pushReplacement(context,
+                                    MaterialPageRoute(builder: (context) => const Admin())
+                                  )
+                                }
+                              });
                             }else{
                               setState(() {
                                 isLoading = false;

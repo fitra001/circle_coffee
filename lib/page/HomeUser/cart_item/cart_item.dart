@@ -117,7 +117,8 @@ class _CartItemState extends State<CartItem> {
               ),
             ],
           ),
-        ));
+        )
+      );
   }
 
   Future<dynamic> modalPesan(BuildContext context) {

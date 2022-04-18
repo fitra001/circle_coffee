@@ -1,4 +1,3 @@
-import 'package:circle_coffee/models/user_model.dart';
 import 'package:circle_coffee/page/login/login.dart';
 import 'package:circle_coffee/services/api_service.dart';
 import 'package:flutter/cupertino.dart';
@@ -135,7 +134,7 @@ class _RegisterState extends State<Register> {
                   obscureText: _isHidden,
                 ),
                 const SizedBox(height: 16,),
-                Container(
+                SizedBox(
                   width: double.infinity,
                   child: isLoading ? const Center(child: CircularProgressIndicator(),) : TextButton(
                     style: TextButton.styleFrom(
@@ -157,14 +156,14 @@ class _RegisterState extends State<Register> {
                       });                   
                       final res = await ApiService().register(
                       nama: _namaController.text,
-                      no_telp: _noTelpController.text,
+                      noTelp: _noTelpController.text,
                       email: _emailController.text,
                       password: _passController.text
                     );
                     
                     if (res['success']) {
                       Navigator.pushReplacement(context,
-                        MaterialPageRoute(builder: (context) => Login())
+                        MaterialPageRoute(builder: (context) => const Login())
                       );
                       Fluttertoast.showToast(
                         msg: res[

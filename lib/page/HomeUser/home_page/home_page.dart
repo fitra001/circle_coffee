@@ -120,7 +120,6 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         title: Container(
-            height: 40,
             child: TextFormField(
               controller: _searchController,
               style: const TextStyle(fontFamily: 'sans serif'),
@@ -171,16 +170,16 @@ class _HomePageState extends State<HomePage> {
         },
         child: SingleChildScrollView(
           child: isSearching ? SearchItem(menuSearch: _searchingList,) :Column(children: [
-            (user!.nama == null) ? const CircularProgressIndicator() :HeadHome(user: user!,),
+            (user!.nama == null) ? const SizedBox() :HeadHome(user: user!,),
             const SizedBox(
               height: 20,
             ),
-            (loadingKategori) ? const CircularProgressIndicator() :ListCategory(kategori: listKategori,apiService: apiService,),
+            (loadingKategori) ? const SizedBox() :ListCategory(kategori: listKategori,apiService: apiService,),
             const SizedBox(
               height: 20,
             ),
             (loadingMenuTerlaris)
-              ? const CircularProgressIndicator()
+              ? const SizedBox()
               : (listMenuTerlaris!.isEmpty) ? const SizedBox(height: 0,) : Menus(
                 title: 'Menu Terlaris',
                 menu: listMenuTerlaris,
