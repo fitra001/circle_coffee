@@ -80,7 +80,7 @@ class _PesananSelesaiState extends State<PesananSelesai> {
                 Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Text(
-                    data[index]['nama'],
+                    '${data[index]['nama']} (${data[index]['no_telp']})',
                     style: const TextStyle(fontSize: 24),
                   ),
                 ),
@@ -96,7 +96,7 @@ class _PesananSelesaiState extends State<PesananSelesai> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        data[index]['status'],
+                        data[index]['status'] + ' (' + data[index]['petugas']['nama'] + ')',
                         style: const TextStyle(fontSize: 18),
                       ),
                       Text(
@@ -124,7 +124,7 @@ class _PesananSelesaiState extends State<PesananSelesai> {
                       ),
                       Text(
                           CurrencyFormat.convertToIdr(
-                              data[index]['total'], 0),
+                              int.parse(data[index]['total']), 0),
                           style: const TextStyle(
                               fontFamily: 'Satisfy',
                               fontSize: 24,

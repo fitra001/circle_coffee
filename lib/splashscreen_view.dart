@@ -32,9 +32,8 @@ class _SplashScreenPageState extends State<SplashScreenPage> {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(builder: (_){
           return isLogin ? 
-          (user!.role_id) == 2 ? const Home()
-          : (user.role_id == 1) ?  const Admin() : const MainHome()  
-          : const MainHome();
+          (user!.role_id == "3") ? const Home()
+          :   const Admin() : const MainHome();
         })
       );
     });

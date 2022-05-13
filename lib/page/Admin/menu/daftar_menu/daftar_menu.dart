@@ -1,5 +1,7 @@
 import 'package:circle_coffee/helpers/currency_format.dart';
+import 'package:circle_coffee/library/my_shared_pref.dart';
 import 'package:circle_coffee/models/menu_model.dart';
+import 'package:circle_coffee/models/user_model.dart';
 import 'package:circle_coffee/page/HomeUser/detail_item/detail_item.dart';
 import 'package:circle_coffee/services/api_service.dart';
 import 'package:flutter/cupertino.dart';
@@ -14,6 +16,7 @@ class DaftarMenu extends StatefulWidget {
 }
 
 class _DaftarMenuState extends State<DaftarMenu> {
+  User? user;
   bool isLoading = true;
   List<Menu> menu = [];
   late ApiService apiService;
@@ -26,12 +29,21 @@ class _DaftarMenuState extends State<DaftarMenu> {
     super.initState();
     apiService = ApiService();
 
+    _fetchUser();
+
     _searchController.addListener(() {
       if (_searchController.text.isNotEmpty) {
         _searchList(_searchController.text);
       } 
     });
     _fetchMenu();
+  }
+
+  _fetchUser() async {
+    final getUser = await MySharedPref().getModel();
+    if (getUser != null) {
+      user = getUser;
+    }
   }
 
   _fetchMenu() async{
@@ -91,22 +103,22 @@ class _DaftarMenuState extends State<DaftarMenu> {
               return Container(
                 margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
                 child: Slidable(
-                  endActionPane: ActionPane(motion: const ScrollMotion(), children: [
-                    SlidableAction(
-                      backgroundColor: Colors.red,
-                      onPressed: (_) async {
-                        // final deleteKeranjang = await ApiService().deleteKeranjang(
-                        //     idUser: user.id_user,
-                        //     idMenu: listKeranjang[index]!.id_menu);
-                        // if (deleteKeranjang['success']) {
-                        //   setState(() {
-                        //     _fetchKeranjang();
-                        //   });
-                        // }
-                      },
-                      icon: CupertinoIcons.delete,
-                    ),
-                  ]),
+                  // endActionPane: user!.role_id != "1" ? null : ActionPane(motion: const ScrollMotion(), children: [
+                  //   SlidableAction(
+                  //     backgroundColor: Colors.red,
+                  //     onPressed: (_) async {
+                  //       // final deleteKeranjang = await ApiService().deleteKeranjang(
+                  //       //     idUser: user.id_user,
+                  //       //     idMenu: listKeranjang[index]!.id_menu);
+                  //       // if (deleteKeranjang['success']) {
+                  //       //   setState(() {
+                  //       //     _fetchKeranjang();
+                  //       //   });
+                  //       // }
+                  //     },
+                  //     icon: CupertinoIcons.delete,
+                  //   ),
+                  // ]),
                   child: InkWell(
                     onTap: () {
                       Navigator.push(
@@ -125,7 +137,14 @@ class _DaftarMenuState extends State<DaftarMenu> {
                         mainAxisSize: MainAxisSize.max,
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Image.network(
+                          (menu[index].photo.isEmpty) ?
+                          Image.asset(
+                              'assets/images/bgsplash.png',
+                              height: 120,
+                              width: 120,
+                              fit: BoxFit.cover,
+                            )
+                          : Image.network(
                             ApiService.imageMenuUrl + menu[index].photo,
                             height: 120,
                             width: 120,
@@ -147,11 +166,18 @@ class _DaftarMenuState extends State<DaftarMenu> {
                                     style: const TextStyle(fontSize: 24),
                                   ),
                                   Text(
-                                      CurrencyFormat.convertToIdr(menu[index].harga, 0),
+                                      CurrencyFormat.convertToIdr(int.parse(menu[index].harga), 0),
                                       style: const TextStyle(
                                           fontFamily: 'Satisfy',
                                           fontSize: 24,
                                           color: Color(0x99FFC107))),
+                                  Text(
+                                        'Stok : ' + menu[index].stok,
+                                        overflow: TextOverflow.ellipsis,
+                                        maxLines: 2,
+                                        style: const TextStyle(
+                                            fontSize: 24),
+                                      ),
                                 ],
                               ),
                             ),

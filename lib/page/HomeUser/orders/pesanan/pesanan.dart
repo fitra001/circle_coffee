@@ -41,14 +41,14 @@ class _PesananSayaState extends State<PesananSaya> {
         data = pesananOrder;
         detailPesanan = detail;
         isLoading = false;
-        
       });
     }
   }
 
-  Future<dynamic> _getDetail(int idTransaksi) async {
+  Future<dynamic> _getDetail(String idTransaksi) async {
     final data = await ApiService().getDetailOrder(idTransaksi: idTransaksi);
     return data['data'];
+    
   }
 
   @override
@@ -111,7 +111,7 @@ class _PesananSayaState extends State<PesananSaya> {
                                 ),
                                 Text(
                                     CurrencyFormat.convertToIdr(
-                                        detailPesanan[index][0]['harga'],
+                                        int.parse(detailPesanan[index][0]['harga']),
                                         0),
                                     style: const TextStyle(
                                         fontFamily: 'Satisfy',
@@ -169,7 +169,7 @@ class _PesananSayaState extends State<PesananSaya> {
                           ),
                           Text(
                               CurrencyFormat.convertToIdr(
-                                  data[index]['total'], 0),
+                                  int.parse(data[index]['total']), 0),
                               style: const TextStyle(
                                   fontFamily: 'Satisfy',
                                   fontSize: 24,

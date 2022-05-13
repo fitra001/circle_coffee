@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 
 class DetailPesanan extends StatefulWidget {
   DetailPesanan({Key? key, required this.idTransaksi}) : super(key: key);
-  int? idTransaksi;
+  String? idTransaksi;
 
   @override
   _DetailPesananState createState() => _DetailPesananState();
@@ -104,7 +104,7 @@ class _DetailPesananState extends State<DetailPesanan> {
                                       ),
                                       Text(
                                           CurrencyFormat.convertToIdr(
-                                              item[index]['harga'], 0),
+                                              int.parse(item[index]['harga']), 0),
                                           style: const TextStyle(
                                               fontFamily: 'Satisfy',
                                               fontSize: 24,
@@ -121,8 +121,8 @@ class _DetailPesananState extends State<DetailPesanan> {
                                           ),
                                           Text(
                                               CurrencyFormat.convertToIdr(
-                                                  item[index]['qty'] *
-                                                      item[index]['harga'],
+                                                  int.parse(item[index]['qty']) *
+                                                      int.parse(item[index]['harga']),
                                                   0),
                                               style: const TextStyle(
                                                   fontFamily: 'Satisfy',
@@ -204,7 +204,7 @@ class _DetailPesananState extends State<DetailPesanan> {
                               const Text(''),
                               Text(
                                   CurrencyFormat.convertToIdr(
-                                      transaksi['total'], 0),
+                                      int.parse(transaksi['total']), 0),
                                   style: const TextStyle(
                                     fontFamily: 'Satisfy',
                                     fontSize:24,

@@ -1,23 +1,34 @@
 import 'dart:convert';
-
+import 'dart:typed_data';
 import 'package:circle_coffee/models/kategori_model.dart';
 import 'package:circle_coffee/models/keranjang_model.dart';
 import 'package:circle_coffee/models/menu_model.dart';
+import 'package:circle_coffee/models/user_model.dart';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart';
+import 'package:image_picker/image_picker.dart';
 
 class ApiService {
-  static const String baseUrl = "http://localhost:3000";
+  // static const String url = "https://circlecoffee.000webhostapp.com";
+  static const String url = "http://localhost/backend/circle_coffee_ci";
+  static const String baseUrl = url + '/api';
+  // static const String baseUrl = "http://localhost:3000";
   // static const String baseUrl = "https://circle-coffee-001.herokuapp.com";
-  static const String imageKategoriUrl = baseUrl + '/images/kategori/';
-  static const String imageMenuUrl = baseUrl + '/images/menu/';
+  static const String imageKategoriUrl = url + '/images/kategori/';
+  static const String imageMenuUrl = url + '/images/menu/';
+  static const String imageProfilUrl = url + '/images/profil/';
+  static const String imageReservasiUrl = url + '/images/reservasi/';
+  // static const String imageKategoriUrl = baseUrl + '/images/kategori/';
+  // static const String imageMenuUrl = baseUrl + '/images/menu/';
 
   Client client = Client();
 
   Future<dynamic> login({String? email, String? pass}) async {
     var data = {'email': email, 'password': pass};
+    
     final response = await client.post(Uri.parse(baseUrl + '/auth'),
         headers: {'Content-Type': 'application/json'}, body: json.encode(data));
-
+  
     Map<String, dynamic> res = json.decode(response.body);
     return res;
   }
@@ -29,7 +40,7 @@ class ApiService {
       'no_telp': noTelp,
       'email': email,
       'password': password,
-      'role_id': 2,
+      'role_id': 3,
       'is_active': 1
     };
 
@@ -38,6 +49,86 @@ class ApiService {
 
     Map<String, dynamic> res = json.decode(response.body);
     return res;
+  }
+
+  Future<List<User>?> getAllUser() async {
+    final response = await client.get(Uri.parse(baseUrl + '/user'));
+    if (response.statusCode == 200) {
+      Map<String, dynamic> res = json.decode(response.body);
+      
+      return List.from( res['data'].map((e)=>userFromJson(e)));
+      // return userFromJson(res['data']);
+    } else {
+      return null;
+    }
+  }
+
+  Future<List<User>?> getUserSearch(String text) async {
+    final response = await client.get(Uri.parse(baseUrl + '/user/search/'+text));
+    if (response.statusCode == 200) {
+      Map<String, dynamic> res = json.decode(response.body);
+
+      return List.from(res['data'].map((e) => userFromJson(e)));
+      // return userFromJson(res['data']);
+    } else {
+      return null;
+    }
+  }
+
+  Future<dynamic> getUserRole() async {
+    final response =
+        await client.get(Uri.parse(baseUrl + '/user/user_role'));
+        
+    Map<String, dynamic> res = json.decode(response.body);
+    return res;
+  }
+
+  Future<dynamic> tambahUser(
+      {String? nama, String? noTelp, String? email, String? password, String? role_id}) async {
+    var data = {
+      'nama': nama,
+      'no_telp': noTelp,
+      'email': email,
+      'password': password,
+      'role_id': role_id,
+      'is_active': 1
+    };
+
+    final response = await client.post(Uri.parse(baseUrl + '/auth/register'),
+        headers: {'Content-Type': 'application/json'}, body: json.encode(data));
+
+    Map<String, dynamic> res = json.decode(response.body);
+    return res;
+  }
+
+  Future<dynamic> ubahUser(dynamic data, [XFile? image]) async{
+    MultipartRequest request =
+        MultipartRequest("POST", Uri.parse(baseUrl + '/user/update'));
+    request.headers.addAll({'Content-Type': 'multipart/form-data'});
+    request.fields.addAll(data);
+    if (image != null) {
+      var photo;
+
+      if (kIsWeb) {
+        // photo = await MultipartFile.fromBytes('photo',);
+      } else {
+        photo = await MultipartFile.fromPath('foto', image.path);
+        request.files.add(photo);
+      }
+    }
+
+    StreamedResponse response = await request.send();
+    Uint8List responseData = await response.stream.toBytes();
+    String responseString = String.fromCharCodes(responseData);
+
+    Map<String, dynamic> res = json.decode(responseString);
+    return res;
+
+    // final response = await client.post(Uri.parse(baseUrl + '/user/update'),
+    //     headers: {'Content-Type': 'application/json'}, body: json.encode(data));
+
+    // Map<String, dynamic> res = json.decode(response.body);
+    // return res;
   }
 
   Future<List<Kategori>?> getAllKategori() async {
@@ -59,7 +150,7 @@ class ApiService {
   }
 
   Future<List<Menu>?> getMenuTerlaris() async {
-    final response = await client.get(Uri.parse(baseUrl + '/menu_terlaris'));
+    final response = await client.get(Uri.parse(baseUrl + '/menu/terlaris'));
     if (response.statusCode == 200) {
       return menuFromJson(response.body);
     } else {
@@ -69,7 +160,7 @@ class ApiService {
 
   Future<List<Menu>?> getMenuByIdKategori(String idKategori) async {
     final response =
-        await client.get(Uri.parse(baseUrl + '/kategori/' + idKategori));
+        await client.get(Uri.parse(baseUrl + '/menu/kategori/' + idKategori));
     if (response.statusCode == 200) {
       return menuFromJson(response.body);
     } else {
@@ -96,6 +187,65 @@ class ApiService {
     }
   }
 
+  Future<dynamic> deleteMenu(String idMenu) async {
+    final response = await client.get(
+      Uri.parse(baseUrl + '/menu/hapus/'+idMenu)
+    );
+    
+    Map<String, dynamic> res = json.decode(response.body);
+    return res;
+  }
+
+  Future<dynamic> updateMenu(dynamic menu, [XFile? image]) async {
+    
+    MultipartRequest request = MultipartRequest("POST", Uri.parse(baseUrl + '/menu/update'));
+    request.headers.addAll({
+      'Content-Type': 'multipart/form-data'
+    });
+    request.fields.addAll(menu);
+    if(image != null) {
+      var photo;
+
+      if (kIsWeb) {
+        // photo = await MultipartFile.fromBytes('photo',);
+      }else{
+        photo = await MultipartFile.fromPath('photo', image.path);
+        request.files.add(photo);
+      }
+    }
+    StreamedResponse response = await request.send();
+    Uint8List responseData = await response.stream.toBytes();
+    String responseString = String.fromCharCodes(responseData);
+
+    Map<String, dynamic> res = json.decode(responseString);
+    return res;
+  }
+
+  Future<dynamic> tambahMenu(dynamic menu, [XFile? image]) async {
+    
+    MultipartRequest request =
+        MultipartRequest("POST", Uri.parse(baseUrl + '/menu/tambah'));
+    request.headers.addAll({'Content-Type': 'multipart/form-data'});
+    request.fields.addAll(menu);
+    if (image != null) {
+      var photo;
+
+      if (kIsWeb) {
+        // photo = await MultipartFile.fromBytes('photo',);
+      } else {
+        photo = await MultipartFile.fromPath('photo', image.path);
+        request.files.add(photo);
+      }
+    }
+
+    StreamedResponse response = await request.send();
+    Uint8List responseData = await response.stream.toBytes();
+    String responseString = String.fromCharCodes(responseData);
+
+    Map<String, dynamic> res = json.decode(responseString);
+    return res;
+  }
+
   Future<List<Keranjang>?> getKeranjang(String idUser) async {
     final response = await client.post(Uri.parse(baseUrl + '/keranjang'),
         headers: {'Content-Type': 'application/json'},
@@ -116,17 +266,17 @@ class ApiService {
     return res;
   }
 
-  Future<dynamic> addKeranjang({int? idUser, int? idMenu, int? qty}) async {
+  Future<dynamic> addKeranjang({String? idUser, String? idMenu, String? qty}) async {
     var data = {'id_user': idUser, 'id_menu': idMenu, 'qty': qty};
     final response = await client.post(Uri.parse(baseUrl + '/keranjang/add'),
         headers: {'Content-Type': 'application/json'}, body: json.encode(data));
-
+  
     Map<String, dynamic> res = json.decode(response.body);
     return res;
   }
 
   Future<dynamic> updateQtyKeranjang(
-      {int? idUser, int? idMenu, int? qty}) async {
+      {String? idUser, String? idMenu, String? qty}) async {
     var data = {'id_user': idUser, 'id_menu': idMenu, 'qty': qty};
     final response = await client.post(
         Uri.parse(baseUrl + '/keranjang/update_qty'),
@@ -137,7 +287,7 @@ class ApiService {
     return res;
   }
 
-  Future<dynamic> deleteKeranjang({int? idUser, int? idMenu}) async {
+  Future<dynamic> deleteKeranjang({String? idUser, String? idMenu}) async {
     var data = {'id_user': idUser, 'id_menu': idMenu};
     final response = await client.post(Uri.parse(baseUrl + '/keranjang/delete'),
         headers: {'Content-Type': 'application/json'}, body: json.encode(data));
@@ -146,7 +296,7 @@ class ApiService {
     return res;
   }
 
-  Future<dynamic> deleteKeranjangByUser({required int? idUser}) async {
+  Future<dynamic> deleteKeranjangByUser({required String? idUser}) async {
     var data = {'id_user': idUser};
     final response = await client.post(Uri.parse(baseUrl + '/keranjang/delete/user'),
         headers: {'Content-Type': 'application/json'}, body: json.encode(data));
@@ -155,7 +305,7 @@ class ApiService {
     return res;
   }
 
-  Future<dynamic> addOrder({required int? idUser, required int total}) async {
+  Future<dynamic> addOrder({required String? idUser, required String total}) async {
     var data = {'id_user': idUser, 'total': total};
     final response = await client.post(Uri.parse(baseUrl + '/order/add'),
         headers: {'Content-Type': 'application/json'}, body: json.encode(data));
@@ -164,7 +314,7 @@ class ApiService {
     return res;
   }
 
-  Future<dynamic> addDetailOrder({required int? lastId, required int? idMenu, required int? harga, required int? qty}) async {
+  Future<dynamic> addDetailOrder({required String? lastId, required String? idMenu, required String? harga, required String? qty}) async {
     var data = {'id_transaksi': lastId, 'id_menu': idMenu, 'harga': harga, 'qty': qty};
     final response = await client.post(Uri.parse(baseUrl + '/order/add/detail'),
         headers: {'Content-Type': 'application/json'}, body: json.encode(data));
@@ -173,7 +323,7 @@ class ApiService {
     return res;
   }
 
-  Future<dynamic> getDetailOrder({required int? idTransaksi}) async {
+  Future<dynamic> getDetailOrder({required String? idTransaksi}) async {
     var data = {'id_transaksi': idTransaksi};
     final response = await client.post(Uri.parse(baseUrl + '/order/detail'),
         headers: {'Content-Type': 'application/json'}, body: json.encode(data));
@@ -200,8 +350,10 @@ class ApiService {
     return res;
   }
 
-  Future<dynamic> getAllPesanan() async {
-    final response = await client.get(Uri.parse(baseUrl + '/order/pesanan'),
+  Future<dynamic> getAllPesanan({String? nama}) async {
+    String url = (nama != null) ? '/order/pesanan/' + nama : '/order/pesanan/';
+
+    final response = await client.get(Uri.parse(baseUrl + url ),
         headers: {'Content-Type': 'application/json'});
 
     Map<String, dynamic> res = json.decode(response.body);
@@ -216,24 +368,31 @@ class ApiService {
     return res;
   }
 
-  Future<dynamic> getAllPesananSiap() async {
-    final response = await client.get(Uri.parse(baseUrl + '/order/siap'),
+  Future<dynamic> getAllPesananSiap({String? nama}) async {
+    String url = (nama != null) ? '/order/siap/' + nama : '/order/siap';
+
+    final response = await client.get(Uri.parse(baseUrl + url),
         headers: {'Content-Type': 'application/json'});
 
     Map<String, dynamic> res = json.decode(response.body);
     return res;
   }
 
-  Future<dynamic> getAllPesananProses() async {
-    final response = await client.get(Uri.parse(baseUrl + '/order/proses'),
+  Future<dynamic> getAllPesananProses({String? nama}) async {
+    String url = (nama != null) ? '/order/proses/' + nama : '/order/proses';
+    
+    final response = await client.get(Uri.parse(baseUrl + url),
         headers: {'Content-Type': 'application/json'});
 
     Map<String, dynamic> res = json.decode(response.body);
     return res;
   }
 
-  Future<dynamic> updateStatusPesanan({status, idTransaksi}) async {
+  Future<dynamic> updateStatusPesanan({status, idTransaksi, String? petugas} ) async {
     var data = {'status': status, 'id_transaksi': idTransaksi};
+    if (petugas != null) {
+      data['petugas'] = petugas;
+    }
     final response = await client.post(Uri.parse(baseUrl + '/order/update_status'),
         headers: {'Content-Type': 'application/json'},
         body: json.encode(data)
@@ -242,4 +401,98 @@ class ApiService {
     Map<String, dynamic> res = json.decode(response.body);
     return res;
   }
+
+  Future<dynamic> getPendapatanPenjualan() async {
+    final response = await client.get(
+      Uri.parse(baseUrl + '/transaksi/pendapatan_penjualan')
+    );
+    
+    Map<String, dynamic> res = json.decode(response.body);
+    return res;
+  }
+
+  Future<dynamic> getTotalPenjualan() async {
+    final response = await client
+        .get(Uri.parse(baseUrl + '/transaksi/total_penjualan'));
+
+    Map<String, dynamic> res = json.decode(response.body);
+    return res;
+  }
+
+  Future<dynamic> getTransaksiPenjualan() async {
+    final response =
+        await client.get(Uri.parse(baseUrl + '/transaksi/transaksi_penjualan'));
+
+    Map<String, dynamic> res = json.decode(response.body);
+    return res;
+  }
+
+  Future<dynamic> getReservasi() async {
+    final response =
+        await client.get(Uri.parse(baseUrl + '/reservasi'));
+
+    Map<String, dynamic> res = json.decode(response.body);
+    return res;
+  }
+
+  Future<dynamic> getReservasiById(String idReservasi) async {
+    final response = await client.get(Uri.parse(baseUrl + '/reservasi/'+ idReservasi));
+
+    Map<String, dynamic> res = json.decode(response.body);
+    return res;
+  }
+
+  Future<dynamic> getListPesananReservasiById(String idReservasi) async {
+    final response =
+        await client.get(Uri.parse(baseUrl + '/reservasi/list_pesanan/' + idReservasi));
+
+    Map<String, dynamic> res = json.decode(response.body);
+    return res;
+  }
+
+  Future<dynamic> getReservasiPesananById(String idUser) async {
+
+    final response =
+        await client.post(Uri.parse(baseUrl + '/reservasi/pesanan'),
+        headers: {'Content-Type': 'application/json'}, 
+        body: json.encode({'id_user': idUser}));
+
+    Map<String, dynamic> res = json.decode(response.body);
+    return res;
+  }
+
+  Future<dynamic> getReservasiRiwayatById(String idUser) async {
+    final response = await client.post(
+        Uri.parse(baseUrl + '/reservasi/riwayat'),
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode({'id_user': idUser}));
+
+    Map<String, dynamic> res = json.decode(response.body);
+    return res;
+  }
+
+  Future<dynamic> getReservasiDetailPesananById(String id) async {
+    final response = await client.post(
+        Uri.parse(baseUrl + '/reservasi/detail'),
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode({'id': id}));
+
+    Map<String, dynamic> res = json.decode(response.body);
+    return res;
+  }
+
+  Future<dynamic> addOrderReservasi({required String? idReservasi, required String? idUser, required String total, required String tglReservasi }) async {
+    var data = {
+      'id_reservasi' : idReservasi,
+      'id_user': idUser, 
+      'total': total,
+      'tgl_reservasi' :tglReservasi
+    };
+    final response = await client.post(Uri.parse(baseUrl + '/reservasi/transaksi'),
+        headers: {'Content-Type': 'application/json'}, body: json.encode(data));
+
+    Map<String, dynamic> res = json.decode(response.body);
+    return res;
+  }
+  
 }

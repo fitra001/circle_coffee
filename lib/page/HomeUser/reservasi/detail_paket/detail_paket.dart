@@ -1,14 +1,67 @@
+import 'package:circle_coffee/helpers/currency_format.dart';
+import 'package:circle_coffee/library/my_shared_pref.dart';
+import 'package:circle_coffee/models/user_model.dart';
+import 'package:circle_coffee/services/api_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class DetailPaket extends StatefulWidget {
-  const DetailPaket({Key? key}) : super(key: key);
+  const DetailPaket({Key? key, this.idReservasi}) : super(key: key);
+  final String? idReservasi;
 
   @override
   _DetailPaketState createState() => _DetailPaketState();
 }
 
 class _DetailPaketState extends State<DetailPaket> {
+  DateTime? _dateTime;
+  bool loading = true;
+  bool loadingListPesanan = true;
+  Map reservasi = {};
+  List listPesanan = [];
+
+  User? user;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _login();
+    fetchReservasi();
+    fetchListPesanan();
+  }
+
+  _login() async {
+    final getUser = await MySharedPref().getModel();
+    if (getUser != null) {
+      setState(() {
+        user = getUser;
+      });
+    }
+  }
+
+  fetchListPesanan() async {
+    final res = await ApiService().getListPesananReservasiById(widget.idReservasi!);
+    if (mounted) {
+      setState(() {
+        listPesanan = res['data'];
+        loadingListPesanan = false;
+
+      });
+    }
+  }
+
+  fetchReservasi() async {
+    final res = await ApiService().getReservasiById(widget.idReservasi!);
+    if (res['success']) {
+      setState(() {
+        reservasi = res['data'];
+        loading = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,11 +81,11 @@ class _DetailPaketState extends State<DetailPaket> {
         elevation: 0,
       ),
       body: SingleChildScrollView(
-        child: Column(
+        child: (loading) ? const Center(child: CircularProgressIndicator(),) : Column(
           mainAxisSize: MainAxisSize.max,
           children: [
-            Image.asset(
-              'assets/images/bgsplash.png',
+            Image.network(
+              ApiService.imageReservasiUrl + reservasi['foto'],
               width: double.infinity,
               height: 250,
               fit: BoxFit.fitWidth,
@@ -49,62 +102,66 @@ class _DetailPaketState extends State<DetailPaket> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      'Room',
-                      style: TextStyle( fontSize: 24),
+                    Text(
+                      reservasi['reservasi'],
+                      style: const TextStyle( fontSize: 24),
                     ),
-                    const Text('Rp. 20.000',
-                        style: TextStyle(
-                            fontFamily: 'Satisfy',
-                            fontSize: 24,
-                            color: Color(0x99FFC107))),
+                    Text(CurrencyFormat.convertToIdr(int.parse(reservasi['harga']), 0),
+                      style: const TextStyle(
+                          fontFamily: 'Satisfy',
+                          fontSize: 24,
+                          color: Color(0x99FFC107))),
                     const SizedBox(height: 20,),
                     const Text(
-                      'Paket Menu',
+                      'Deskripsi',
                       style: TextStyle( fontSize: 24),
                     ),
-                    ListView.builder(
-                      physics: const NeverScrollableScrollPhysics(),
-                      shrinkWrap: true,
-                      itemCount: 2,
-                      itemBuilder: (context, index) {
-                        return Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.max,
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Image.asset(
-                                'assets/images/bgsplash.png',
-                                height: 50,
-                              ),
-                              Expanded(
-                                flex: 1,
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.max,
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceAround,
-                                  children: const [
-                                    Text(
-                                      'Nasi Goreng',
-                                      style: TextStyle( fontSize: 14),
-                                      textAlign: TextAlign.start,
-                                    ),
-                                    
-                                    Text(
-                                      'X1',
-                                      style: TextStyle(
-                                          fontSize: 18),
-                                    ),
-                                    
-                                  ],
-                                ),
-                              )
-                            ],
-                          ),
-                        );
-                      },
+                    const SizedBox(height: 20,),
+                    Text(
+                      reservasi['deskripsi']
                     ),
+                    // ListView.builder(
+                    //   physics: const NeverScrollableScrollPhysics(),
+                    //   shrinkWrap: true,
+                    //   itemCount: 2,
+                    //   itemBuilder: (context, index) {
+                    //     return Padding(
+                    //       padding: const EdgeInsets.all(8.0),
+                    //       child: Row(
+                    //         mainAxisSize: MainAxisSize.max,
+                    //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    //         children: [
+                    //           Image.asset(
+                    //             'assets/images/bgsplash.png',
+                    //             height: 50,
+                    //           ),
+                    //           Expanded(
+                    //             flex: 1,
+                    //             child: Row(
+                    //               mainAxisSize: MainAxisSize.max,
+                    //               mainAxisAlignment:
+                    //                   MainAxisAlignment.spaceAround,
+                    //               children: const [
+                    //                 Text(
+                    //                   'Nasi Goreng',
+                    //                   style: TextStyle( fontSize: 14),
+                    //                   textAlign: TextAlign.start,
+                    //                 ),
+                                    
+                    //                 Text(
+                    //                   'X1',
+                    //                   style: TextStyle(
+                    //                       fontSize: 18),
+                    //                 ),
+                                    
+                    //               ],
+                    //             ),
+                    //           )
+                    //         ],
+                    //       ),
+                    //     );
+                    //   },
+                    // ),
                     const SizedBox(height: 20,)
                   ],
                 ),
@@ -116,7 +173,7 @@ class _DetailPaketState extends State<DetailPaket> {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(15.0),
               ),
-              child: Container(
+              child: (loading) ? const Center(child: SizedBox(),) : Container(
                 margin: const EdgeInsets.symmetric(horizontal: 16),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
@@ -127,14 +184,14 @@ class _DetailPaketState extends State<DetailPaket> {
                     ListView.builder(
                       physics: const NeverScrollableScrollPhysics(),
                       shrinkWrap: true,
-                      itemCount: 2,
+                      itemCount: listPesanan.length,
                       itemBuilder: (context, index) {
                         return Row(
                           mainAxisSize: MainAxisSize.max,
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
-                            Text('20-05-2022',style: const TextStyle(fontSize:18,)),
-                            Text('BRIVANI',style: const TextStyle(fontSize:18,)),
+                            Text(listPesanan[index]['tgl_reservasi'],style: const TextStyle(fontSize:18,)),
+                            Text(listPesanan[index]['nama'], style: const TextStyle(fontSize:18,)),
                           ],
                         );
                       },
@@ -191,17 +248,29 @@ class _DetailPaketState extends State<DetailPaket> {
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
                                       children: [
-                                        
                                         Expanded(
-                                          child: Text('Tanggal'),
-                                          // child: TextFormField(
-                                          //   textAlign:
-                                          //       TextAlign.center,
-                                          //   controller:
-                                          //       _qtyController,
-                                          // ),
+                                          child: Center(
+                                            child: GestureDetector(
+                                              onTap: () {
+                                                showDatePicker(
+                                                  context: context, 
+                                                  initialDate: DateTime.now(), 
+                                                  firstDate: DateTime(2000), 
+                                                  lastDate: DateTime(2099),
+                                                  initialEntryMode: DatePickerEntryMode.input,
+                                                ).then((date) {
+                                                  setState((){
+                                                    _dateTime = date;
+                                                  });
+                                                });
+                                              },
+                                              child: Text(
+                                                _dateTime == null ? 'Pilih Tanggal' : '${_dateTime?.toLocal()}'.split(' ')[0],
+                                                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                                              )
+                                            ),
+                                          ),
                                         ),
-
                                       ],
                                     ),
                                   ),
@@ -212,7 +281,7 @@ class _DetailPaketState extends State<DetailPaket> {
                                     icon: const Icon(
                                         CupertinoIcons.cart),
                                     onPressed: () {
-                                      modalConfirmPesanan(context);
+                                      (_dateTime != null ) ? modalConfirmPesanan(context) : null;
                                     },
                                     label: const Text(
                                         'PESAN SEKARANG'),
@@ -262,22 +331,12 @@ class _DetailPaketState extends State<DetailPaket> {
               OutlinedButton.icon(
                 icon: const Icon(CupertinoIcons.cart),
                 onPressed: () async {
-                  // final order = await apiService.addOrder(
-                  //     idUser: user?.id_user,
-                  //     total: int.parse(_qtyController.text) * menu!.harga);
-
-                  // if (order['success']) {
-                  //   apiService.addDetailOrder(
-                  //       lastId: order['last_id'],
-                  //       idMenu: menu.id_menu,
-                  //       harga: int.parse(_qtyController.text) * menu.harga,
-                  //       qty: int.parse(_qtyController.text));
-
-                  //   Navigator.pushReplacement(context,
-                  //       MaterialPageRoute(builder: (_) => const Home()));
-
-                  //   Fluttertoast.showToast(msg: order['message']);
-                  // }
+                  final res = await ApiService().addOrderReservasi(idReservasi: widget.idReservasi, idUser: user?.id_user, total: reservasi['harga'], tglReservasi: '${_dateTime?.toLocal()}'.split(' ')[0]);
+                  Fluttertoast.showToast(msg: res['message']);
+                  if (res['success']) {
+                    Navigator.pop(context);
+                    Navigator.pop(context);
+                  }
                 },
                 label: const Text('PESAN'),
                 style:

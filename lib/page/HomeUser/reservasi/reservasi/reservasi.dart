@@ -1,4 +1,6 @@
+import 'package:circle_coffee/helpers/currency_format.dart';
 import 'package:circle_coffee/page/HomeUser/reservasi/detail_paket/detail_paket.dart';
+import 'package:circle_coffee/services/api_service.dart';
 import 'package:flutter/material.dart';
 
 class Reservasi extends StatefulWidget {
@@ -9,9 +11,29 @@ class Reservasi extends StatefulWidget {
 }
 
 class _PesananSayaState extends State<Reservasi> {
+  bool loading = true;
+  List reservasi = [];
+  
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    fetchReservasi();
+  }
+
+  fetchReservasi() async {
+    final res = await ApiService().getReservasi();
+    if (res['success']) {
+      setState(() {
+        reservasi = res['data'];
+        loading = false;
+      }); 
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return (loading) ? const Center(child: CircularProgressIndicator(),) : Container(
       margin: const EdgeInsets.all(16.0),
       child: ListView.builder(
         shrinkWrap: true,
@@ -21,7 +43,7 @@ class _PesananSayaState extends State<Reservasi> {
             onTap: () => Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => const DetailPaket())),
+                    builder: (context) => DetailPaket(idReservasi : reservasi[index]['id_reservasi']))),
             child: Card(
               clipBehavior: Clip.antiAliasWithSaveLayer,
               shape: RoundedRectangleBorder(
@@ -35,8 +57,8 @@ class _PesananSayaState extends State<Reservasi> {
                     mainAxisSize: MainAxisSize.max,
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Image.asset(
-                        'assets/images/bgsplash.png',
+                      Image.network(
+                        ApiService.imageReservasiUrl + reservasi[index]['foto'],
                         height: 120,
                       ),
                       Expanded(
@@ -50,11 +72,12 @@ class _PesananSayaState extends State<Reservasi> {
                             mainAxisSize: MainAxisSize.max,
                             children: [
                               Text(
-                                '2-5 Orang',
-                                style: TextStyle(fontSize: 24),
+                                reservasi[index]['reservasi'],
+                                style: const TextStyle(fontSize: 24),
                               ),
-                              Text('Rp. 20.000',
-                                  style: TextStyle(
+                              Text(CurrencyFormat.convertToIdr(
+                                              int.parse(reservasi[index]['harga']), 0),
+                                  style: const TextStyle(
                                       fontFamily: 'Satisfy',
                                       fontSize: 24,
                                       color: Color(0x99FFC107))),
@@ -69,11 +92,11 @@ class _PesananSayaState extends State<Reservasi> {
                         border: Border(
                             top: BorderSide(color: Colors.grey, width: 0.5))),
                   ),
-                  const Padding(
-                    padding: EdgeInsets.all(16.0),
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
                     child: Text(
-                      'Breakfast, fast food, coffe break',
-                      style: TextStyle(fontSize: 12),
+                      reservasi[index]['deskripsi'],
+                      style: const TextStyle(fontSize: 12),
                     ),
                   ),
                   Container(

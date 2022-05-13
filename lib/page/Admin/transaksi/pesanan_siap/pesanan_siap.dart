@@ -1,6 +1,7 @@
 import 'package:circle_coffee/helpers/currency_format.dart';
 import 'package:circle_coffee/page/Admin/transaksi/detail_transaksi/detail_transaksi.dart';
 import 'package:circle_coffee/services/api_service.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class PesananSiap extends StatefulWidget {
@@ -14,12 +15,23 @@ class _PesananSiapState extends State<PesananSiap> {
   bool isLoading = true;
   List<dynamic> data = <dynamic>[];
 
+  final TextEditingController _searchController = TextEditingController();
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
 
     _fetchListPesanan();
+
+    _searchController.addListener(() {
+      if (_searchController.text.isNotEmpty) {
+        _searchList(_searchController.text);
+      }else{
+        _fetchListPesanan();
+      }
+    });
+    
 
   }
 
@@ -35,18 +47,54 @@ class _PesananSiapState extends State<PesananSiap> {
     }
   }
 
+  _searchList(String text) async {
+    final getSearch = await ApiService().getAllPesananSiap(nama: text);
+    if (mounted) {
+      setState(() {
+        data = getSearch!['data'];
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return isLoading
       ? const Center(child: CircularProgressIndicator())
-      : Container(
-        margin: const EdgeInsets.symmetric(horizontal: 16),
-        child: data.isEmpty
-          ? const Center(
-              child: Text('Data Kosong'),
+      : Column(
+        children: [
+          Container(
+            margin:
+                const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: TextFormField(
+              controller: _searchController,
+              style: const TextStyle(fontFamily: 'sans serif'),
+              decoration: const InputDecoration(
+                prefixIcon:
+                    Icon(CupertinoIcons.search, color: Color(0x99FFC107)),
+                hintText: 'Pencarian',
+                enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Color(0x99FFC107)),
+                    borderRadius:
+                        BorderRadius.all(Radius.circular(20.0))),
+                border: OutlineInputBorder(
+                    borderSide: BorderSide(color: Color(0x99FFC107)),
+                    borderRadius:
+                        BorderRadius.all(Radius.circular(20.0))),
+              ),
             )
-          : listPesanan()
-  );
+          ),
+          Expanded(
+            child: Container(
+              margin: const EdgeInsets.symmetric(horizontal: 16),
+              child: data.isEmpty
+                ? const Center(
+                    child: Text('Data Kosong'),
+                  )
+                : listPesanan()
+            ),
+          ),
+        ],
+      );
   }
 
   Widget listPesanan(){
@@ -79,7 +127,7 @@ class _PesananSiapState extends State<PesananSiap> {
                 Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Text(
-                    data[index]['nama'],
+                    '${data[index]['nama']} (${data[index]['no_telp']})',
                     style: const TextStyle(fontSize: 24),
                   ),
                 ),
@@ -94,7 +142,7 @@ class _PesananSiapState extends State<PesananSiap> {
                   child: Text(
                     (data[index]['status'] == "Belum Bayar")
                         ? 'Bayar Sebelum ' + data[index]['kadaluwarsa']
-                        : data[index]['status'],
+                        : data[index]['status'] + ' (' + data[index]['petugas']['nama'] + ')',
                     style: const TextStyle(fontSize: 18),
                   ),
                 ),
@@ -116,7 +164,7 @@ class _PesananSiapState extends State<PesananSiap> {
                       ),
                       Text(
                           CurrencyFormat.convertToIdr(
-                              data[index]['total'], 0),
+                              int.parse(data[index]['total']), 0),
                           style: const TextStyle(
                               fontFamily: 'Satisfy',
                               fontSize: 24,

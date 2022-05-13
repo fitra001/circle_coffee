@@ -1,4 +1,6 @@
+import 'package:circle_coffee/library/my_shared_pref.dart';
 import 'package:circle_coffee/models/kategori_model.dart';
+import 'package:circle_coffee/models/user_model.dart';
 import 'package:circle_coffee/page/HomeUser/list_item/list_item.dart';
 import 'package:circle_coffee/services/api_service.dart';
 import 'package:flutter/cupertino.dart';
@@ -14,6 +16,7 @@ class DaftarKategori extends StatefulWidget {
 }
 
 class _DaftarKategoriState extends State<DaftarKategori> {
+  User? user;
   bool isLoading = true;
   List<Kategori> kategori = [];
   late ApiService apiService;
@@ -26,12 +29,21 @@ class _DaftarKategoriState extends State<DaftarKategori> {
     super.initState();
     apiService = ApiService();
 
+    _fetchUser();
+
     // _searchController.addListener(() {
     //   if (_searchController.text.isNotEmpty) {
     //     _searchList(_searchController.text);
     //   }
     // });
     _fetchKategori();
+  }
+
+  _fetchUser() async {
+    final getUser = await MySharedPref().getModel();
+    if (getUser != null) {
+      user = getUser;
+    }
   }
 
   _fetchKategori() async{
@@ -93,32 +105,32 @@ class _DaftarKategoriState extends State<DaftarKategori> {
               return Container(
                 margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
                 child: Slidable(
-                  endActionPane: ActionPane(motion: const ScrollMotion(), children: [
-                    SlidableAction(
-                      backgroundColor: Colors.red,
-                      onPressed: (_) async {
-                        // final deleteKeranjang = await ApiService().deleteKeranjang(
-                        //     idUser: user.id_user,
-                        //     idMenu: listKeranjang[index]!.id_menu);
-                        // if (deleteKeranjang['success']) {
-                        //   setState(() {
-                        //     _fetchKeranjang();
-                        //   });
-                        // }
-                      },
-                      icon: CupertinoIcons.delete,
-                    ),
-                  ]),
+                  // endActionPane: user!.role_id != "1" ? null :ActionPane(motion: const ScrollMotion(), children: [
+                  //   SlidableAction(
+                  //     backgroundColor: Colors.red,
+                  //     onPressed: (_) async {
+                  //       // final deleteKeranjang = await ApiService().deleteKeranjang(
+                  //       //     idUser: user.id_user,
+                  //       //     idMenu: listKeranjang[index]!.id_menu);
+                  //       // if (deleteKeranjang['success']) {
+                  //       //   setState(() {
+                  //       //     _fetchKeranjang();
+                  //       //   });
+                  //       // }
+                  //     },
+                  //     icon: CupertinoIcons.delete,
+                  //   ),
+                  // ]),
                   child: InkWell(
                     onTap: () {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                                          builder: (context) => ListItem(
-                                              title: kategori[index].kategori,
-                                              future: apiService
-                                                  .getMenuByIdKategori(
-                                                      '${kategori[index].id_kategori}'))));
+                            builder: (context) => ListItem(
+                                title: kategori[index].kategori,
+                                future: apiService
+                                    .getMenuByIdKategori(
+                                        '${kategori[index].id_kategori}'))));
                     },
                     child: Card(
                       clipBehavior: Clip.antiAliasWithSaveLayer,

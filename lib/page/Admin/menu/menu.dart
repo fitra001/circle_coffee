@@ -1,5 +1,7 @@
 import 'package:circle_coffee/page/Admin/menu/daftar_kategori/daftar_kategori.dart';
 import 'package:circle_coffee/page/Admin/menu/daftar_menu/daftar_menu.dart';
+import 'package:circle_coffee/page/Admin/menu/tambah_menu/tambah_menu.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class Menu extends StatefulWidget {
@@ -54,6 +56,14 @@ class _MenuState extends State<Menu> {
             DaftarMenu(),
             DaftarKategori()
           ]),
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () => {
+            Navigator.push(context, 
+              MaterialPageRoute(builder: (_) => const TambahMenu())
+            )
+          },
+          child: Icon(CupertinoIcons.plus),
         ),
       ),
     );

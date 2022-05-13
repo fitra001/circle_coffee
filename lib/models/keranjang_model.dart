@@ -2,14 +2,14 @@ import 'dart:convert';
 
 class Keranjang {
 
-  int id_menu;
-  int id_kategori;
-  int qty;
+  String id_menu;
+  String id_kategori;
+  String qty;
   String menu;
   String photo;
   String deskripsi;
-  int stok;
-  int harga;
+  String stok;
+  String harga;
 
   Keranjang({
     required this.id_menu,

@@ -1,10 +1,9 @@
-import 'dart:convert';
-
 import 'package:circle_coffee/helpers/currency_format.dart';
 import 'package:circle_coffee/library/my_shared_pref.dart';
-import 'package:circle_coffee/models/keranjang_model.dart';
 import 'package:circle_coffee/models/menu_model.dart';
 import 'package:circle_coffee/models/user_model.dart';
+import 'package:circle_coffee/page/Admin/admin.dart';
+import 'package:circle_coffee/page/Admin/menu/edit_menu/edit_menu.dart';
 import 'package:circle_coffee/page/HomeUser/cart_item/cart_item.dart';
 import 'package:circle_coffee/page/HomeUser/home/home.dart';
 import 'package:circle_coffee/services/api_service.dart';
@@ -33,6 +32,7 @@ class _DetailItemState extends State<DetailItem> {
   User? user;
   bool loadingKeranjang = false;
   int jumlahKeranjang = 0;
+  bool loadingDelete = false;
   
   @override
   void initState() {
@@ -57,15 +57,15 @@ class _DetailItemState extends State<DetailItem> {
   _getJumlahKeranjang(String idUser) async {
     final getJumlahKeranjang = await apiService.getJumlahKeranjang(idUser);
     setState(() {
-      jumlahKeranjang = getJumlahKeranjang['data']['jumlah'] ?? 0;
+      jumlahKeranjang = int.parse(getJumlahKeranjang['data']['jumlah'] ?? "0");
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       child: FutureBuilder(
-          future: apiService.getDetailMenuByIdMenu(widget.idMenu.toString()),
+          future: apiService.getDetailMenuByIdMenu(widget.idMenu!),
           builder: (context, snapshot) {
             if (snapshot.hasError) {
               return Center(
@@ -93,13 +93,20 @@ class _DetailItemState extends State<DetailItem> {
                         flexibleSpace: FlexibleSpaceBar(
                           centerTitle: true,
                           title: const Text(''),
-                          background: Image.network(
+                          background: (menu.photo.isEmpty) ?
+                            Image.asset(
+                              'assets/images/bgsplash.png',
+                              height: 120,
+                              width: 120,
+                              fit: BoxFit.cover,
+                            )
+                          : Image.network(
                             ApiService.imageMenuUrl + menu.photo,
                             fit: BoxFit.fill,
                           ),
                         ),
                         actions: [
-                          Stack(
+                          (user!.role_id != "3")? const SizedBox():Stack(
                             children: [
                               IconButton(
                                 color: Colors.black,
@@ -128,11 +135,13 @@ class _DetailItemState extends State<DetailItem> {
                       )
                     ];
                   },
-                  body: Padding(
-                    padding: const EdgeInsets.all(24.0),
+                  body: Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 24),
                     child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.max,
                       children: [
-                        Container(
+                        SizedBox(
                           width: double.infinity,
                           child: Card(
                             child: Padding(
@@ -148,7 +157,7 @@ class _DetailItemState extends State<DetailItem> {
                                   ),
                                   Text(
                                       CurrencyFormat.convertToIdr(
-                                          menu.harga, 0),
+                                          int.parse(menu.harga), 0),
                                       style: const TextStyle(
                                           fontFamily: 'satisfy',
                                           fontSize: 24,
@@ -160,6 +169,13 @@ class _DetailItemState extends State<DetailItem> {
                                     menu.deskripsi,
                                     style: const TextStyle(fontSize: 18),
                                   ),
+                                  const SizedBox(
+                                    height: 24,
+                                  ),
+                                  Text( 
+                                    'Tersedia : ' + menu.stok,
+                                    style: const TextStyle(fontSize: 18),
+                                  ),
                                 ],
                               ),
                             ),
@@ -169,9 +185,9 @@ class _DetailItemState extends State<DetailItem> {
                     ),
                   ),
                 ),
-                bottomNavigationBar: Container(
+                bottomNavigationBar: SizedBox(
                   height: 50,
-                  child: Row(
+                  child: (user!.role_id == "3") ? Row(
                     mainAxisSize: MainAxisSize.max,
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -250,7 +266,7 @@ class _DetailItemState extends State<DetailItem> {
                                                             currentValue++;
                                                             _qtyController
                                                                 .text = (currentValue <
-                                                                        menu.stok
+                                                                        int.parse(menu.stok)
                                                                     ? currentValue
                                                                     : menu.stok)
                                                                 .toString(); // incrementing value
@@ -274,11 +290,8 @@ class _DetailItemState extends State<DetailItem> {
                                                   });
                                                   final addKeranjang = await controller.addKeranjang(
                                                       idUser: user!.id_user,
-                                                      idMenu: int.parse(widget
-                                                          .idMenu
-                                                          .toString()),
-                                                      qty: int.parse(
-                                                          _qtyController.text));
+                                                      idMenu: widget.idMenu,
+                                                      qty: _qtyController.text);
                                                   if(addKeranjang){
                                                     Navigator.pop(context);
 
@@ -393,7 +406,7 @@ class _DetailItemState extends State<DetailItem> {
                                                                 currentValue++;
                                                                 _qtyController
                                                                     .text = (currentValue <
-                                                                            menu.stok
+                                                                            int.parse(menu.stok)
                                                                         ? currentValue
                                                                         : menu.stok)
                                                                     .toString(); // incrementing value
@@ -435,6 +448,42 @@ class _DetailItemState extends State<DetailItem> {
                               style: TextStyle(color: Color(0xffFFC107)),
                             )),
                       ),
+                    ],
+                  )
+                  : Row(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      TextButton(
+                        style: TextButton.styleFrom(
+                            backgroundColor: const Color(0xffDD6060)),
+                        onPressed: () async {
+                          modalConfirmDelete(context,menu: menu);
+                          
+                        },
+                        child: loadingDelete ? Text('. . .') : const Icon(
+                          CupertinoIcons.trash,
+                          color: Colors.black,
+                        )),
+                      Expanded(
+                        child: TextButton(
+                            style: TextButton.styleFrom(
+                              backgroundColor: const Color(0xff404040),
+                            ),
+                            onPressed: () => {
+                              Navigator.push(context, 
+                                MaterialPageRoute(builder: 
+                                  (context) => EditMenu(menu : menu)
+                                )
+                              )
+                            },
+                            child: const Text(
+                              'Edit',
+                              style: TextStyle(color: Color(0xffFFC107)),
+                            )),
+                      ),
+                  
                     ],
                   ),
                 ),
@@ -488,7 +537,7 @@ class _DetailItemState extends State<DetailItem> {
                               children: [
                                 Text(
                                     CurrencyFormat.convertToIdr(
-                                        menu.harga, 0),
+                                        int.parse(menu.harga), 0),
                                     style: const TextStyle(
                                         fontSize: 18,
                                         color: Color(0x99FFC107))),
@@ -500,7 +549,7 @@ class _DetailItemState extends State<DetailItem> {
                                   fontSize: 18, color: Color(0x99FFC107))),
                           Text(
                               CurrencyFormat.convertToIdr(
-                                  menu.harga *
+                                  int.parse(menu.harga) *
                                       int.parse(_qtyController.text),
                                   0),
                               style: const TextStyle(
@@ -569,16 +618,18 @@ class _DetailItemState extends State<DetailItem> {
               OutlinedButton.icon(
                 icon: const Icon(CupertinoIcons.cart),
                 onPressed: () async {
+                  
                   final order = await apiService.addOrder(
-                      idUser: user?.id_user, total: int.parse(_qtyController.text) * menu!.harga);
+                      idUser: user!.id_user, total: (int.parse(_qtyController.text) * int.parse(menu!.harga)).toString());
 
                   if (order['success']) {
-                      apiService.addDetailOrder(
-                          lastId: order['last_id'],
-                          idMenu: menu.id_menu,
-                          harga: int.parse(_qtyController.text) * menu.harga,
-                          qty: int.parse(_qtyController.text));
                     
+                      final addDetailOrder = apiService.addDetailOrder(
+                          lastId: order['last_id'].toString(),
+                          idMenu: menu.id_menu.toString(),
+                          harga: (int.parse(_qtyController.text) * int.parse(menu.harga)).toString(),
+                          qty: _qtyController.text);
+                          
                     Navigator.pushReplacement(context,
                         MaterialPageRoute(builder: (_) => const Home()));
 
@@ -592,5 +643,50 @@ class _DetailItemState extends State<DetailItem> {
             ],
           );
         });
+  }
+
+  Future<dynamic> modalConfirmDelete(BuildContext context, {Menu? menu}) {
+    return showDialog(
+      context: context,
+      builder: (context) {
+        return SimpleDialog(
+          children: [
+            const Padding(
+              padding: EdgeInsets.all(16.0),
+              child: Text(
+                'Konfirmasi Hapus',
+                style: TextStyle(fontSize: 18),
+              ),
+            ),
+            OutlinedButton.icon(
+              icon: const Icon(CupertinoIcons.clear),
+              onPressed: () => Navigator.pop(context),
+              label: const Text('BATAL'),
+              style:
+                  OutlinedButton.styleFrom(padding: const EdgeInsets.all(24)),
+            ),
+            OutlinedButton.icon(
+              icon: const Icon(CupertinoIcons.cart),
+              onPressed: () async {
+                setState(() {
+                    loadingDelete = true;
+                  });
+                  final res = await ApiService().deleteMenu(menu!.id_menu);
+                  if (res['success']) {
+                    setState(() {
+                      loadingDelete = false;
+                    });
+                    Navigator.pushReplacement(context,
+                        MaterialPageRoute(builder: (_) => const Admin()));
+                }
+              },
+              label: const Text('Hapus'),
+              style:
+                  OutlinedButton.styleFrom(padding: const EdgeInsets.all(24)),
+            ),
+          ],
+        );
+      }
+    );
   }
 }

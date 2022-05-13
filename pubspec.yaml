@@ -40,6 +40,9 @@ dependencies:
   intl: ^0.17.0
   fluttertoast: ^8.0.9
   shared_preferences: ^2.0.13
+  url_launcher: ^6.1.0
+  image_picker: ^0.8.5
+  image_picker_for_web: ^2.1.6
 
 dev_dependencies:
   flutter_test:
@@ -66,6 +69,7 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/images/
+    - assets/icons/
     # - assets/images/bgsplash.png
     # - assets/images/loader.gif
   #   - images/a_dot_burr.jpeg

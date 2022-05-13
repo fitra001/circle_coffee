@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 class Kategori {
-  int id_kategori;
+  String id_kategori;
   String kategori;
   String icon;
 

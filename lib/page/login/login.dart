@@ -132,15 +132,17 @@ class _LoginState extends State<Login> {
 
                             if (res['success']) {
                               user = userFromJson(res['data']);
+                              
                               _mySharedPref.setModel(user);
                               _mySharedPref.setLogin(true);
                               Fluttertoast.showToast(msg: res['message']);
                               _mySharedPref.getModel().then((value) => {
-                                if(value?.role_id == 2) {
+                                if(value!.role_id == "3") {
                                   Navigator.pushReplacement(context,
                                     MaterialPageRoute(builder: (context) => const Home())
                                   )
-                                }else if(value?.role_id == 1){
+                                // }else if(value.role_id == "2"){
+                                }else {
                                   Navigator.pushReplacement(context,
                                     MaterialPageRoute(builder: (context) => const Admin())
                                   )

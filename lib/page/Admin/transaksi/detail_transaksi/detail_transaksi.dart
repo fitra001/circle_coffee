@@ -1,14 +1,20 @@
+import 'dart:io';
+
 import 'package:circle_coffee/helpers/currency_format.dart';
+import 'package:circle_coffee/library/my_shared_pref.dart';
+import 'package:circle_coffee/models/user_model.dart';
 import 'package:circle_coffee/page/Admin/admin.dart';
 import 'package:circle_coffee/page/HomeUser/detail_item/detail_item.dart';
 import 'package:circle_coffee/services/api_service.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class DetailTransaksi extends StatefulWidget {
   const DetailTransaksi({Key? key, required this.idTransaksi}) : super(key: key);
-  final int? idTransaksi;
+  final String? idTransaksi;
 
   @override
   _DetailTransaksiState createState() => _DetailTransaksiState();
@@ -18,6 +24,7 @@ class _DetailTransaksiState extends State<DetailTransaksi> {
   Map<String, dynamic> transaksi = <String, dynamic>{};
   List<dynamic> item = <dynamic>[];
   bool isLoading = true;
+  User? user;
 
   @override
   void initState() {
@@ -25,6 +32,14 @@ class _DetailTransaksiState extends State<DetailTransaksi> {
     super.initState();
 
     _fetchDetail();
+    _login();
+  }
+
+  _login() async {
+    final getUser = await MySharedPref().getModel();
+    setState(() {
+      user = getUser;
+    });
   }
 
   _fetchDetail() async {
@@ -109,7 +124,7 @@ class _DetailTransaksiState extends State<DetailTransaksi> {
                                   ),
                                   Text(
                                       CurrencyFormat.convertToIdr(
-                                          item[index]['harga'], 0),
+                                          int.parse(item[index]['harga']), 0),
                                       style: const TextStyle(
                                           fontFamily: 'Satisfy',
                                           fontSize: 24,
@@ -126,8 +141,8 @@ class _DetailTransaksiState extends State<DetailTransaksi> {
                                       ),
                                       Text(
                                           CurrencyFormat.convertToIdr(
-                                              item[index]['qty'] *
-                                                  item[index]['harga'],
+                                              int.parse(item[index]['qty']) *
+                                                  int.parse(item[index]['harga']),
                                               0),
                                           style: const TextStyle(
                                               fontFamily: 'Satisfy',
@@ -209,7 +224,7 @@ class _DetailTransaksiState extends State<DetailTransaksi> {
                           const Text(''),
                           Text(
                               CurrencyFormat.convertToIdr(
-                                  transaksi['total'], 0),
+                                  int.parse(transaksi['total']), 0),
                               style: const TextStyle(
                                 fontFamily: 'Satisfy',
                                 fontSize: 24,
@@ -225,11 +240,45 @@ class _DetailTransaksiState extends State<DetailTransaksi> {
             ],
           ),
         ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => {
+          launchWhatsApp(
+            phone: transaksi['no_telp'], 
+            message: 'Total Pesanan ${transaksi['total']}, ${transaksi['status']}'
+          )
+        },
+        child: Image.asset('assets/icons/icon-whatsapp.gif'),
+      ),
       bottomNavigationBar: (transaksi['status'] == 'Belum Bayar') 
         ? buttonKonfirmasi('BAYAR PESANAN', 'Diproses') : (transaksi['status'] == 'Diproses') 
         ? buttonKonfirmasi('PESANAN SIAP', 'Pesanan Sudah Siap') : (transaksi['status'] == 'Pesanan Sudah Siap')  
         ? buttonKonfirmasi('SELESAI', 'Selesai')  : const SizedBox(height: 0,) 
     );
+  }
+
+  void launchWhatsApp({
+    @required String? phone,
+    @required String? message,
+  }) async {
+    String url() {
+      if (kIsWeb) {
+        return "https://api.whatsapp.com/send?phone=$phone=${Uri.parse(message!)}"; // new line
+      }else{
+        if (Platform.isIOS) {
+          // add the [https]
+          return "https://wa.me/$phone/?text=${Uri.parse(message!)}"; // new line
+        } else {
+          // add the [https]
+          return "https://api.whatsapp.com/send?phone=$phone=${Uri.parse(message!)}"; // new line
+        }
+      }
+    }
+
+    if (await canLaunchUrl(Uri.parse(url()))) {
+      await launchUrl(Uri.parse(url()));
+    } else {
+      throw 'Could not launch ${url()}';
+    }
   }
 
   Widget buttonKonfirmasi(String title, status) {
@@ -283,11 +332,18 @@ class _DetailTransaksiState extends State<DetailTransaksi> {
                 icon: const Icon(CupertinoIcons.cart),
                 onPressed: () async {
                   final updateStatus = await ApiService().updateStatusPesanan(
-                    status: status, idTransaksi: widget.idTransaksi
+                    status: status, idTransaksi: widget.idTransaksi, petugas:(status == "Diproses")?user!.id_user :null 
                   );
                     
                   Fluttertoast.showToast(msg: updateStatus['message']);
                   if (updateStatus['success']) {
+                    // if(transaksi['status'] !='Belum Bayar'){
+                      launchWhatsApp(
+                        phone: transaksi['no_telp'],
+                        message:
+                          'Total Pesanan ${transaksi['total']}, ${status}'
+                      );
+                    // }
                     Navigator.pushReplacement(context, 
                       MaterialPageRoute(builder: (_) => const Admin())
                     );

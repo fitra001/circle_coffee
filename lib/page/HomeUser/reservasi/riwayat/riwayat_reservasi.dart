@@ -1,4 +1,7 @@
+import 'package:circle_coffee/helpers/currency_format.dart';
+import 'package:circle_coffee/library/my_shared_pref.dart';
 import 'package:circle_coffee/page/HomeUser/reservasi/detail_pesanan_reservasi/detail_pesanan_reservasi.dart';
+import 'package:circle_coffee/services/api_service.dart';
 import 'package:flutter/material.dart';
 
 class RiwayatReservasi extends StatefulWidget {
@@ -9,19 +12,45 @@ class RiwayatReservasi extends StatefulWidget {
 }
 
 class _RiwayatReservasiState extends State<RiwayatReservasi> {
+
+  bool loading = true;
+  List reservasi = [];
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    fetchReservasi();
+  }
+
+  fetchReservasi() async {
+    final user = await MySharedPref().getModel();
+    final res = await ApiService().getReservasiRiwayatById(user!.id_user!);
+    if (mounted) {
+      setState(() {
+        reservasi = res['data'];
+        loading = false;
+      });
+    }
+  }
+  
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return (loading) ? const Center(child: CircularProgressIndicator(),) : Container(
       margin: const EdgeInsets.all(16.0),
-      child: ListView.builder(
+      child: reservasi.isEmpty
+        ? const Center(
+            child: Text('Data Kosong'),
+          )
+        : ListView.builder(
         shrinkWrap: true,
-        itemCount: 3,
+        itemCount: reservasi.length,
         itemBuilder: (context, index) {
           return InkWell(
             onTap: () => Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => const DetailPesananReservasi())),
+                    builder: (context) => DetailPesananReservasi(idTransaksiReservasi: reservasi[index]['id'],))),
             child: Card(
               clipBehavior: Clip.antiAliasWithSaveLayer,
               shape: RoundedRectangleBorder(
@@ -35,8 +64,8 @@ class _RiwayatReservasiState extends State<RiwayatReservasi> {
                     mainAxisSize: MainAxisSize.max,
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Image.asset(
-                        'assets/images/bgsplash.png',
+                      Image.network(
+                        ApiService.imageReservasiUrl + reservasi[index]['foto'],
                         height: 120,
                       ),
                       Expanded(
@@ -50,11 +79,12 @@ class _RiwayatReservasiState extends State<RiwayatReservasi> {
                             mainAxisSize: MainAxisSize.max,
                             children: [
                               Text(
-                                'Room',
-                                style: TextStyle(fontSize: 24),
+                                reservasi[index]['reservasi'],
+                                style: const TextStyle(fontSize: 24),
                               ),
-                              Text('Rp. 20.000',
-                                  style: TextStyle(
+                              Text(CurrencyFormat.convertToIdr(
+                                    int.parse(reservasi[index]['harga']), 0),
+                                  style: const TextStyle(
                                       fontFamily: 'Satisfy',
                                       fontSize: 24,
                                       color: Color(0x99FFC107))),
@@ -69,11 +99,11 @@ class _RiwayatReservasiState extends State<RiwayatReservasi> {
                         border: Border(
                             top: BorderSide(color: Colors.grey, width: 0.5))),
                   ),
-                  const Padding(
-                    padding: EdgeInsets.all(16.0),
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
                     child: Text(
-                      'Breakfast, fast foot, coffee breaks',
-                      style: TextStyle(fontSize: 12),
+                      reservasi[index]['deskripsi'],
+                      style: const TextStyle(fontSize: 12),
                     ),
                   ),
                   Container(
@@ -81,11 +111,11 @@ class _RiwayatReservasiState extends State<RiwayatReservasi> {
                         border: Border(
                             top: BorderSide(color: Colors.grey, width: 0.5))),
                   ),
-                  const Padding(
-                    padding: EdgeInsets.all(16.0),
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
                     child: Text(
-                      'Selesai',
-                      style: TextStyle(fontSize: 18),
+                      reservasi[index]['status'],
+                      style: const TextStyle(fontSize: 18),
                     ),
                   ),
                 ],

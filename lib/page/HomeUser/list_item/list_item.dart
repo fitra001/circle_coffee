@@ -84,7 +84,14 @@ class _ListItemState extends State<ListItem> {
                           mainAxisSize: MainAxisSize.max,
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Image.network(
+                            (menu[index].photo.isEmpty) ?
+                              Image.asset(
+                                'assets/images/bgsplash.png',
+                                height: 120,
+                                width: 120,
+                                fit: BoxFit.cover,
+                              )
+                            : Image.network(
                               ApiService.imageMenuUrl + menu[index].photo,
                               height: 120,
                               width: 120,
@@ -100,7 +107,7 @@ class _ListItemState extends State<ListItem> {
                                   mainAxisSize: MainAxisSize.max,
                                   children: [
                                     Text(menu[index].menu, overflow: TextOverflow.ellipsis, maxLines: 2, style: const TextStyle(fontSize: 24),),
-                                    Text(CurrencyFormat.convertToIdr(menu[index].harga, 0), style: const TextStyle(fontFamily: 'Satisfy', fontSize: 24, color: Color(0x99FFC107))),
+                                    Text(CurrencyFormat.convertToIdr(int.parse(menu[index].harga), 0), style: const TextStyle(fontFamily: 'Satisfy', fontSize: 24, color: Color(0x99FFC107))),
                                   ],
                                 ),
                               ),

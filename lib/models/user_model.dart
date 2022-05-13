@@ -1,12 +1,12 @@
 import 'dart:convert';
 
 class User {
-  int? id_user;
+  String? id_user;
   String? nama;
   String? email;
   String? no_telp;
   String? foto;
-  int? role_id;
+  String? role_id;
 
   User({this.id_user, this.nama, this.email, this.no_telp, this.foto, this.role_id});
   

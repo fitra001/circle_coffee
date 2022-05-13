@@ -2,13 +2,13 @@ import 'dart:convert';
 
 class Menu {
 
-  int id_menu;
-  int id_kategori;
+  String id_menu;
+  String id_kategori;
   String menu;
   String photo;
   String deskripsi;
-  int stok;
-  int harga;
+  String stok;
+  String harga;
 
   Menu({
     required this.id_menu,

@@ -69,7 +69,7 @@ class _HomePageState extends State<HomePage> {
       final getJumlahKeranjang = await apiService.getJumlahKeranjang(getUser.id_user.toString());
       if (mounted) {
         setState(() {
-          jumlahKeranjang = getJumlahKeranjang['data']['jumlah'] ?? 0;
+          jumlahKeranjang = int.parse(getJumlahKeranjang['data']['jumlah'] ?? "0");
           user = getUser;
         });
       }
@@ -88,10 +88,13 @@ class _HomePageState extends State<HomePage> {
 
   _getMenuTerlaris() async {
     final menuTerlaris = await apiService.getMenuTerlaris();
-    setState(() {
-      listMenuTerlaris = menuTerlaris;
-      loadingMenuTerlaris = false;
-    });
+    final getMenuTerlaris = menuTerlaris ?? [];
+    if (mounted) {
+      setState(() {
+        listMenuTerlaris = getMenuTerlaris;
+        loadingMenuTerlaris = false;
+      });
+    }
   }
 
   _getAllMenu() async {
@@ -119,7 +122,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Container(
+        title: SizedBox(
             child: TextFormField(
               controller: _searchController,
               style: const TextStyle(fontFamily: 'sans serif'),
@@ -170,7 +173,7 @@ class _HomePageState extends State<HomePage> {
         },
         child: SingleChildScrollView(
           child: isSearching ? SearchItem(menuSearch: _searchingList,) :Column(children: [
-            (user!.nama == null) ? const SizedBox() :HeadHome(user: user!,),
+            (user!.nama == null) ? const SizedBox() : HeadHome(user: user!),
             const SizedBox(
               height: 20,
             ),
@@ -240,7 +243,7 @@ class AllMenus extends StatelessWidget {
             
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
-              childAspectRatio: MediaQuery.of(context).size.width / (MediaQuery.of(context).size.height / 1.7)
+              childAspectRatio: MediaQuery.of(context).size.width / (MediaQuery.of(context).size.height / 1.4)
             ), 
             itemCount: menu?.length,
             itemBuilder: (_, index) => Card(
@@ -262,11 +265,18 @@ class AllMenus extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Image.network(
-                      ApiService.imageMenuUrl + '${menu?[index].photo}',
-                      width: double.infinity,
-                      height:120,
-                      fit: BoxFit.fill,
+                    (menu![index].photo.isEmpty)
+                    ? Image.asset(
+                        'assets/images/bgsplash.png',
+                        width: double.infinity,
+                        height: 120,
+                        fit: BoxFit.cover,
+                      )
+                    : Image.network(
+                        ApiService.imageMenuUrl + '${menu?[index].photo}',
+                        width: double.infinity,
+                        height:120,
+                        fit: BoxFit.fill,
                     ),
                     Expanded(
                       child: Padding(
@@ -279,7 +289,7 @@ class AllMenus extends StatelessWidget {
                     )),
                     Text(
                       CurrencyFormat.convertToIdr(
-                          menu![index].harga, 0),
+                          int.parse(menu![index].harga), 0),
                       style: const TextStyle(
                           fontFamily: 'Satisfy',
                           fontSize: 18,
@@ -445,6 +455,12 @@ class Menus extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
+                        (menu![index].photo.isEmpty)
+                        ? Image.asset(
+                            'assets/images/bgsplash.png',
+                            height: 120,
+                            fit: BoxFit.cover,
+                          ) :
                         Image.network(
                           ApiService.imageMenuUrl + '${menu?[index].photo}',
                           height: 120,
@@ -454,7 +470,7 @@ class Menus extends StatelessWidget {
                           padding: const EdgeInsets.symmetric(horizontal : 8.0),
                           child: Center(child: Text('${menu?[index].menu}',maxLines: 2, overflow: TextOverflow.ellipsis)),
                         )),
-                        Text(CurrencyFormat.convertToIdr(menu?[index].harga, 0), style: const TextStyle(fontFamily: 'Satisfy', fontSize: 18, color: Color(0x99FFC107))),
+                        Text(CurrencyFormat.convertToIdr(int.parse(menu![index].harga), 0), style: const TextStyle(fontFamily: 'Satisfy', fontSize: 18, color: Color(0x99FFC107))),
                         const SizedBox(height: 10,)
                       ],
                     ),
@@ -540,6 +556,14 @@ class SearchItem extends StatelessWidget {
                 mainAxisSize: MainAxisSize.max,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
+                  (menuSearch![index].photo.isEmpty)
+                    ? Image.asset(
+                        'assets/images/bgsplash.png',
+                        height: 120,
+                        width: 120,
+                        fit: BoxFit.cover,
+                      )
+                    :
                   Image.network(
                     ApiService.imageMenuUrl + menuSearch?[index].photo,
                     height: 120,
@@ -563,7 +587,7 @@ class SearchItem extends StatelessWidget {
                                 const TextStyle( fontSize: 24),
                           ),
                           Text(
-                              CurrencyFormat.convertToIdr(menuSearch?[index].harga, 0),
+                              CurrencyFormat.convertToIdr(int.parse(menuSearch![index].harga), 0),
                               style: const TextStyle(
                                   fontFamily: 'Satisfy',
                                   fontSize: 24,

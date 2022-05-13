@@ -1,6 +1,7 @@
 import 'package:circle_coffee/helpers/currency_format.dart';
 import 'package:circle_coffee/page/Admin/transaksi/detail_transaksi/detail_transaksi.dart';
 import 'package:circle_coffee/services/api_service.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class Pesanan extends StatefulWidget {
@@ -14,13 +15,33 @@ class _PesananState extends State<Pesanan> {
   bool isLoading = true;
   List<dynamic> data = <dynamic>[];
 
+  final TextEditingController _searchController = TextEditingController();
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
 
     _fetchListPesanan();
+    
+    _searchController.addListener(() {
+      if (_searchController.text.isNotEmpty) {
+        _searchList(_searchController.text);
+      }else{
+        _fetchListPesanan();
+      }
+    });
+    
 
+  }
+
+  _searchList(String text) async {
+    var getSearch = await ApiService().getAllPesanan(nama: text);
+    if (mounted) {
+      setState(() {
+        data = getSearch!['data'];
+      });
+    }
   }
 
   _fetchListPesanan() async {
@@ -39,14 +60,40 @@ class _PesananState extends State<Pesanan> {
   Widget build(BuildContext context) {
     return isLoading
       ? const Center(child: CircularProgressIndicator())
-      : Container(
-        margin: const EdgeInsets.symmetric(horizontal: 16),
-        child: data.isEmpty
-          ? const Center(
-              child: Text('Data Kosong'),
+      : Column(
+        children: [
+          Container(
+            margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: TextFormField(
+              controller: _searchController,
+              style: const TextStyle(fontFamily: 'sans serif'),
+              decoration: const InputDecoration(
+                prefixIcon: Icon(CupertinoIcons.search,
+                    color: Color(0x99FFC107)),
+                hintText: 'Pencarian',
+                enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Color(0x99FFC107)),
+                    borderRadius:
+                        BorderRadius.all(Radius.circular(20.0))),
+                border: OutlineInputBorder(
+                    borderSide: BorderSide(color: Color(0x99FFC107)),
+                    borderRadius:
+                        BorderRadius.all(Radius.circular(20.0))),
+              ),
             )
-          : listPesanan()
-  );
+          ),
+          Expanded(
+            child: Container(
+              margin: const EdgeInsets.symmetric(horizontal: 16),
+              child: data.isEmpty
+                ? const Center(
+                    child: Text('Data Kosong'),
+                  )
+                : listPesanan()
+            ),
+          ),
+        ],
+      );
   }
 
   Widget listPesanan(){
@@ -79,7 +126,7 @@ class _PesananState extends State<Pesanan> {
                 Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Text(
-                    data[index]['nama'],
+                    '${data[index]['nama']} (${data[index]['no_telp']})',
                     style: const TextStyle(fontSize: 24),
                   ),
                 ),
@@ -116,7 +163,7 @@ class _PesananState extends State<Pesanan> {
                       ),
                       Text(
                           CurrencyFormat.convertToIdr(
-                              data[index]['total'], 0),
+                              int.parse(data[index]['total']), 0),
                           style: const TextStyle(
                               fontFamily: 'Satisfy',
                               fontSize: 24,

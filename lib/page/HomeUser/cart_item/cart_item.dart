@@ -38,15 +38,19 @@ class _CartItemState extends State<CartItem> {
     final getUser = await MySharedPref().getModel();
     final getKeranjang =
         await apiService.getKeranjang(getUser!.id_user.toString());
-
+        
     if (getKeranjang != null) {
       for (var item in getKeranjang) {
-        total += item.harga * item.qty;
+        total += int.parse(item.harga) * int.parse(item.qty);
       }
       setState(() {
         listKeranjang = getKeranjang;
         total = total;
         user = getUser;
+        isLoading = false;
+      });
+    }else{
+      setState(() {
         isLoading = false;
       });
     }
@@ -164,7 +168,7 @@ class _CartItemState extends State<CartItem> {
                                   children: [
                                     Text(
                                         CurrencyFormat.convertToIdr(
-                                            listKeranjang[index]!.harga, 0),
+                                            int.parse(listKeranjang[index]!.harga), 0),
                                         style: const TextStyle(
                                             fontSize: 18,
                                             color: Color(0x99FFC107))),
@@ -176,8 +180,8 @@ class _CartItemState extends State<CartItem> {
                                       fontSize: 18, color: Color(0x99FFC107))),
                               Text(
                                   CurrencyFormat.convertToIdr(
-                                      listKeranjang[index]!.harga *
-                                          listKeranjang[index]!.qty,
+                                      int.parse(listKeranjang[index]!.harga) *
+                                          int.parse(listKeranjang[index]!.qty),
                                       0),
                                   style: const TextStyle(
                                       fontSize: 18, color: Color(0x99FFC107))),
@@ -249,14 +253,14 @@ class _CartItemState extends State<CartItem> {
                 icon: const Icon(CupertinoIcons.cart),
                 onPressed: () async {
                   final order = await apiService.addOrder(
-                      idUser: user.id_user, total: total);
+                      idUser: user.id_user, total: total.toString());
 
                   if (order['success']) {
                     for (var menu in listKeranjang) {
                       apiService.addDetailOrder(
-                          lastId: order['last_id'],
+                          lastId: order['last_id'].toString(),
                           idMenu: menu!.id_menu,
-                          harga: menu.qty * menu.harga,
+                          harga: (int.parse(menu.qty) * int.parse(menu.harga)).toString(),
                           qty: menu.qty);
                     }
                     apiService.deleteKeranjangByUser(idUser: user.id_user);
@@ -284,10 +288,10 @@ class _CartItemState extends State<CartItem> {
 
   Widget item() {
     return listKeranjang.isEmpty
-        ? const Center(
-            child: Text('Keranjang Kosong'),
-          )
-        : ListView.builder(
+      ? const Center(
+          child: Text('Keranjang Kosong'),
+        )
+      : ListView.builder(
       itemCount: listKeranjang.length,
       itemBuilder: (context, index) {
         _qtyControllerList.add(TextEditingController());
@@ -304,6 +308,7 @@ class _CartItemState extends State<CartItem> {
                       idMenu: listKeranjang[index]!.id_menu);
                   if (deleteKeranjang['success']) {
                     setState(() {
+                      listKeranjang = [];
                       _fetchKeranjang();
                     });
                   }
@@ -355,7 +360,7 @@ class _CartItemState extends State<CartItem> {
                               ),
                               Text(
                                   CurrencyFormat.convertToIdr(
-                                      listKeranjang[index]!.harga, 0),
+                                      int.parse(listKeranjang[index]!.harga), 0),
                                   style: const TextStyle(
                                       fontSize: 24, color: Color(0x99FFC107))),
                               Container(
@@ -378,7 +383,7 @@ class _CartItemState extends State<CartItem> {
                                                         listKeranjang[index]!
                                                             .id_menu,
                                                     idUser: user.id_user,
-                                                    qty: currentValue);
+                                                    qty: currentValue.toString());
                                             if (updateQty['success']) {
                                               setState(() {
                                                 _fetchKeranjang();
@@ -403,14 +408,14 @@ class _CartItemState extends State<CartItem> {
                                               _qtyControllerList[index].text);
                                           currentValue++;
                                           if (currentValue <=
-                                              listKeranjang[index]!.stok) {
+                                              int.parse(listKeranjang[index]!.stok)) {
                                             final updateQty = await ApiService()
                                                 .updateQtyKeranjang(
                                                     idMenu:
                                                         listKeranjang[index]!
                                                             .id_menu,
                                                     idUser: user.id_user,
-                                                    qty: currentValue);
+                                                    qty: currentValue.toString());
                                             if (updateQty['success']) {
                                               setState(() {
                                                 _fetchKeranjang();

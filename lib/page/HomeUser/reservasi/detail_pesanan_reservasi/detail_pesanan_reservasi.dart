@@ -1,14 +1,38 @@
+import 'package:circle_coffee/helpers/currency_format.dart';
+import 'package:circle_coffee/services/api_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class DetailPesananReservasi extends StatefulWidget {
-  const DetailPesananReservasi({Key? key}) : super(key: key);
+  const DetailPesananReservasi({Key? key, required this.idTransaksiReservasi}) : super(key: key);
+  final String idTransaksiReservasi;
 
   @override
   _DetailPesananReservasiState createState() => _DetailPesananReservasiState();
 }
 
 class _DetailPesananReservasiState extends State<DetailPesananReservasi> {
+
+  bool loading = true;
+  Map reservasi = {};
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    fetchReservasi();
+  }
+
+  fetchReservasi() async {
+    final res = await ApiService().getReservasiDetailPesananById(widget.idTransaksiReservasi);
+    if (mounted) {
+      setState(() {
+        reservasi = res['data'];
+        loading = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,11 +52,11 @@ class _DetailPesananReservasiState extends State<DetailPesananReservasi> {
         elevation: 0,
       ),
       body: SingleChildScrollView(
-        child: Column(
+        child: (loading) ? const Center(child: CircularProgressIndicator(),) :Column(
           mainAxisSize: MainAxisSize.max,
           children: [
-            Image.asset(
-              'assets/images/bgsplash.png',
+            Image.network(
+              ApiService.imageReservasiUrl + reservasi['foto'],
               width: double.infinity,
               height: 250,
               fit: BoxFit.fitWidth,
@@ -49,62 +73,65 @@ class _DetailPesananReservasiState extends State<DetailPesananReservasi> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      'Room',
-                      style: TextStyle( fontSize: 24),
+                    Text(
+                      reservasi['reservasi'],
+                      style: const TextStyle( fontSize: 24),
                     ),
-                    const Text('Rp. 20.000',
-                        style: TextStyle(
-                            
+                    Text(CurrencyFormat.convertToIdr(
+                        int.parse(reservasi['harga']), 0),
+                        style: const TextStyle(
                             fontSize: 24,
                             color: Color(0x99FFC107))),
                     const SizedBox(height: 20,),
                     const Text(
-                      'Paket Menu',
+                      'Deskripsi',
                       style: TextStyle( fontSize: 24),
                     ),
-                    ListView.builder(
-                      physics: const NeverScrollableScrollPhysics(),
-                      shrinkWrap: true,
-                      itemCount: 2,
-                      itemBuilder: (context, index) {
-                        return Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.max,
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Image.asset(
-                                'assets/images/bgsplash.png',
-                                height: 50,
-                              ),
-                              Expanded(
-                                flex: 1,
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.max,
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceAround,
-                                  children: const [
-                                    Text(
-                                      'Nasi Goreng',
-                                      style: TextStyle( fontSize: 14),
-                                      textAlign: TextAlign.start,
-                                    ),
-                                    
-                                    Text(
-                                      'X1',
-                                      style: TextStyle(
-                                          fontSize: 18),
-                                    ),
-                                    
-                                  ],
-                                ),
-                              )
-                            ],
-                          ),
-                        );
-                      },
+                    Text(
+                      reservasi['deskripsi']
                     ),
+                    // ListView.builder(
+                    //   physics: const NeverScrollableScrollPhysics(),
+                    //   shrinkWrap: true,
+                    //   itemCount: 2,
+                    //   itemBuilder: (context, index) {
+                    //     return Padding(
+                    //       padding: const EdgeInsets.all(8.0),
+                    //       child: Row(
+                    //         mainAxisSize: MainAxisSize.max,
+                    //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    //         children: [
+                    //           Image.asset(
+                    //             'assets/images/bgsplash.png',
+                    //             height: 50,
+                    //           ),
+                    //           Expanded(
+                    //             flex: 1,
+                    //             child: Row(
+                    //               mainAxisSize: MainAxisSize.max,
+                    //               mainAxisAlignment:
+                    //                   MainAxisAlignment.spaceAround,
+                    //               children: const [
+                    //                 Text(
+                    //                   'Nasi Goreng',
+                    //                   style: TextStyle( fontSize: 14),
+                    //                   textAlign: TextAlign.start,
+                    //                 ),
+                                    
+                    //                 Text(
+                    //                   'X1',
+                    //                   style: TextStyle(
+                    //                       fontSize: 18),
+                    //                 ),
+                                    
+                    //               ],
+                    //             ),
+                    //           )
+                    //         ],
+                    //       ),
+                    //     );
+                    //   },
+                    // ),
                     const SizedBox(height: 20,)
                   ],
                 ),
@@ -120,56 +147,52 @@ class _DetailPesananReservasiState extends State<DetailPesananReservasi> {
                   padding: const EdgeInsets.symmetric(
                       horizontal: 16.0, vertical: 24.0),
                   child: Table(
-                    border: TableBorder(
+                    border: const TableBorder(
                         horizontalInside:
                             BorderSide(width: 0.5, color: Colors.grey)),
                     children: [
                       TableRow(children: [
-                        Text(
+                        const Text(
                           'Booking',
-                          style: TextStyle( fontSize: 24),
+                          style: TextStyle( fontSize: 18),
                         ),
-                        Text(':'),
-                        Text('21/22/23',
-                            style: TextStyle(
-                                
-                                fontSize: 24,
+                        const Text(':'),
+                        Text(reservasi['tgl_reservasi'],
+                            style: const TextStyle(
+                                fontSize: 18,
                                 color: Color(0x99FFC107))),
                       ]),
                       TableRow(children: [
-                        Text(
+                        const Text(
                           'Tanggal Pesan',
-                          style: TextStyle( fontSize: 24),
+                          style: TextStyle( fontSize: 18),
                         ),
-                        Text(':'),
-                        Text('21/22/23',
-                            style: TextStyle(
-                                
-                                fontSize: 24,
+                        const Text(':'),
+                        Text(reservasi['tgl_transaksi'],
+                            style: const TextStyle(
+                                fontSize: 18,
                                 color: Color(0x99FFC107))),
                       ]),
                       TableRow(children: [
-                        Text(
+                        const Text(
                           'Status Pesanan',
-                          style: TextStyle( fontSize: 24),
+                          style: TextStyle( fontSize: 18),
                         ),
-                        Text(':'),
-                        Text('Dibatalkan',
-                            style: TextStyle(
-                                
-                                fontSize: 24,
+                        const Text(':'),
+                        Text(reservasi['status'],
+                            style: const TextStyle(
+                                fontSize: 18,
                                 color: Color(0x99FFC107))),
                       ]),
                       TableRow(children: [
-                        Text(
+                        const Text(
                           'Pemesan',
-                          style: TextStyle( fontSize: 24),
+                          style: TextStyle( fontSize: 18),
                         ),
-                        Text(':'),
-                        Text('BAC',
-                            style: TextStyle(
-                                
-                                fontSize: 24,
+                        const Text(':'),
+                        Text(reservasi['nama'],
+                            style: const TextStyle(
+                                fontSize: 18,
                                 color: Color(0x99FFC107))),
                       ])
                     ],
@@ -181,7 +204,7 @@ class _DetailPesananReservasiState extends State<DetailPesananReservasi> {
           ],
         ),
       ),
-      bottomNavigationBar: Card(
+      bottomNavigationBar: (loading) ? const Center(child: CircularProgressIndicator(),) : Card(
           clipBehavior: Clip.antiAliasWithSaveLayer,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(15.0),
@@ -192,13 +215,14 @@ class _DetailPesananReservasiState extends State<DetailPesananReservasi> {
             child: Table(
               children: [
                 TableRow(children: [
-                  Text(
+                  const Text(
                     'Total Pesanan',
                     style: TextStyle( fontSize: 24),
                   ),
-                  Text(''),
-                  Text('Rp. 20.000',
-                      style: TextStyle(
+                  const Text(''),
+                  Text(CurrencyFormat.convertToIdr(
+                        int.parse(reservasi['total']), 0),
+                      style: const TextStyle(
                         fontFamily: 'Satisfy',
                         fontSize: 24,
                         color: Color(0x99FFC107),
@@ -211,52 +235,4 @@ class _DetailPesananReservasiState extends State<DetailPesananReservasi> {
     
   }
 
-  Future<dynamic> modalConfirmPesanan(BuildContext context) {
-    return showDialog(
-        context: context,
-        builder: (context) {
-          return SimpleDialog(
-            children: [
-              const Padding(
-                padding: EdgeInsets.all(16.0),
-                child: Text(
-                  'Konfirmasi Pesanan',
-                  style: TextStyle(fontSize: 18),
-                ),
-              ),
-              OutlinedButton.icon(
-                icon: const Icon(CupertinoIcons.clear),
-                onPressed: () => Navigator.pop(context),
-                label: const Text('BATAL'),
-                style:
-                    OutlinedButton.styleFrom(padding: const EdgeInsets.all(24)),
-              ),
-              OutlinedButton.icon(
-                icon: const Icon(CupertinoIcons.cart),
-                onPressed: () async {
-                  // final order = await apiService.addOrder(
-                  //     idUser: user?.id_user,
-                  //     total: int.parse(_qtyController.text) * menu!.harga);
-
-                  // if (order['success']) {
-                  //   apiService.addDetailOrder(
-                  //       lastId: order['last_id'],
-                  //       idMenu: menu.id_menu,
-                  //       harga: int.parse(_qtyController.text) * menu.harga,
-                  //       qty: int.parse(_qtyController.text));
-
-                  //   Navigator.pushReplacement(context,
-                  //       MaterialPageRoute(builder: (_) => const Home()));
-
-                  //   Fluttertoast.showToast(msg: order['message']);
-                  // }
-                },
-                label: const Text('PESAN'),
-                style:
-                    OutlinedButton.styleFrom(padding: const EdgeInsets.all(24)),
-              ),
-            ],
-          );
-        });
-  }
 }

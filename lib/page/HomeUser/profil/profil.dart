@@ -1,5 +1,6 @@
 import 'package:circle_coffee/library/my_shared_pref.dart';
 import 'package:circle_coffee/models/user_model.dart';
+import 'package:circle_coffee/page/HomeUser/profil/ubah_profil/ubah_profil.dart';
 import 'package:circle_coffee/splashscreen_view.dart';
 import 'package:flutter/material.dart';
 
@@ -89,27 +90,36 @@ class _ProfilState extends State<Profil> {
               ),
               const SizedBox(height: 24,),
               
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(16),
-                decoration: const BoxDecoration(color: Colors.grey),
-                // height: 2,
-                child: const Text(
-                  'Ubah Akun',
-                  style: TextStyle(fontSize: 18),
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => UbahProfil(user: user!),
+                      ));
+                },
+                child: Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(16),
+                  decoration: const BoxDecoration(color: Colors.grey),
+                  // height: 2,
+                  child: const Text(
+                    'Ubah Akun',
+                    style: TextStyle(fontSize: 18),
+                  ),
                 ),
               ),
-              const SizedBox(height: 2,),
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(16),
-                decoration: const BoxDecoration(color: Colors.grey),
-                // height: 2,
-                child: const Text(
-                  'Ubah Kata Sandi',
-                  style: TextStyle(fontSize: 18),
-                ),
-              ),
+              // const SizedBox(height: 2,),
+              // Container(
+              //   width: double.infinity,
+              //   padding: const EdgeInsets.all(16),
+              //   decoration: const BoxDecoration(color: Colors.grey),
+              //   // height: 2,
+              //   child: const Text(
+              //     'Ubah Kata Sandi',
+              //     style: TextStyle(fontSize: 18),
+              //   ),
+              // ),
               const SizedBox(height: 24,),
               Container(
                 width: double.infinity,

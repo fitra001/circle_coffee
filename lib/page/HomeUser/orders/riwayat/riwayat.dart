@@ -30,6 +30,7 @@ class _RiwayatPesananState extends State<RiwayatPesanan> {
     final order =
         await ApiService().getRiwayatOrder(user!.id_user.toString());
     var riwayatOrder = order['data'];
+
     List detail = [];
     for (var item in riwayatOrder) {
       final detailOrder = await _getDetail(item['id']);
@@ -44,7 +45,7 @@ class _RiwayatPesananState extends State<RiwayatPesanan> {
     }
   }
 
-  Future<dynamic> _getDetail(int idTransaksi) async {
+  Future<dynamic> _getDetail(String idTransaksi) async {
     final data = await ApiService().getDetailOrder(idTransaksi: idTransaksi);
     return data['data'];
   }
@@ -106,7 +107,7 @@ class _RiwayatPesananState extends State<RiwayatPesanan> {
                                         overflow: TextOverflow.ellipsis,
                                         style: const TextStyle(fontSize: 24),
                                       ),
-                                      Text(CurrencyFormat.convertToIdr(detailPesanan[index][0]['harga'], 0),
+                                      Text(CurrencyFormat.convertToIdr(int.parse(detailPesanan[index][0]['harga']), 0),
                                           style: const TextStyle(
                                               fontFamily: 'Satisfy',
                                               fontSize: 24,
@@ -161,7 +162,7 @@ class _RiwayatPesananState extends State<RiwayatPesanan> {
                                 ),
                                 Text(
                                     CurrencyFormat.convertToIdr(
-                                        data[index]['total'], 0),
+                                        int.parse(data[index]['total']), 0),
                                     style: const TextStyle(
                                         fontSize: 24,
                                         color: Color(0x99FFC107))),
