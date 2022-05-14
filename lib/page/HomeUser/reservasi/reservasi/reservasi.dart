@@ -37,7 +37,7 @@ class _PesananSayaState extends State<Reservasi> {
       margin: const EdgeInsets.all(16.0),
       child: ListView.builder(
         shrinkWrap: true,
-        itemCount: 2,
+        itemCount: reservasi.length,
         itemBuilder: (context, index) {
           return InkWell(
             onTap: () => Navigator.push(
@@ -57,7 +57,14 @@ class _PesananSayaState extends State<Reservasi> {
                     mainAxisSize: MainAxisSize.max,
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Image.network(
+                      (reservasi[index]['foto'] == null) ?
+                      Image.asset(
+                          'assets/images/bgsplash.png',
+                          height: 120,
+                          width: 120,
+                          fit: BoxFit.cover,
+                        )
+                      :Image.network(
                         ApiService.imageReservasiUrl + reservasi[index]['foto'],
                         height: 120,
                       ),

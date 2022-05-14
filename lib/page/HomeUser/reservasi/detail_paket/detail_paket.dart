@@ -1,6 +1,8 @@
 import 'package:circle_coffee/helpers/currency_format.dart';
 import 'package:circle_coffee/library/my_shared_pref.dart';
 import 'package:circle_coffee/models/user_model.dart';
+import 'package:circle_coffee/page/Admin/admin.dart';
+import 'package:circle_coffee/page/Admin/master/reservasi/edit_reservasi/edit_reservasi.dart';
 import 'package:circle_coffee/services/api_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -17,6 +19,7 @@ class DetailPaket extends StatefulWidget {
 class _DetailPaketState extends State<DetailPaket> {
   DateTime? _dateTime;
   bool loading = true;
+  bool loadingDelete = false;
   bool loadingListPesanan = true;
   Map reservasi = {};
   List listPesanan = [];
@@ -84,7 +87,14 @@ class _DetailPaketState extends State<DetailPaket> {
         child: (loading) ? const Center(child: CircularProgressIndicator(),) : Column(
           mainAxisSize: MainAxisSize.max,
           children: [
-            Image.network(
+            (reservasi['foto'] == null)
+            ? Image.asset(
+                'assets/images/bgsplash.png',
+                height: 120,
+                width: 120,
+                fit: BoxFit.cover,
+              )
+            : Image.network(
               ApiService.imageReservasiUrl + reservasi['foto'],
               width: double.infinity,
               height: 250,
@@ -207,9 +217,9 @@ class _DetailPaketState extends State<DetailPaket> {
           ],
         ),
       ),
-      bottomNavigationBar: Container(
+      bottomNavigationBar: SizedBox(
         height: 50,
-        child: TextButton(
+        child: (user?.role_id == "3") ? TextButton(
             style: TextButton.styleFrom(
               backgroundColor: const Color(0xff404040),
             ),
@@ -255,18 +265,25 @@ class _DetailPaketState extends State<DetailPaket> {
                                                 showDatePicker(
                                                   context: context, 
                                                   initialDate: DateTime.now(), 
-                                                  firstDate: DateTime(2000), 
-                                                  lastDate: DateTime(2099),
-                                                  initialEntryMode: DatePickerEntryMode.input,
+                                                  firstDate: DateTime(2022), 
+                                                  lastDate: DateTime(2050),
+                                                  // initialEntryMode: DatePickerEntryMode.input,
                                                 ).then((date) {
                                                   setState((){
                                                     _dateTime = date;
                                                   });
                                                 });
                                               },
-                                              child: Text(
-                                                _dateTime == null ? 'Pilih Tanggal' : '${_dateTime?.toLocal()}'.split(' ')[0],
-                                                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                                              child: Container(
+                                                decoration: BoxDecoration(
+                                                  border: Border.all(color: Colors.grey),
+                                                  borderRadius: const BorderRadius.all(Radius.circular(15.0))
+                                                ),
+                                                padding: const EdgeInsets.all(8.0),
+                                                child: Text(
+                                                  _dateTime == null ? 'Pilih Tanggal' : '${_dateTime?.toLocal()}'.split(' ')[0],
+                                                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                                                ),
                                               )
                                             ),
                                           ),
@@ -302,8 +319,46 @@ class _DetailPaketState extends State<DetailPaket> {
             child: const Text(
               'PESAN SEKARANG',
               style: TextStyle(color: Color(0xffFFC107)),
-            )),
-      ),
+            )
+          )
+          : Row(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                TextButton(
+                  style: TextButton.styleFrom(
+                      backgroundColor: const Color(0xffDD6060)),
+                  onPressed: () async {
+                    modalConfirmDelete(context, reservasi: reservasi);
+                    
+                  },
+                  child: loadingDelete ? Text('. . .') : const Icon(
+                    CupertinoIcons.trash,
+                    color: Colors.black,
+                  )),
+                Expanded(
+                  child: TextButton(
+                      style: TextButton.styleFrom(
+                        backgroundColor: const Color(0xff404040),
+                      ),
+                      onPressed: () => {
+                        Navigator.push(context, 
+                          MaterialPageRoute(builder: 
+                            (context) => EditReservasi(reservasi : reservasi)
+                          )
+                        )
+                      },
+                      child: const Text(
+                        'Edit',
+                        style: TextStyle(color: Color(0xffFFC107)),
+                      )),
+                ),
+            
+              ],
+            )
+            ,
+      )
     );
     
   }
@@ -339,6 +394,50 @@ class _DetailPaketState extends State<DetailPaket> {
                   }
                 },
                 label: const Text('PESAN'),
+                style:
+                    OutlinedButton.styleFrom(padding: const EdgeInsets.all(24)),
+              ),
+            ],
+          );
+        });
+  }
+
+  Future<dynamic> modalConfirmDelete(BuildContext context, {dynamic reservasi}) {
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return SimpleDialog(
+            children: [
+              const Padding(
+                padding: EdgeInsets.all(16.0),
+                child: Text(
+                  'Konfirmasi Hapus',
+                  style: TextStyle(fontSize: 18),
+                ),
+              ),
+              OutlinedButton.icon(
+                icon: const Icon(CupertinoIcons.clear),
+                onPressed: () => Navigator.pop(context),
+                label: const Text('BATAL'),
+                style:
+                    OutlinedButton.styleFrom(padding: const EdgeInsets.all(24)),
+              ),
+              OutlinedButton.icon(
+                icon: const Icon(CupertinoIcons.cart),
+                onPressed: () async {
+                  setState(() {
+                    loadingDelete = true;
+                  });
+                  final res = await ApiService().deleteReservasi(reservasi['id_reservasi']);
+                  if (res['success']) {
+                    setState(() {
+                      loadingDelete = false;
+                    });
+                    Navigator.pushReplacement(context,
+                        MaterialPageRoute(builder: (_) => const Admin()));
+                  }
+                },
+                label: const Text('Hapus'),
                 style:
                     OutlinedButton.styleFrom(padding: const EdgeInsets.all(24)),
               ),

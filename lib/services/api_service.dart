@@ -435,6 +435,61 @@ class ApiService {
     return res;
   }
 
+  Future<dynamic> deleteReservasi(String idReservasi) async {
+    final response =
+        await client.get(Uri.parse(baseUrl + '/reservasi/hapus/' + idReservasi));
+
+    Map<String, dynamic> res = json.decode(response.body);
+    return res;
+  }
+
+  Future<dynamic> tambahReservasi(dynamic menu, [XFile? image]) async {
+    MultipartRequest request =
+        MultipartRequest("POST", Uri.parse(baseUrl + '/reservasi/tambah'));
+    request.headers.addAll({'Content-Type': 'multipart/form-data'});
+    request.fields.addAll(menu);
+    if (image != null) {
+      var photo;
+
+      if (kIsWeb) {
+        // photo = await MultipartFile.fromBytes('photo',);
+      } else {
+        photo = await MultipartFile.fromPath('foto', image.path);
+        request.files.add(photo);
+      }
+    }
+
+    StreamedResponse response = await request.send();
+    Uint8List responseData = await response.stream.toBytes();
+    String responseString = String.fromCharCodes(responseData);
+
+    Map<String, dynamic> res = json.decode(responseString);
+    return res;
+  }
+
+  Future<dynamic> updateReservasi(dynamic reservasi, [XFile? image]) async {
+    MultipartRequest request =
+        MultipartRequest("POST", Uri.parse(baseUrl + '/reservasi/update'));
+    request.headers.addAll({'Content-Type': 'multipart/form-data'});
+    request.fields.addAll(reservasi);
+    if (image != null) {
+      var foto;
+
+      if (kIsWeb) {
+        // foto = await MultipartFile.fromBytes('foto',);
+      } else {
+        foto = await MultipartFile.fromPath('foto', image.path);
+        request.files.add(foto);
+      }
+    }
+    StreamedResponse response = await request.send();
+    Uint8List responseData = await response.stream.toBytes();
+    String responseString = String.fromCharCodes(responseData);
+
+    Map<String, dynamic> res = json.decode(responseString);
+    return res;
+  }
+
   Future<dynamic> getReservasiById(String idReservasi) async {
     final response = await client.get(Uri.parse(baseUrl + '/reservasi/'+ idReservasi));
 
@@ -494,5 +549,39 @@ class ApiService {
     Map<String, dynamic> res = json.decode(response.body);
     return res;
   }
+
+  Future<dynamic> getAllReservasiPesanan({String? nama}) async {
+    String url = (nama != null) ? '/reservasi/pesanan/' + nama : '/reservasi/pesanan';
+    final response = await client.get(Uri.parse(baseUrl + url),
+        headers: {'Content-Type': 'application/json'});
+
+    Map<String, dynamic> res = json.decode(response.body);
+    return res;
+  }
+
+  Future<dynamic> getAllReservasiBelumLunas({String? nama}) async {
+    String url = (nama != null) ? '/reservasi/belum_lunas/' + nama : '/reservasi/belum_lunas';
+    final response = await client.get(Uri.parse(baseUrl + url),
+        headers: {'Content-Type': 'application/json'});
+
+    Map<String, dynamic> res = json.decode(response.body);
+    return res;
+  }
+
+  Future<dynamic> getAllReservasiLunas({String? nama}) async {
+    String url = (nama != null) ? '/reservasi/lunas/' + nama : '/reservasi/lunas';
+    final response = await client.get(Uri.parse(baseUrl + url),
+        headers: {'Content-Type': 'application/json'});
+
+    Map<String, dynamic> res = json.decode(response.body);
+    return res;
+  }
   
+  Future<dynamic> getAllReservasiSelesai() async {
+    final response = await client.get(Uri.parse(baseUrl + '/reservasi/selesai'),
+        headers: {'Content-Type': 'application/json'});
+
+    Map<String, dynamic> res = json.decode(response.body);
+    return res;
+  }
 }

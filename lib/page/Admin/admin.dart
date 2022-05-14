@@ -1,7 +1,8 @@
 import 'package:circle_coffee/page/Admin/dashboard/dashboard.dart';
-import 'package:circle_coffee/page/Admin/menu/menu.dart';
+import 'package:circle_coffee/page/Admin/master/master.dart';
 import 'package:circle_coffee/page/Admin/profil_admin/profil_admin.dart';
 import 'package:circle_coffee/page/Admin/transaksi/transaksi.dart';
+import 'package:circle_coffee/page/Admin/transaksi_reservasi/transaksi_reservasi.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -13,12 +14,12 @@ class Admin extends StatefulWidget {
 }
 
 class _AdminState extends State<Admin> {
-  int _selectedNavbar = 0;
+  int _selectedNavbar = 2;
   final List _children = [
     const Dashboard(),
     const Transaksi(),
-    Container(),
-    const Menu(),
+    const TransaksiReservasi(),
+    const Master(),
     const ProfilAdmin(),
   ];
 
@@ -54,7 +55,7 @@ class _AdminState extends State<Admin> {
             icon: Icon(CupertinoIcons.list_bullet),
           ),
           BottomNavigationBarItem(
-            label: 'Menu',
+            label: 'Master',
             icon: Icon(CupertinoIcons.square_list),
           ),
           BottomNavigationBarItem(

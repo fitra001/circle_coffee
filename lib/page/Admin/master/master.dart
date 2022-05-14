@@ -1,22 +1,22 @@
-import 'package:circle_coffee/page/Admin/menu/daftar_kategori/daftar_kategori.dart';
-import 'package:circle_coffee/page/Admin/menu/daftar_menu/daftar_menu.dart';
-import 'package:circle_coffee/page/Admin/menu/tambah_menu/tambah_menu.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:circle_coffee/page/Admin/master/menu/daftar_kategori/daftar_kategori.dart';
+import 'package:circle_coffee/page/Admin/master/menu/daftar_menu/daftar_menu.dart';
+import 'package:circle_coffee/page/Admin/master/menu/menu.dart';
+import 'package:circle_coffee/page/Admin/master/reservasi/daftar_reservasi/daftar_reservasi.dart';
 import 'package:flutter/material.dart';
 
-class Menu extends StatefulWidget {
-  const Menu({Key? key}) : super(key: key);
+class Master extends StatefulWidget {
+  const Master({Key? key}) : super(key: key);
 
   @override
-  _MenuState createState() => _MenuState();
+  _MasterState createState() => _MasterState();
 }
 
-class _MenuState extends State<Menu> {
+class _MasterState extends State<Master> {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
       initialIndex: 0,
-      length: 2,
+      length: 3,
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.white,
@@ -24,9 +24,9 @@ class _MenuState extends State<Menu> {
           centerTitle: true,
           automaticallyImplyLeading: false,
           title: Container(
-            margin: const EdgeInsets.all(8.0),
+            // margin: const EdgeInsets.symmetric(vertical:8.0),
             decoration: BoxDecoration(
-                border: Border.all(color: const Color(0xffFFC107)),
+                border: Border.all(color: const Color.fromARGB(255, 7, 85, 255)),
                 borderRadius: const BorderRadius.all(Radius.circular(20))),
             child: const TabBar(
                 isScrollable: true,
@@ -39,11 +39,15 @@ class _MenuState extends State<Menu> {
                 tabs: [
                   Padding(
                     padding: EdgeInsets.all(8.0),
-                    child: Text('Daftar Menu'),
+                    child: Text('Menu'),
                   ),
                   Padding(
                     padding: EdgeInsets.all(8.0),
                     child: Text('Kategori'),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: Text('Reservasi'),
                   ),
                 ]),
           ),
@@ -54,17 +58,12 @@ class _MenuState extends State<Menu> {
               ),
           child: const TabBarView(children: [
             DaftarMenu(),
-            DaftarKategori()
+            DaftarKategori(),
+            // Menu(),
+            DaftarReservasi()
           ]),
         ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () => {
-            Navigator.push(context, 
-              MaterialPageRoute(builder: (_) => const TambahMenu())
-            )
-          },
-          child: Icon(CupertinoIcons.plus),
-        ),
+        
       ),
     );
   }
