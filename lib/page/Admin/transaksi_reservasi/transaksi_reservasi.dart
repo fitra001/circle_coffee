@@ -15,7 +15,7 @@ class _TransaksiReservasiState extends State<TransaksiReservasi> {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      initialIndex: 3,
+      initialIndex: 0,
       length: 4,
       child: Scaffold(
         appBar: AppBar(

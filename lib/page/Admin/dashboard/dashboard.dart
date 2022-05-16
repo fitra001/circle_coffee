@@ -1,4 +1,5 @@
 import 'package:circle_coffee/helpers/currency_format.dart';
+import 'package:circle_coffee/page/Admin/dashboard/total_penjualan/total_penjualan.dart';
 import 'package:circle_coffee/services/api_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -99,7 +100,7 @@ class _DashboardState extends State<Dashboard> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Dashboard Circle Coffee', 
+          'Dashboard Admin', 
           style: TextStyle(color: Color(0xffFFC107)),
         ),
         automaticallyImplyLeading: false,
@@ -139,58 +140,69 @@ class _DashboardState extends State<Dashboard> {
 
   Widget pendapatan(){
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text('Pendapatan Penjualan', style: TextStyle(fontSize: 24),),
-        loadingPendapatan ? const SizedBox() : Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  children: [
-                    Row(
-                      children: const [
-                        //Icon(CupertinoIcons.speedometer, size: 16,),
-                        Text('Bulan ini', style: TextStyle(fontSize: 16),),
-                      ],
-                    ),
-                    Text(
-                      CurrencyFormat.convertToIdr(
-                        pendapatanPenjualan == null ? 0 : int.parse(pendapatanPenjualan?['hari']), 0), 
-                      style: const TextStyle(fontSize: 24),
-                    )
-                  ],
+        loadingPendapatan ? const SizedBox() : SizedBox(
+          height: 180,
+          child: GridView.count(
+            physics: const ScrollPhysics(),
+            crossAxisCount: 2,
+            children: [
+              Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: const [
+                          //Icon(CupertinoIcons.speedometer, size: 16,),
+                          Text('Bulan ini', style: TextStyle(fontSize: 16),),
+                        ],
+                      ),
+                      Text(
+                        CurrencyFormat.convertToIdr(
+                          pendapatanPenjualan == null ? 0 : 
+                          pendapatanPenjualan?['hari'] == null ? 0:
+                          int.parse(pendapatanPenjualan?['hari']), 0), 
+                        style: const TextStyle(fontSize: 24),
+                      )
+                    ],
+                  ),
                 ),
               ),
-            ),
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  children: [
-                    Row(
-                      children: const [
-                        //Icon(
-                        //   CupertinoIcons.speedometer,
-                        //   size: 16,
-                        // ),
-                        Text(
-                          'Hari ini',
-                          style: TextStyle(fontSize: 16),
-                        ),
-                      ],
-                    ),
-                    Text(
-                      CurrencyFormat.convertToIdr(
-                          pendapatanPenjualan == null ? 0 : int.parse(pendapatanPenjualan?['bulan']), 0),
-                      style: const TextStyle(fontSize: 24),
-                    )
-                  ],
+              Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: const [
+                          //Icon(
+                          //   CupertinoIcons.speedometer,
+                          //   size: 16,
+                          // ),
+                          Text(
+                            'Hari ini',
+                            style: TextStyle(fontSize: 16),
+                          ),
+                        ],
+                      ),
+                      Text(
+                        CurrencyFormat.convertToIdr(
+                            pendapatanPenjualan == null ? 0 : 
+                            pendapatanPenjualan?['bulan'] == null ? 0 :
+                            int.parse(pendapatanPenjualan?['bulan']), 0),
+                        style: const TextStyle(fontSize: 24),
+                      )
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ],
     );
@@ -198,65 +210,76 @@ class _DashboardState extends State<Dashboard> {
 
   Widget penjualan() {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
           'Total Penjualan',
           style: TextStyle(fontSize: 24),
         ),
-        loadingTotalPenjualan ? const SizedBox() :Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  children: [
-                    Row(
-                      children: const [
-                        //Icon(
-                        //   CupertinoIcons.speedometer,
-                        //   size: 16,
-                        // ),
-                        Text(
-                          'Bulan ini',
-                          style: TextStyle(fontSize: 16),
+        loadingTotalPenjualan ? const SizedBox() : SizedBox(
+          height: 180,
+          child: GridView.count(
+            physics: const ScrollPhysics(),
+            crossAxisCount: 2,
+            children: [
+              InkWell(
+                onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => TotalPenjualan(title: 'Total Penjualan Bulan ini', future:ApiService().getTotalTerjualBulan(),))),
+                child: Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      children: [
+                        Row(
+                          children: const [
+                            //Icon(
+                            //   CupertinoIcons.speedometer,
+                            //   size: 16,
+                            // ),
+                            Text(
+                              'Bulan ini',
+                              style: TextStyle(fontSize: 16),
+                            ),
+                          ],
                         ),
+                        Text(
+                          totalPenjualan == null ? "0" : totalPenjualan?['bulan'] ?? 0,
+                          style: const TextStyle(fontSize: 24),
+                        )
                       ],
                     ),
-                    Text(
-                      totalPenjualan == null ? "0" : totalPenjualan?['bulan'],
-                      style: const TextStyle(fontSize: 24),
-                    )
-                  ],
+                  ),
                 ),
               ),
-            ),
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  children: [
-                    Row(
-                      children: const [
-                        //Icon(
-                        //   CupertinoIcons.speedometer,
-                        //   size: 16,
-                        // ),
-                        Text(
-                          'Hari ini',
-                          style: TextStyle(fontSize: 16),
+              InkWell(
+                onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => TotalPenjualan(title: 'Total Penjualan Hari ini', future: ApiService().getTotalTerjualHari(),))),
+                child: Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      children: [
+                        Row(
+                          children: const [
+                            //Icon(
+                            //   CupertinoIcons.speedometer,
+                            //   size: 16,
+                            // ),
+                            Text(
+                              'Hari ini',
+                              style: TextStyle(fontSize: 16),
+                            ),
+                          ],
                         ),
+                        Text(
+                            totalPenjualan == null ? "0" : totalPenjualan?['hari'] ?? 0, 
+                          style: const TextStyle(fontSize: 24)
+                        )
                       ],
                     ),
-                    Text(
-                        totalPenjualan == null ? "0" : totalPenjualan?['hari'], 
-                      style: const TextStyle(fontSize: 24)
-                    )
-                  ],
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ],
     );
@@ -264,78 +287,83 @@ class _DashboardState extends State<Dashboard> {
 
   Widget transaksi(){
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text('Transaksi Penjualan', style: TextStyle(fontSize: 24),),
-        loadingTransaksiPenjualan ? const SizedBox() : Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  children: [
-                    Row(
-                      children: const [
-                        //Icon(
-                        //   CupertinoIcons.money_pound,
-                        //   size: 16,
-                        // ),
-                        Text(
-                          'Belum Bayar',
-                          style: TextStyle(fontSize: 16),
-                        ),
-                      ],
-                    ),
-                    Text(transaksiPenjualan == null ? "0" : transaksiPenjualan?['belum_bayar'], style: const TextStyle(fontSize: 24))
-                  ],
+        loadingTransaksiPenjualan ? const SizedBox() : SizedBox(
+          height: 360,
+          child: GridView.count(
+            physics: const ScrollPhysics(),
+            crossAxisCount: 2,
+            children: [
+              Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    children: [
+                      Row(
+                        children: const [
+                          //Icon(
+                          //   CupertinoIcons.money_pound,
+                          //   size: 16,
+                          // ),
+                          Text(
+                            'Belum Bayar',
+                            style: TextStyle(fontSize: 16),
+                          ),
+                        ],
+                      ),
+                      Text(transaksiPenjualan == null ? "0" : transaksiPenjualan?['belum_bayar'] ?? 0, style: const TextStyle(fontSize: 24))
+                    ],
+                  ),
                 ),
               ),
-            ),
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  children: [
-                    Row(
-                      children: const [
-                        //Icon(
-                        //   CupertinoIcons.circle,
-                        //   size: 16,
-                        // ),
-                        Text(
-                          'Diproses',
-                          style: TextStyle(fontSize: 16),
-                        ),
-                      ],
-                    ),
-                    Text(transaksiPenjualan == null ? "0" : transaksiPenjualan?['diproses'], style: const TextStyle(fontSize: 24))
-                  ],
+              Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    children: [
+                      Row(
+                        children: const [
+                          //Icon(
+                          //   CupertinoIcons.circle,
+                          //   size: 16,
+                          // ),
+                          Text(
+                            'Diproses',
+                            style: TextStyle(fontSize: 16),
+                          ),
+                        ],
+                      ),
+                      Text(transaksiPenjualan == null ? "0" : transaksiPenjualan?['diproses'] ?? 0, style: const TextStyle(fontSize: 24))
+                    ],
+                  ),
                 ),
               ),
-            ),
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  children: [
-                    Row(
-                      children: const [
-                        //Icon(
-                        //   CupertinoIcons.square_list,
-                        //   size: 16,
-                        // ),
-                        Text(
-                          'Pesanan Siap',
-                          style: TextStyle(fontSize: 16),
-                        ),
-                      ],
-                    ),
-                    Text(transaksiPenjualan == null ? "0" : transaksiPenjualan?['siap'], style: const TextStyle(fontSize: 24))
-                  ],
+              Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    children: [
+                      Row(
+                        children: const [
+                          //Icon(
+                          //   CupertinoIcons.square_list,
+                          //   size: 16,
+                          // ),
+                          Text(
+                            'Pesanan Siap',
+                            style: TextStyle(fontSize: 16),
+                          ),
+                        ],
+                      ),
+                      Text(transaksiPenjualan == null ? "0" : transaksiPenjualan?['siap'] ?? 0, style: const TextStyle(fontSize: 24))
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ],
     );     
@@ -343,72 +371,81 @@ class _DashboardState extends State<Dashboard> {
 
   Widget pendapatanViewBooking() {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
           'Pendapatan Booking',
           style: TextStyle(fontSize: 24),
         ),
-        loadingBooking ? const SizedBox() : Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  children: [
-                    Row(
-                      children: const [
-                        //Icon(
-                        //   CupertinoIcons.speedometer,
-                        //   size: 16,
-                        // ),
-                        Text(
-                          'Bulan ini',
-                          style: TextStyle(fontSize: 16),
-                        ),
-                      ],
-                    ),
-                    Text(
-                      CurrencyFormat.convertToIdr(
-                          pendapatanBooking == null
-                              ? 0
-                              : int.parse(pendapatanBooking?['bulan']),
-                          0),
-                      style: const TextStyle(fontSize: 24),
-                    )
-                  ],
-                ),
-              ),
-            ),
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  children: [
-                    Row(
-                      children: const [
-                        //Icon(
-                        //   CupertinoIcons.speedometer,
-                        //   size: 16,
-                        // ),
-                        Text(
-                          'Hari ini',
-                          style: TextStyle(fontSize: 16),
-                        ),
-                      ],
-                    ),
-                    Text(
+        loadingBooking ? const SizedBox() : SizedBox(
+          height: 180,
+          child: GridView.count(
+            physics: const ScrollPhysics(),
+            crossAxisCount: 2,
+            children: [
+              Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: const [
+                          //Icon(
+                          //   CupertinoIcons.speedometer,
+                          //   size: 16,
+                          // ),
+                          Text(
+                            'Bulan ini',
+                            style: TextStyle(fontSize: 16),
+                          ),
+                        ],
+                      ),
+                      Text(
                         CurrencyFormat.convertToIdr(
                             pendapatanBooking == null
                                 ? 0
-                                : int.parse(pendapatanBooking?['hari']),
-                            0), 
-                      style: const TextStyle(fontSize: 24))
-                  ],
+                                : pendapatanBooking?['bulan'] == null ? 0 : int.parse(pendapatanBooking?['bulan']),
+                            0),
+                        style: const TextStyle(fontSize: 24),
+                      )
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ],
+              Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: const [
+                          //Icon(
+                          //   CupertinoIcons.speedometer,
+                          //   size: 16,
+                          // ),
+                          Text(
+                            'Hari ini',
+                            style: TextStyle(fontSize: 16),
+                          ),
+                        ],
+                      ),
+                      Text(
+                          CurrencyFormat.convertToIdr(
+                              pendapatanBooking == null
+                                  ? 0
+                                  : pendapatanBooking?['hari'] == null ? 0 : 
+                                  pendapatanBooking?['hari'] == null ? 0 :
+                                  int.parse(pendapatanBooking?['hari']),
+                              0), 
+                        style: const TextStyle(fontSize: 24))
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ],
     );
@@ -416,81 +453,86 @@ class _DashboardState extends State<Dashboard> {
 
   Widget booking() {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
           'Booking',
           style: TextStyle(fontSize: 24),
         ),
-        loadingTransaksiBooking ? const SizedBox() : Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  children: [
-                    Row(
-                      children: const [
-                        //Icon(
-                        //   CupertinoIcons.money_pound,
-                        //   size: 16,
-                        // ),
-                        Text(
-                          'Belum Bayar',
-                          style: TextStyle(fontSize: 16),
-                        ),
-                      ],
-                    ),
-                    Text(transaksiBooking == null ? "0" : transaksiBooking?['belum_bayar'], style: const TextStyle(fontSize: 24))
-                  ],
+        loadingTransaksiBooking ? const SizedBox() : SizedBox(
+          height: 360,
+          child: GridView.count(
+            physics: const ScrollPhysics(),
+            crossAxisCount: 2,
+            children: [
+              Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    children: [
+                      Row(
+                        children: const [
+                          //Icon(
+                          //   CupertinoIcons.money_pound,
+                          //   size: 16,
+                          // ),
+                          Text(
+                            'Belum Bayar',
+                            style: TextStyle(fontSize: 16),
+                          ),
+                        ],
+                      ),
+                      Text(transaksiBooking == null ? "0" : transaksiBooking?['belum_bayar'] ?? 0, style: const TextStyle(fontSize: 24))
+                    ],
+                  ),
                 ),
               ),
-            ),
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  children: [
-                    Row(
-                      children: const [
-                        //Icon(
-                        //   CupertinoIcons.circle,
-                        //   size: 16,
-                        // ),
-                        Text(
-                          'Belum Lunas',
-                          style: TextStyle(fontSize: 16),
-                        ),
-                      ],
-                    ),
-                    Text(transaksiBooking == null ? "0" : transaksiBooking?['belum_lunas'], style: const TextStyle(fontSize: 24))
-                  ],
+              Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    children: [
+                      Row(
+                        children: const [
+                          //Icon(
+                          //   CupertinoIcons.circle,
+                          //   size: 16,
+                          // ),
+                          Text(
+                            'Belum Lunas',
+                            style: TextStyle(fontSize: 16),
+                          ),
+                        ],
+                      ),
+                      Text(transaksiBooking == null ? "0" : transaksiBooking?['belum_lunas'] ?? 0, style: const TextStyle(fontSize: 24))
+                    ],
+                  ),
                 ),
               ),
-            ),
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  children: [
-                    Row(
-                      children: const [
-                        //Icon(
-                        //   CupertinoIcons.square_list,
-                        //   size: 16,
-                        // ),
-                        Text(
-                          'Lunas',
-                          style: TextStyle(fontSize: 16),
-                        ),
-                      ],
-                    ),
-                    Text(transaksiBooking == null ? "0" : transaksiBooking?['lunas'], style: const TextStyle(fontSize: 24))
-                  ],
+              Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    children: [
+                      Row(
+                        children: const [
+                          //Icon(
+                          //   CupertinoIcons.square_list,
+                          //   size: 16,
+                          // ),
+                          Text(
+                            'Lunas',
+                            style: TextStyle(fontSize: 16),
+                          ),
+                        ],
+                      ),
+                      Text(transaksiBooking == null ? "0" : transaksiBooking?['lunas'], style: const TextStyle(fontSize: 24))
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ],
     );

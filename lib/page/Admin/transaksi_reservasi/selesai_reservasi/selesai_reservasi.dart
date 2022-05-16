@@ -1,11 +1,15 @@
+import 'dart:io';
+
 import 'package:circle_coffee/helpers/currency_format.dart';
-import 'package:circle_coffee/page/Admin/transaksi/detail_transaksi/detail_transaksi.dart';
 import 'package:circle_coffee/page/Admin/transaksi_reservasi/detail_transaksi_reservasi/detail_transaksi_reservasi.dart';
 import 'package:circle_coffee/services/api_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'dart:io';
-// import 'package:pdf';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:pdf/pdf.dart';
+import 'package:pdf/widgets.dart' as pw;
+import 'package:permission_handler/permission_handler.dart';
 
 class SelesaiReservasi extends StatefulWidget {
   const SelesaiReservasi({Key? key}) : super(key: key);
@@ -31,7 +35,6 @@ class _SelesaiReservasiState extends State<SelesaiReservasi> {
     final order = await ApiService().getAllReservasiSelesai();
     var pesananOrder = order['data'];
 
-
     if (mounted) {
       setState(() {
         data = pesananOrder;
@@ -40,8 +43,158 @@ class _SelesaiReservasiState extends State<SelesaiReservasi> {
     }
   }
 
-  _printPDF(){
-    // final pdf = Document
+  _printPDF() async {
+    final pdf = pw.Document();
+    int total = 0;
+    List<pw.TableRow> list(){
+      List<pw.TableRow> tableRow= [];
+      tableRow.add(pw.TableRow(children: [
+        pw.Column(
+            crossAxisAlignment: pw.CrossAxisAlignment.center,
+            mainAxisAlignment: pw.MainAxisAlignment.center,
+            children: [
+              pw.Text('Tanggal Transaksi',
+                  style: const pw.TextStyle(fontSize: 6)),
+              pw.Divider(thickness: 1)
+            ]),
+        pw.Column(
+            crossAxisAlignment: pw.CrossAxisAlignment.center,
+            mainAxisAlignment: pw.MainAxisAlignment.center,
+            children: [
+              pw.Text('Tanggal Reservasi',
+                  style: const pw.TextStyle(fontSize: 6)),
+              pw.Divider(thickness: 1)
+            ]),
+        pw.Column(
+            crossAxisAlignment: pw.CrossAxisAlignment.center,
+            mainAxisAlignment: pw.MainAxisAlignment.center,
+            children: [
+              pw.Text('Nama', style: const pw.TextStyle(fontSize: 6)),
+              pw.Divider(thickness: 1)
+            ]),
+        pw.Column(
+            crossAxisAlignment: pw.CrossAxisAlignment.center,
+            mainAxisAlignment: pw.MainAxisAlignment.center,
+            children: [
+              pw.Text('Harga', style: const pw.TextStyle(fontSize: 6)),
+              pw.Divider(thickness: 1)
+            ])
+      ]));
+
+      for (var item in data) {
+        total = total + int.parse(item['total']);
+        tableRow.add(
+          pw.TableRow(children: [
+            pw.Column(
+                crossAxisAlignment: pw.CrossAxisAlignment.center,
+                mainAxisAlignment: pw.MainAxisAlignment.center,
+                children: [
+                  pw.Text(item['tgl_transaksi'],
+                      style: const pw.TextStyle(fontSize: 6)),
+                  pw.Divider(thickness: 1)
+                ]),
+            pw.Column(
+                crossAxisAlignment: pw.CrossAxisAlignment.center,
+                mainAxisAlignment: pw.MainAxisAlignment.center,
+                children: [
+                  pw.Text(item['tgl_reservasi'],
+                      style: const pw.TextStyle(fontSize: 6)),
+                  pw.Divider(thickness: 1)
+                ]),
+            pw.Column(
+                crossAxisAlignment: pw.CrossAxisAlignment.center,
+                mainAxisAlignment: pw.MainAxisAlignment.center,
+                children: [
+                  pw.Text(item['nama'], style: const pw.TextStyle(fontSize: 6)),
+                  pw.Divider(thickness: 1)
+                ]),
+            pw.Column(
+                crossAxisAlignment: pw.CrossAxisAlignment.center,
+                mainAxisAlignment: pw.MainAxisAlignment.center,
+                children: [
+                  pw.Text(item['total'], style: const pw.TextStyle(fontSize: 6)),
+                  pw.Divider(thickness: 1)
+                ])
+          ])
+        );
+      }
+
+      tableRow.add(pw.TableRow(children: [
+        pw.Column(
+            crossAxisAlignment: pw.CrossAxisAlignment.center,
+            mainAxisAlignment: pw.MainAxisAlignment.center,
+            children: [
+              pw.Text('Total', style: const pw.TextStyle(fontSize: 6)),
+              pw.Divider(thickness: 1)
+            ]),
+        pw.Column(
+            crossAxisAlignment: pw.CrossAxisAlignment.center,
+            mainAxisAlignment: pw.MainAxisAlignment.center,
+            children: [
+              pw.Text('', style: const pw.TextStyle(fontSize: 6)),
+              pw.Divider(thickness: 1)
+            ]),
+        pw.Column(
+            crossAxisAlignment: pw.CrossAxisAlignment.center,
+            mainAxisAlignment: pw.MainAxisAlignment.center,
+            children: [
+              pw.Text('', style: const pw.TextStyle(fontSize: 6)),
+              pw.Divider(thickness: 1)
+            ]),
+        pw.Column(
+            crossAxisAlignment: pw.CrossAxisAlignment.center,
+            mainAxisAlignment: pw.MainAxisAlignment.center,
+            children: [
+              pw.Text(total.toString(), style: const pw.TextStyle(fontSize: 6)),
+              pw.Divider(thickness: 1)
+            ])
+      ]));
+      return tableRow;
+    };
+
+    pdf.addPage(
+      pw.MultiPage(
+        pageFormat:
+          PdfPageFormat.letter.copyWith(marginBottom: 1.5 * PdfPageFormat.cm),
+      crossAxisAlignment: pw.CrossAxisAlignment.start,
+        header: (context)  {
+          return pw.Container(
+            alignment: pw.Alignment.centerRight,
+            margin: const pw.EdgeInsets.only(bottom: 3.0 * PdfPageFormat.mm),
+            padding: const pw.EdgeInsets.only(bottom: 3.0 * PdfPageFormat.mm),
+            child: pw.Text(DateTime.now().toString()
+                ));
+        },
+        footer: (context) {
+          return pw.Container(
+              alignment: pw.Alignment.centerRight,
+              margin: const pw.EdgeInsets.only(top: 1.0 * PdfPageFormat.cm),
+              child: pw.Text('Page ${context.pageNumber} of ${context.pagesCount}',));
+        },
+        build: (context) =>  [
+          pw.Center(
+            child: pw.Header(level: 1, text: 'Laporan Transaksi Reservasi')
+          ),
+          // pw.Paragraph(
+          //       text: 'Laporan '+
+          // )
+          pw.Padding(padding: const pw.EdgeInsets.all(10)),
+          pw.Table(
+            children: list()
+          )
+        ]
+        // build: 
+      )
+
+
+    
+    );
+
+    final file = await File('/storage/emulated/0/Documents/laporan_reservasi_'+DateTime.now().toString().split(' ')[0]+'.pdf').create(recursive: true);
+    final r = await file.writeAsBytes(await pdf.save());
+    if (file.path.isNotEmpty) {
+      Fluttertoast.showToast(msg: 'PDF Berhasil dibuat di folder Documents');
+    }
   }
 
   @override
@@ -87,7 +240,14 @@ class _SelesaiReservasiState extends State<SelesaiReservasi> {
                     ),
                   ),
                   InkWell(
-                    onTap: () => {_printPDF()},
+                    onTap: () async {
+                      final cekpermision = await Permission.storage.isGranted;
+                      if (cekpermision) {
+                        _printPDF();
+                      }else{
+                        await Permission.storage.request();
+                      }
+                    },
                     child: const Icon(Icons.print, size: 40),
                   ),
                 ],

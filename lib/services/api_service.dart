@@ -9,8 +9,8 @@ import 'package:http/http.dart';
 import 'package:image_picker/image_picker.dart';
 
 class ApiService {
-  // static const String url = "https://circlecoffee.000webhostapp.com";
-  static const String url = "http://localhost/backend/circle_coffee_ci";
+  static const String url = "https://circlecoffee.000webhostapp.com";
+  // static const String url = "http://localhost/backend/circle_coffee_ci";
   static const String baseUrl = url + '/api';
   // static const String baseUrl = "http://localhost:3000";
   // static const String baseUrl = "https://circle-coffee-001.herokuapp.com";
@@ -649,5 +649,22 @@ class ApiService {
 
     Map<String, dynamic> res = json.decode(response.body);
     return res;
+  }
+
+  Future<dynamic> getTotalTerjualHari() async {
+    final response = await client.get(Uri.parse(baseUrl + '/transaksi/terjual_hari'),
+        headers: {'Content-Type': 'application/json'});
+
+    Map<String, dynamic> res = json.decode(response.body);
+    return res['data'];
+  }
+
+  Future<dynamic> getTotalTerjualBulan() async {
+    final response = await client.get(
+        Uri.parse(baseUrl + '/transaksi/terjual_bulan'),
+        headers: {'Content-Type': 'application/json'});
+
+    Map<String, dynamic> res = json.decode(response.body);
+    return res['data'];
   }
 }

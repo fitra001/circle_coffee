@@ -14,7 +14,7 @@ class Admin extends StatefulWidget {
 }
 
 class _AdminState extends State<Admin> {
-  int _selectedNavbar = 2;
+  int _selectedNavbar = 0;
   final List _children = [
     const Dashboard(),
     const Transaksi(),
