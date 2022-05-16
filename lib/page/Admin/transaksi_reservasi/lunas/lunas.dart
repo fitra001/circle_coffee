@@ -37,7 +37,7 @@ class _LunasState extends State<Lunas> {
   }
 
   _fetchListPesanan() async {
-    final order = await ApiService().getAllPesananSiap();
+    final order = await ApiService().getAllReservasiLunas();
     var pesananOrder = order['data'];
 
     if (mounted) {
@@ -49,7 +49,7 @@ class _LunasState extends State<Lunas> {
   }
 
   _searchList(String text) async {
-    final getSearch = await ApiService().getAllPesananSiap(nama: text);
+    final getSearch = await ApiService().getAllReservasiLunas(nama: text);
     if (mounted) {
       setState(() {
         data = getSearch!['data'];

@@ -24,23 +24,23 @@ class _DetailTransaksiState extends State<DetailTransaksiReservasi> {
   List<dynamic> item = <dynamic>[];
   bool isLoading = true;
   User? user;
-
+  TextEditingController _totalBayarController = TextEditingController();
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
 
     // _fetchDetail();
-    // _login();
+    _login();
     _fetchReservasiDetail();
   }
 
-  // _login() async {
-  //   final getUser = await MySharedPref().getModel();
-  //   setState(() {
-  //     user = getUser;
-  //   });
-  // }
+  _login() async {
+    final getUser = await MySharedPref().getModel();
+    setState(() {
+      user = getUser;
+    });
+  }
 
   // _fetchDetail() async {
   //   final data =
@@ -57,7 +57,6 @@ class _DetailTransaksiState extends State<DetailTransaksiReservasi> {
     if (mounted) {
       setState(() {
         reservasi = res['data'];
-        print(reservasi);
         isLoading = false;
       });
     }
@@ -257,9 +256,9 @@ class _DetailTransaksiState extends State<DetailTransaksiReservasi> {
         },
         child: Image.asset('assets/icons/icon-whatsapp.gif'),
       ),
-      bottomNavigationBar: (reservasi['status'] == 'Belum Bayar') ? buttonKonfirmasi('BAYAR PESANAN', 'Diproses') 
-        : (reservasi['status'] == 'Diproses') ? buttonKonfirmasi('PESANAN SIAP', 'Pesanan Sudah Siap') 
-        : (reservasi['status'] == 'Pesanan Sudah Siap') ? buttonKonfirmasi('SELESAI', 'Selesai')  
+      bottomNavigationBar: (reservasi['status'] == 'Belum Bayar') ? buttonKonfirmasi('BAYAR PESANAN', 'bayar') 
+        : (reservasi['status'] == 'Belum Lunas') ? buttonKonfirmasi('LUNAS', 'Lunas') 
+        : (reservasi['status'] == 'Lunas') ? buttonKonfirmasi('SELESAI', 'Selesai')  
         : const SizedBox(height: 0,) 
     );
   }
@@ -302,7 +301,8 @@ class _DetailTransaksiState extends State<DetailTransaksiReservasi> {
                 decoration: const BoxDecoration(color: Color(0xff404040)),
                 child: TextButton(
                   onPressed: () {
-                    modalConfirmPesanan(context, status);
+                    (status == 'bayar') ? modalConfirmBayar(context) 
+                    : modalConfirmPesanan(context, status);
                   },
                   child: Text(
                     title,
@@ -339,8 +339,8 @@ class _DetailTransaksiState extends State<DetailTransaksiReservasi> {
               OutlinedButton.icon(
                 icon: const Icon(CupertinoIcons.cart),
                 onPressed: () async {
-                  final updateStatus = await ApiService().updateStatusPesanan(
-                    status: status, idTransaksi: widget.idTransaksi, petugas:(status == "Diproses")?user!.id_user :null 
+                  final updateStatus = await ApiService().updateStatusPesananReservasi(
+                    status: status, idTransaksi: widget.idTransaksi, total: reservasi['total'] 
                   );
                     
                   Fluttertoast.showToast(msg: updateStatus['message']);
@@ -357,6 +357,79 @@ class _DetailTransaksiState extends State<DetailTransaksiReservasi> {
                     );
                   }
                   
+                },
+                label: const Text('Konfirmasi'),
+                style:
+                    OutlinedButton.styleFrom(padding: const EdgeInsets.all(24)),
+              ),
+            ],
+          );
+        });
+  }
+
+  Future<dynamic> modalConfirmBayar(BuildContext context) {
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return SimpleDialog(
+            children: [
+              const Padding(
+                padding: EdgeInsets.all(16.0),
+                child: Text(
+                  'Konfirmasi Pesanan',
+                  style: TextStyle(fontSize: 18),
+                ),
+              ),
+              Container(
+                margin:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                child: TextFormField(
+                  controller: _totalBayarController,
+                  style: const TextStyle(fontFamily: 'sans serif'),
+                  decoration: const InputDecoration(
+                    prefixIcon:Padding(
+                      padding: EdgeInsetsDirectional.only(start: 12.0),
+                      child: Text('Rp.'),
+                    ),
+                    hintText: 'Nominal',
+                    enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Color(0x99FFC107)),
+                        borderRadius:
+                            BorderRadius.all(Radius.circular(20.0))),
+                    border: OutlineInputBorder(
+                        borderSide: BorderSide(color: Color(0x99FFC107)),
+                        borderRadius:
+                            BorderRadius.all(Radius.circular(20.0))),
+                  ),
+                )
+              ),
+              OutlinedButton.icon(
+                icon: const Icon(CupertinoIcons.clear),
+                onPressed: () => Navigator.pop(context),
+                label: const Text('BATAL'),
+                style:
+                    OutlinedButton.styleFrom(padding: const EdgeInsets.all(24)),
+              ),
+              OutlinedButton.icon(
+                icon: const Icon(CupertinoIcons.cart),
+                onPressed: () async {
+                  final bayar = await ApiService().bayarReservasiPesanan(idTransaksi: widget.idTransaksi, total: reservasi['total'], bayar: _totalBayarController.text, petugas: user?.id_user);
+                  // final updateStatus = await ApiService().updateStatusPesanan(
+                //       status: status,
+                //       idTransaksi: widget.idTransaksi,
+                //       petugas: (status == "Diproses") ? user!.id_user : null);
+
+                  Fluttertoast.showToast(msg: bayar['message']);
+                  if (bayar['success']) {
+                    // if(transaksi['status'] !='Belum Bayar'){
+                    launchWhatsApp(
+                        phone: reservasi['no_telp'],
+                        message:
+                            'Total Pesanan ${reservasi['total']}, telah dibayar');
+                    // }
+                    Navigator.pushReplacement(context,
+                        MaterialPageRoute(builder: (_) => const Admin()));
+                  }
                 },
                 label: const Text('Konfirmasi'),
                 style:

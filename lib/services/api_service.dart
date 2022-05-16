@@ -411,6 +411,14 @@ class ApiService {
     return res;
   }
 
+  Future<dynamic> getPendapatanBooking() async {
+    final response = await client
+        .get(Uri.parse(baseUrl + '/transaksi/pendapatan_booking'));
+
+    Map<String, dynamic> res = json.decode(response.body);
+    return res;
+  }
+
   Future<dynamic> getTotalPenjualan() async {
     final response = await client
         .get(Uri.parse(baseUrl + '/transaksi/total_penjualan'));
@@ -422,6 +430,14 @@ class ApiService {
   Future<dynamic> getTransaksiPenjualan() async {
     final response =
         await client.get(Uri.parse(baseUrl + '/transaksi/transaksi_penjualan'));
+
+    Map<String, dynamic> res = json.decode(response.body);
+    return res;
+  }
+
+  Future<dynamic> getTransaksiBooking() async {
+    final response =
+        await client.get(Uri.parse(baseUrl + '/transaksi/transaksi_booking'));
 
     Map<String, dynamic> res = json.decode(response.body);
     return res;
@@ -580,6 +596,56 @@ class ApiService {
   Future<dynamic> getAllReservasiSelesai() async {
     final response = await client.get(Uri.parse(baseUrl + '/reservasi/selesai'),
         headers: {'Content-Type': 'application/json'});
+
+    Map<String, dynamic> res = json.decode(response.body);
+    return res;
+  }
+
+  Future<dynamic> bayarReservasiPesanan(
+      {idTransaksi, total, bayar, String? petugas}) async {
+    var data = {'id': idTransaksi, 'total': total, 'bayar':bayar, 'petugas':petugas};
+    // if (petugas != null) {
+    //   data['petugas'] = petugas;
+    // }
+    final response = await client.post(
+        Uri.parse(baseUrl + '/reservasi/bayar'),
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode(data));
+
+    Map<String, dynamic> res = json.decode(response.body);
+    return res;
+  }
+
+  Future<dynamic> updateStatusPesananReservasi(
+      {status, idTransaksi, total}) async {
+    var data = {'status': status, 'id': idTransaksi, 'total' : total};
+    final response = await client.post(
+        Uri.parse(baseUrl + '/reservasi/update_pesanan'),
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode(data));
+
+    Map<String, dynamic> res = json.decode(response.body);
+    return res;
+  }
+  
+  Future<dynamic> filterSelesaiReservasi(
+      {tglAwal, tglAkhir}) async {
+    var data = {'tgl_awal': tglAwal, 'tgl_akhir': tglAkhir};
+    final response = await client.post(
+        Uri.parse(baseUrl + '/reservasi/tanggal'),
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode(data));
+
+    Map<String, dynamic> res = json.decode(response.body);
+    return res;
+  }
+
+  Future<dynamic> filterSelesaiTransaksi({tglAwal, tglAkhir}) async {
+    var data = {'tgl_awal': tglAwal, 'tgl_akhir': tglAkhir};
+    final response = await client.post(
+        Uri.parse(baseUrl + '/order/tanggal'),
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode(data));
 
     Map<String, dynamic> res = json.decode(response.body);
     return res;

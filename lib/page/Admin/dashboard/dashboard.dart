@@ -12,11 +12,15 @@ class Dashboard extends StatefulWidget {
 
 class _DashboardState extends State<Dashboard> {
   bool loadingPendapatan = true;
+  bool loadingBooking = true;
   bool loadingTotalPenjualan = true;
   bool loadingTransaksiPenjualan = true;
+  bool loadingTransaksiBooking = true;
   Map<String,dynamic>? pendapatanPenjualan = {};
   Map<String, dynamic>? totalPenjualan = {};
   Map<String, dynamic>? transaksiPenjualan = {};
+  Map<String, dynamic>? pendapatanBooking = {};
+  Map<String, dynamic>? transaksiBooking = {};
 
 
   @override
@@ -31,6 +35,8 @@ class _DashboardState extends State<Dashboard> {
     _pendapatanPenjualan();
     _totalPenjualan();
     _transaksiPenjualan();
+    _pendapatanBooking();
+    _transaksiBooking();
   }
 
   _pendapatanPenjualan() async {
@@ -66,6 +72,28 @@ class _DashboardState extends State<Dashboard> {
     }
   }
 
+  _pendapatanBooking() async {
+    final res = await ApiService().getPendapatanBooking();
+
+    if (mounted) {
+      setState(() {
+        pendapatanBooking = res['data'];
+        loadingBooking = false;
+      });
+    }
+  }
+
+  _transaksiBooking() async {
+    final res = await ApiService().getTransaksiBooking();
+
+    if (mounted) {
+      setState(() {
+        transaksiBooking = res['data'];
+        loadingTransaksiBooking = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {;
     return Scaffold(
@@ -96,7 +124,7 @@ class _DashboardState extends State<Dashboard> {
                 transaksi(),
                 gap(),
 
-                pendapatanBooking(),
+                pendapatanViewBooking(),
                 gap(),
                 
                 booking(),
@@ -313,14 +341,14 @@ class _DashboardState extends State<Dashboard> {
     );     
   }
 
-  Widget pendapatanBooking() {
+  Widget pendapatanViewBooking() {
     return Column(
       children: [
         const Text(
           'Pendapatan Booking',
           style: TextStyle(fontSize: 24),
         ),
-        Row(
+        loadingBooking ? const SizedBox() : Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Card(
@@ -341,7 +369,11 @@ class _DashboardState extends State<Dashboard> {
                       ],
                     ),
                     Text(
-                      '300',
+                      CurrencyFormat.convertToIdr(
+                          pendapatanBooking == null
+                              ? 0
+                              : int.parse(pendapatanBooking?['bulan']),
+                          0),
                       style: const TextStyle(fontSize: 24),
                     )
                   ],
@@ -365,7 +397,13 @@ class _DashboardState extends State<Dashboard> {
                         ),
                       ],
                     ),
-                    Text('30', style: const TextStyle(fontSize: 24))
+                    Text(
+                        CurrencyFormat.convertToIdr(
+                            pendapatanBooking == null
+                                ? 0
+                                : int.parse(pendapatanBooking?['hari']),
+                            0), 
+                      style: const TextStyle(fontSize: 24))
                   ],
                 ),
               ),
@@ -383,7 +421,7 @@ class _DashboardState extends State<Dashboard> {
           'Booking',
           style: TextStyle(fontSize: 24),
         ),
-        Row(
+        loadingTransaksiBooking ? const SizedBox() : Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Card(
@@ -403,7 +441,7 @@ class _DashboardState extends State<Dashboard> {
                         ),
                       ],
                     ),
-                    Text('16', style: const TextStyle(fontSize: 24))
+                    Text(transaksiBooking == null ? "0" : transaksiBooking?['belum_bayar'], style: const TextStyle(fontSize: 24))
                   ],
                 ),
               ),
@@ -425,7 +463,7 @@ class _DashboardState extends State<Dashboard> {
                         ),
                       ],
                     ),
-                    Text('4', style: const TextStyle(fontSize: 24))
+                    Text(transaksiBooking == null ? "0" : transaksiBooking?['belum_lunas'], style: const TextStyle(fontSize: 24))
                   ],
                 ),
               ),
@@ -442,12 +480,12 @@ class _DashboardState extends State<Dashboard> {
                         //   size: 16,
                         // ),
                         Text(
-                          'Total Booking',
+                          'Lunas',
                           style: TextStyle(fontSize: 16),
                         ),
                       ],
                     ),
-                    Text('16', style: const TextStyle(fontSize: 24))
+                    Text(transaksiBooking == null ? "0" : transaksiBooking?['lunas'], style: const TextStyle(fontSize: 24))
                   ],
                 ),
               ),

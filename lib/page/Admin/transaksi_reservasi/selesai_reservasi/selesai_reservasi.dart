@@ -2,7 +2,10 @@ import 'package:circle_coffee/helpers/currency_format.dart';
 import 'package:circle_coffee/page/Admin/transaksi/detail_transaksi/detail_transaksi.dart';
 import 'package:circle_coffee/page/Admin/transaksi_reservasi/detail_transaksi_reservasi/detail_transaksi_reservasi.dart';
 import 'package:circle_coffee/services/api_service.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'dart:io';
+// import 'package:pdf';
 
 class SelesaiReservasi extends StatefulWidget {
   const SelesaiReservasi({Key? key}) : super(key: key);
@@ -25,7 +28,7 @@ class _SelesaiReservasiState extends State<SelesaiReservasi> {
   }
 
   _fetchListPesanan() async {
-    final order = await ApiService().getAllPesananSelesai();
+    final order = await ApiService().getAllReservasiSelesai();
     var pesananOrder = order['data'];
 
 
@@ -37,17 +40,66 @@ class _SelesaiReservasiState extends State<SelesaiReservasi> {
     }
   }
 
+  _printPDF(){
+    // final pdf = Document
+  }
+
   @override
   Widget build(BuildContext context) {
     return isLoading
       ? const Center(child: CircularProgressIndicator())
       : Container(
         margin: const EdgeInsets.symmetric(horizontal: 16),
-        child: data.isEmpty
-          ? const Center(
-              child: Text('Data Kosong'),
-            )
-          : listPesanan()
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  InkWell(
+                    onTap: () async {
+                      DateTimeRange? result = await showDateRangePicker(
+                        context: context,
+                        firstDate:
+                            DateTime(2022, 1, 1), // the earliest allowable
+                        lastDate:
+                            DateTime(2040, 12, 31), // the latest allowable
+                        currentDate: DateTime.now(),
+                        saveText: 'Done',
+                      );
+                      if (result != null) {
+                        final res = await ApiService()
+                            .filterSelesaiReservasi(
+                                tglAwal:
+                                    result.start.toString().split(' ')[0],
+                                tglAkhir:
+                                    result.end.toString().split(' ')[0]);
+                        setState(() {
+                          data = res['data'];
+                        });
+                      }
+                    },
+                    child: const Icon(
+                      Icons.filter_list_alt,
+                      size: 40,
+                    ),
+                  ),
+                  InkWell(
+                    onTap: () => {_printPDF()},
+                    child: const Icon(Icons.print, size: 40),
+                  ),
+                ],
+              ),
+            ),
+            data.isEmpty
+              ? const Center(
+                  child: Text('Data Kosong'),
+                )
+              : Expanded(child: listPesanan()),
+          ],
+        )
   );
   }
 
