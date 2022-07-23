@@ -1,7 +1,7 @@
-import 'package:circle_coffee/page/Admin/transaksi_reservasi/belum_lunas/belum_lunas.dart';
-import 'package:circle_coffee/page/Admin/transaksi_reservasi/lunas/lunas.dart';
-import 'package:circle_coffee/page/Admin/transaksi_reservasi/pesanan_reservasi/pesanan_reservasi.dart';
-import 'package:circle_coffee/page/Admin/transaksi_reservasi/selesai_reservasi/selesai_reservasi.dart';
+import 'package:s2r_kitchen/page/Admin/transaksi_reservasi/belum_lunas/belum_lunas.dart';
+import 'package:s2r_kitchen/page/Admin/transaksi_reservasi/lunas/lunas.dart';
+import 'package:s2r_kitchen/page/Admin/transaksi_reservasi/pesanan_reservasi/pesanan_reservasi.dart';
+import 'package:s2r_kitchen/page/Admin/transaksi_reservasi/selesai_reservasi/selesai_reservasi.dart';
 import 'package:flutter/material.dart';
 
 class TransaksiReservasi extends StatefulWidget {

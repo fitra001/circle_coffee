@@ -1,16 +1,16 @@
-import 'package:circle_coffee/library/my_shared_pref.dart';
-import 'package:circle_coffee/models/kategori_model.dart';
-import 'package:circle_coffee/models/menu_model.dart';
-import 'package:circle_coffee/models/user_model.dart';
-import 'package:circle_coffee/page/HomeUser/category/category.dart';
-import 'package:circle_coffee/page/HomeUser/detail_item/detail_item.dart';
-import 'package:circle_coffee/page/HomeUser/list_item/list_item.dart';
-import 'package:circle_coffee/page/HomeUser/cart_item/cart_item.dart';
-import 'package:circle_coffee/services/api_service.dart';
+import 'package:s2r_kitchen/library/my_shared_pref.dart';
+import 'package:s2r_kitchen/models/kategori_model.dart';
+import 'package:s2r_kitchen/models/menu_model.dart';
+import 'package:s2r_kitchen/models/user_model.dart';
+import 'package:s2r_kitchen/page/HomeUser/category/category.dart';
+import 'package:s2r_kitchen/page/HomeUser/detail_item/detail_item.dart';
+import 'package:s2r_kitchen/page/HomeUser/list_item/list_item.dart';
+import 'package:s2r_kitchen/page/HomeUser/cart_item/cart_item.dart';
+import 'package:s2r_kitchen/services/api_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:circle_coffee/helpers/currency_format.dart';
+import 'package:s2r_kitchen/helpers/currency_format.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);

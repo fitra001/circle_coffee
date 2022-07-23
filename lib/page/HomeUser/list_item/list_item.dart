@@ -1,7 +1,7 @@
-import 'package:circle_coffee/helpers/currency_format.dart';
-import 'package:circle_coffee/models/menu_model.dart';
-import 'package:circle_coffee/page/HomeUser/detail_item/detail_item.dart';
-import 'package:circle_coffee/services/api_service.dart';
+import 'package:s2r_kitchen/helpers/currency_format.dart';
+import 'package:s2r_kitchen/models/menu_model.dart';
+import 'package:s2r_kitchen/page/HomeUser/detail_item/detail_item.dart';
+import 'package:s2r_kitchen/services/api_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 

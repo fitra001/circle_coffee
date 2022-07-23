@@ -1,8 +1,8 @@
-import 'package:circle_coffee/page/Admin/dashboard/dashboard.dart';
-import 'package:circle_coffee/page/Admin/master/master.dart';
-import 'package:circle_coffee/page/Admin/profil_admin/profil_admin.dart';
-import 'package:circle_coffee/page/Admin/transaksi/transaksi.dart';
-import 'package:circle_coffee/page/Admin/transaksi_reservasi/transaksi_reservasi.dart';
+import 'package:s2r_kitchen/page/Admin/dashboard/dashboard.dart';
+import 'package:s2r_kitchen/page/Admin/master/master.dart';
+import 'package:s2r_kitchen/page/Admin/profil_admin/profil_admin.dart';
+import 'package:s2r_kitchen/page/Admin/transaksi/transaksi.dart';
+import 'package:s2r_kitchen/page/Admin/transaksi_reservasi/transaksi_reservasi.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 

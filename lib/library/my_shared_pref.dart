@@ -1,4 +1,4 @@
-import 'package:circle_coffee/models/user_model.dart';
+import 'package:s2r_kitchen/models/user_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class MySharedPref {

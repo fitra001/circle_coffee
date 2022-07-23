@@ -1,6 +1,6 @@
-import 'package:circle_coffee/helpers/currency_format.dart';
-import 'package:circle_coffee/page/HomeUser/reservasi/detail_paket/detail_paket.dart';
-import 'package:circle_coffee/services/api_service.dart';
+import 'package:s2r_kitchen/helpers/currency_format.dart';
+import 'package:s2r_kitchen/page/HomeUser/reservasi/detail_paket/detail_paket.dart';
+import 'package:s2r_kitchen/services/api_service.dart';
 import 'package:flutter/material.dart';
 
 class Reservasi extends StatefulWidget {

@@ -1,12 +1,12 @@
-import 'package:circle_coffee/helpers/currency_format.dart';
-import 'package:circle_coffee/library/my_shared_pref.dart';
-import 'package:circle_coffee/models/menu_model.dart';
-import 'package:circle_coffee/models/user_model.dart';
-import 'package:circle_coffee/page/Admin/admin.dart';
-import 'package:circle_coffee/page/Admin/master/menu/edit_menu/edit_menu.dart';
-import 'package:circle_coffee/page/HomeUser/cart_item/cart_item.dart';
-import 'package:circle_coffee/page/HomeUser/home/home.dart';
-import 'package:circle_coffee/services/api_service.dart';
+import 'package:s2r_kitchen/helpers/currency_format.dart';
+import 'package:s2r_kitchen/library/my_shared_pref.dart';
+import 'package:s2r_kitchen/models/menu_model.dart';
+import 'package:s2r_kitchen/models/user_model.dart';
+import 'package:s2r_kitchen/page/Admin/admin.dart';
+import 'package:s2r_kitchen/page/Admin/master/menu/edit_menu/edit_menu.dart';
+import 'package:s2r_kitchen/page/HomeUser/cart_item/cart_item.dart';
+import 'package:s2r_kitchen/page/HomeUser/home/home.dart';
+import 'package:s2r_kitchen/services/api_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -137,9 +137,9 @@ class _DetailItemState extends State<DetailItem> {
                   },
                   body: Container(
                     margin: const EdgeInsets.symmetric(horizontal: 24),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      mainAxisSize: MainAxisSize.max,
+                    child: ListView(
+                      // mainAxisAlignment: MainAxisAlignment.center,
+                      // mainAxisSize: MainAxisSize.max,
                       children: [
                         SizedBox(
                           width: double.infinity,

@@ -1,8 +1,8 @@
 import 'dart:io';
 
-import 'package:circle_coffee/models/kategori_model.dart';
-import 'package:circle_coffee/page/Admin/admin.dart';
-import 'package:circle_coffee/services/api_service.dart';
+import 'package:s2r_kitchen/models/kategori_model.dart';
+import 'package:s2r_kitchen/page/Admin/admin.dart';
+import 'package:s2r_kitchen/services/api_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';

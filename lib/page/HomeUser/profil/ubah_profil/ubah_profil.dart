@@ -1,14 +1,14 @@
 import 'dart:io';
 
-import 'package:circle_coffee/library/my_shared_pref.dart';
-import 'package:circle_coffee/models/user_model.dart';
-import 'package:circle_coffee/page/Admin/admin.dart';
-import 'package:circle_coffee/page/Admin/kelola_user/kelola_user.dart';
-import 'package:circle_coffee/page/Admin/profil_admin/profil_admin.dart';
-import 'package:circle_coffee/page/HomeUser/home/home.dart';
-import 'package:circle_coffee/page/HomeUser/profil/profil.dart';
-import 'package:circle_coffee/page/login/login.dart';
-import 'package:circle_coffee/services/api_service.dart';
+import 'package:s2r_kitchen/library/my_shared_pref.dart';
+import 'package:s2r_kitchen/models/user_model.dart';
+import 'package:s2r_kitchen/page/Admin/admin.dart';
+import 'package:s2r_kitchen/page/Admin/kelola_user/kelola_user.dart';
+import 'package:s2r_kitchen/page/Admin/profil_admin/profil_admin.dart';
+import 'package:s2r_kitchen/page/HomeUser/home/home.dart';
+import 'package:s2r_kitchen/page/HomeUser/profil/profil.dart';
+import 'package:s2r_kitchen/page/login/login.dart';
+import 'package:s2r_kitchen/services/api_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -103,186 +103,188 @@ class _UbahProfil extends State<UbahProfil>{
         title: const Text('Ubah Profil', style: TextStyle(color: Colors.black),),  
         backgroundColor: Colors.white,
       ),
-      body: Container(
-        margin: const EdgeInsets.all(16),
-        child: Column(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            GestureDetector(
-              onTap: () async {
-                final XFile? _image = await _imagePicker.pickImage(source: ImageSource.gallery, imageQuality: 50);
-                setState(() {
-                  image = _image;
-                });
-              },
-              child: Center(
-                  child: Container(
-                clipBehavior: Clip.antiAliasWithSaveLayer,
-                decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: const Color(0xff000000),
-                    border:
-                        Border.all(width: 1.0, color: const Color(0xff000000))),
-                height: 120,
-                width: 120,
-                child: (image != null) ?
-                  _imageFile(image!)
-                  : (user?.foto != null) ? Image.network( ApiService.imageProfilUrl + user!.foto.toString())
-                  : Image.asset(
-                  'assets/images/bgsplash.png',
-                ),
-              )),
-            ),
-            const SizedBox(
-              height: 24,
-            ),
-            TextFormField(
-              controller: _namaController,
-              style: const TextStyle(fontFamily: 'sans serif'),
-              decoration: const InputDecoration(
-                labelText: 'Nama',
-                prefixIcon: Icon(CupertinoIcons.person),
-                enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Color(0x99FFC107)),
-                  borderRadius: BorderRadius.all(Radius.circular(20.0))
-                ),
-                border: OutlineInputBorder(
-                  borderSide: BorderSide(color: Color(0x99FFC107)),
-                  borderRadius: BorderRadius.all(Radius.circular(20.0))
-                ),
-              ),
-            ),
-            const SizedBox(height: 16,),
-            TextFormField(
-              controller: _noTelpController,
-              style: const TextStyle(fontFamily: 'sans serif'),
-              decoration: const InputDecoration(
-                labelText: 'No Telpon',
-                prefixIcon: Icon(CupertinoIcons.phone),
-                enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Color(0x99FFC107)),
-                  borderRadius: BorderRadius.all(Radius.circular(20.0))
-                ),
-                border: OutlineInputBorder(
-                  borderSide: BorderSide(color: Color(0x99FFC107)),
-                  borderRadius: BorderRadius.all(Radius.circular(20.0))
-                ),
-              ),
-            ),
-            const SizedBox(height: 16,),
-            TextFormField(
-              controller: _emailController,
-              style: const TextStyle(fontFamily: 'sans serif'),
-              decoration: const InputDecoration(
-                labelText: 'Email',
-                prefixIcon: Icon(CupertinoIcons.mail),
-                enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Color(0x99FFC107)),
-                  borderRadius: BorderRadius.all(Radius.circular(20.0))
-                ),
-                border: OutlineInputBorder(
-                  borderSide: BorderSide(color: Color(0x99FFC107)),
-                  borderRadius: BorderRadius.all(Radius.circular(20.0))
-                ),
-              ),
-            ),
-            const SizedBox(height: 16,),
-            TextFormField(
-              controller: _passController,
-              style: const TextStyle(fontFamily: 'sans serif'),
-              decoration: InputDecoration(
-                labelText: 'Password',
-                prefixIcon: const Icon(CupertinoIcons.lock),
-                enabledBorder: const OutlineInputBorder(
-                  borderSide: BorderSide(color: Color(0x99FFC107)),
-                  borderRadius: BorderRadius.all(Radius.circular(20.0))
-                ),
-                border: const OutlineInputBorder(
-                  borderSide: BorderSide(color: Color(0x99FFC107)),
-                  borderRadius: BorderRadius.all(Radius.circular(20.0))
-                ),
-                suffixIcon: InkWell(
-                  onTap: _togglePasswordView,
-                  child: Icon(
-                    _isHidden ?
-                    CupertinoIcons.eye_fill :
-                    CupertinoIcons.eye_slash
-                    )
-                )
-              ),
-              obscureText: _isHidden,
-            ),
-            const SizedBox(height: 16,),
-            SizedBox(
-              width: double.infinity,
-              child: isLoading ? const Center(child: CircularProgressIndicator(),) : TextButton(
-                style: TextButton.styleFrom(
-                        padding: const EdgeInsets.all(20),
-                        backgroundColor: const Color(0x44FFC107),
-                        shape: RoundedRectangleBorder(
-                          side: const BorderSide(
-                            color: Color(0xFF000000),
-                            width: 1,
-                            style: BorderStyle.solid
-                          ),
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        // shape: StadiumBorder()
-                      ),
-                onPressed: () async{  
+      body: SingleChildScrollView(
+        child: Container(
+          margin: const EdgeInsets.all(16),
+          child: Column(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              GestureDetector(
+                onTap: () async {
+                  final XFile? _image = await _imagePicker.pickImage(source: ImageSource.gallery, imageQuality: 50);
                   setState(() {
-                    isLoading = true;
-                  });     
-
-                  var data = {
-                    'id_user': widget.user!.id_user.toString(),
-                    'nama': _namaController.text,
-                    'no_telp': _noTelpController.text,
-                    'email': _emailController.text,
-                    'password' : _passController.text
-                  };
-                  
-                  final res = await ApiService().ubahUser(data);
-                  if (res['success']) {
-                    User u = User();
-                    u.id_user = data['id_user'];
-                    u.nama = data['nama'];
-                    u.email = data['email'];
-                    u.no_telp = data['no_telp'];
-                    // u.foto = data['id_user'];
-                    u.role_id = widget.user?.role_id;
-
-                    MySharedPref().setModel(u);
-                    
-                    // Navigator.pop(context);
-
-                    Navigator.pushReplacement(context,
-                      MaterialPageRoute(builder: (context) => (u.role_id == "3" ) ? const Home(): const Admin())
-                    );
-                    Fluttertoast.showToast(
-                      msg: res[
-                          'message']);
-                  }else{
-                    setState(() {
-                      isLoading = false;
-                    });
-                    Fluttertoast.showToast(
-                      msg: res[
-                          'message']);
-                  }
-                    
-                }, 
-                child: const Text(
-                  "Simpan", 
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.black
+                    image = _image;
+                  });
+                },
+                child: Center(
+                    child: Container(
+                  clipBehavior: Clip.antiAliasWithSaveLayer,
+                  decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: const Color(0xff000000),
+                      border:
+                          Border.all(width: 1.0, color: const Color(0xff000000))),
+                  height: 120,
+                  width: 120,
+                  child: (image != null) ?
+                    _imageFile(image!)
+                    : (user?.foto != null) ? Image.network( ApiService.imageProfilUrl + user!.foto.toString())
+                    : Image.asset(
+                    'assets/images/bgsplash.png',
                   ),
-                )
+                )),
               ),
-            ),
-          ],
+              const SizedBox(
+                height: 24,
+              ),
+              TextFormField(
+                controller: _namaController,
+                style: const TextStyle(fontFamily: 'sans serif'),
+                decoration: const InputDecoration(
+                  labelText: 'Nama',
+                  prefixIcon: Icon(CupertinoIcons.person),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Color(0x99FFC107)),
+                    borderRadius: BorderRadius.all(Radius.circular(20.0))
+                  ),
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide(color: Color(0x99FFC107)),
+                    borderRadius: BorderRadius.all(Radius.circular(20.0))
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16,),
+              TextFormField(
+                controller: _noTelpController,
+                style: const TextStyle(fontFamily: 'sans serif'),
+                decoration: const InputDecoration(
+                  labelText: 'No Telpon',
+                  prefixIcon: Icon(CupertinoIcons.phone),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Color(0x99FFC107)),
+                    borderRadius: BorderRadius.all(Radius.circular(20.0))
+                  ),
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide(color: Color(0x99FFC107)),
+                    borderRadius: BorderRadius.all(Radius.circular(20.0))
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16,),
+              TextFormField(
+                controller: _emailController,
+                style: const TextStyle(fontFamily: 'sans serif'),
+                decoration: const InputDecoration(
+                  labelText: 'Email',
+                  prefixIcon: Icon(CupertinoIcons.mail),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Color(0x99FFC107)),
+                    borderRadius: BorderRadius.all(Radius.circular(20.0))
+                  ),
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide(color: Color(0x99FFC107)),
+                    borderRadius: BorderRadius.all(Radius.circular(20.0))
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16,),
+              TextFormField(
+                controller: _passController,
+                style: const TextStyle(fontFamily: 'sans serif'),
+                decoration: InputDecoration(
+                  labelText: 'Password',
+                  prefixIcon: const Icon(CupertinoIcons.lock),
+                  enabledBorder: const OutlineInputBorder(
+                    borderSide: BorderSide(color: Color(0x99FFC107)),
+                    borderRadius: BorderRadius.all(Radius.circular(20.0))
+                  ),
+                  border: const OutlineInputBorder(
+                    borderSide: BorderSide(color: Color(0x99FFC107)),
+                    borderRadius: BorderRadius.all(Radius.circular(20.0))
+                  ),
+                  suffixIcon: InkWell(
+                    onTap: _togglePasswordView,
+                    child: Icon(
+                      _isHidden ?
+                      CupertinoIcons.eye_fill :
+                      CupertinoIcons.eye_slash
+                      )
+                  )
+                ),
+                obscureText: _isHidden,
+              ),
+              const SizedBox(height: 16,),
+              SizedBox(
+                width: double.infinity,
+                child: isLoading ? const Center(child: CircularProgressIndicator(),) : TextButton(
+                  style: TextButton.styleFrom(
+                          padding: const EdgeInsets.all(20),
+                          backgroundColor: const Color(0x44FFC107),
+                          shape: RoundedRectangleBorder(
+                            side: const BorderSide(
+                              color: Color(0xFF000000),
+                              width: 1,
+                              style: BorderStyle.solid
+                            ),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          // shape: StadiumBorder()
+                        ),
+                  onPressed: () async{  
+                    setState(() {
+                      isLoading = true;
+                    });     
+      
+                    var data = {
+                      'id_user': widget.user!.id_user.toString(),
+                      'nama': _namaController.text,
+                      'no_telp': _noTelpController.text,
+                      'email': _emailController.text,
+                      'password' : _passController.text
+                    };
+                    
+                    final res = await ApiService().ubahUser(data);
+                    if (res['success']) {
+                      User u = User();
+                      u.id_user = data['id_user'];
+                      u.nama = data['nama'];
+                      u.email = data['email'];
+                      u.no_telp = data['no_telp'];
+                      // u.foto = data['id_user'];
+                      u.role_id = widget.user?.role_id;
+      
+                      MySharedPref().setModel(u);
+                      
+                      // Navigator.pop(context);
+      
+                      Navigator.pushReplacement(context,
+                        MaterialPageRoute(builder: (context) => (u.role_id == "3" ) ? const Home(): const Admin())
+                      );
+                      Fluttertoast.showToast(
+                        msg: res[
+                            'message']);
+                    }else{
+                      setState(() {
+                        isLoading = false;
+                      });
+                      Fluttertoast.showToast(
+                        msg: res[
+                            'message']);
+                    }
+                      
+                  }, 
+                  child: const Text(
+                    "Simpan", 
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.black
+                    ),
+                  )
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

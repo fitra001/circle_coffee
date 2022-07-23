@@ -1,9 +1,9 @@
-import 'package:circle_coffee/library/my_shared_pref.dart';
-import 'package:circle_coffee/page/Admin/admin.dart';
-import 'package:circle_coffee/page/HomeUser/home/home.dart';
-import 'package:circle_coffee/page/HomeUser/home_page/home_page.dart';
-import 'package:circle_coffee/page/login/login.dart';
-import 'package:circle_coffee/page/register/register.dart';
+import 'package:s2r_kitchen/library/my_shared_pref.dart';
+import 'package:s2r_kitchen/page/Admin/admin.dart';
+import 'package:s2r_kitchen/page/HomeUser/home/home.dart';
+import 'package:s2r_kitchen/page/HomeUser/home_page/home_page.dart';
+import 'package:s2r_kitchen/page/login/login.dart';
+import 'package:s2r_kitchen/page/register/register.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 
@@ -27,7 +27,7 @@ class _SplashScreenPageState extends State<SplashScreenPage> {
   startSplashScreen() async {
     final isLogin = await MySharedPref().getLogin();
     final user = await MySharedPref().getModel();
-    var duration = const Duration(seconds : 3);
+    var duration = const Duration(seconds : 2);
     return Timer(duration, (){
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(builder: (_){

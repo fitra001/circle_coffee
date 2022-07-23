@@ -1,7 +1,7 @@
-import 'package:circle_coffee/page/Admin/master/menu/daftar_kategori/daftar_kategori.dart';
-import 'package:circle_coffee/page/Admin/master/menu/daftar_menu/daftar_menu.dart';
-import 'package:circle_coffee/page/Admin/master/menu/menu.dart';
-import 'package:circle_coffee/page/Admin/master/reservasi/daftar_reservasi/daftar_reservasi.dart';
+import 'package:s2r_kitchen/page/Admin/master/menu/daftar_kategori/daftar_kategori.dart';
+import 'package:s2r_kitchen/page/Admin/master/menu/daftar_menu/daftar_menu.dart';
+import 'package:s2r_kitchen/page/Admin/master/menu/menu.dart';
+import 'package:s2r_kitchen/page/Admin/master/reservasi/daftar_reservasi/daftar_reservasi.dart';
 import 'package:flutter/material.dart';
 
 class Master extends StatefulWidget {

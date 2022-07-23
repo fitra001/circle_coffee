@@ -1,6 +1,6 @@
-import 'package:circle_coffee/page/Admin/master/menu/daftar_kategori/daftar_kategori.dart';
-import 'package:circle_coffee/page/Admin/master/menu/daftar_menu/daftar_menu.dart';
-import 'package:circle_coffee/page/Admin/master/menu/tambah_menu/tambah_menu.dart';
+import 'package:s2r_kitchen/page/Admin/master/menu/daftar_kategori/daftar_kategori.dart';
+import 'package:s2r_kitchen/page/Admin/master/menu/daftar_menu/daftar_menu.dart';
+import 'package:s2r_kitchen/page/Admin/master/menu/tambah_menu/tambah_menu.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 

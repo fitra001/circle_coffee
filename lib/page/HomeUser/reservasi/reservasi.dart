@@ -1,7 +1,7 @@
 
-import 'package:circle_coffee/page/HomeUser/reservasi/pesanan/pesanan_reservasi.dart';
-import 'package:circle_coffee/page/HomeUser/reservasi/reservasi/reservasi.dart';
-import 'package:circle_coffee/page/HomeUser/reservasi/riwayat/riwayat_reservasi.dart';
+import 'package:s2r_kitchen/page/HomeUser/reservasi/pesanan/pesanan_reservasi.dart';
+import 'package:s2r_kitchen/page/HomeUser/reservasi/reservasi/reservasi.dart';
+import 'package:s2r_kitchen/page/HomeUser/reservasi/riwayat/riwayat_reservasi.dart';
 import 'package:flutter/material.dart';
 
 class ReservasiHome extends StatefulWidget {

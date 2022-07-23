@@ -1,7 +1,7 @@
-import 'package:circle_coffee/page/Admin/admin.dart';
-import 'package:circle_coffee/page/Admin/kelola_user/kelola_user.dart';
-import 'package:circle_coffee/page/login/login.dart';
-import 'package:circle_coffee/services/api_service.dart';
+import 'package:s2r_kitchen/page/Admin/admin.dart';
+import 'package:s2r_kitchen/page/Admin/kelola_user/kelola_user.dart';
+import 'package:s2r_kitchen/page/login/login.dart';
+import 'package:s2r_kitchen/services/api_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';

@@ -1,7 +1,7 @@
-import 'package:circle_coffee/page/HomeUser/home_page/home_page.dart';
-import 'package:circle_coffee/page/HomeUser/orders/orders.dart';
-import 'package:circle_coffee/page/HomeUser/profil/profil.dart';
-import 'package:circle_coffee/page/HomeUser/reservasi/reservasi.dart';
+import 'package:s2r_kitchen/page/HomeUser/home_page/home_page.dart';
+import 'package:s2r_kitchen/page/HomeUser/orders/orders.dart';
+import 'package:s2r_kitchen/page/HomeUser/profil/profil.dart';
+import 'package:s2r_kitchen/page/HomeUser/reservasi/reservasi.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 

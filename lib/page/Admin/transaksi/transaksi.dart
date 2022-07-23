@@ -1,7 +1,7 @@
-import 'package:circle_coffee/page/Admin/transaksi/pesanan/pesanan.dart';
-import 'package:circle_coffee/page/Admin/transaksi/pesanan_proses/pesanan_proses.dart';
-import 'package:circle_coffee/page/Admin/transaksi/pesanan_siap/pesanan_siap.dart';
-import 'package:circle_coffee/page/Admin/transaksi/selesai/selesai.dart';
+import 'package:s2r_kitchen/page/Admin/transaksi/pesanan/pesanan.dart';
+import 'package:s2r_kitchen/page/Admin/transaksi/pesanan_proses/pesanan_proses.dart';
+import 'package:s2r_kitchen/page/Admin/transaksi/pesanan_siap/pesanan_siap.dart';
+import 'package:s2r_kitchen/page/Admin/transaksi/selesai/selesai.dart';
 import 'package:flutter/material.dart';
 
 class Transaksi extends StatefulWidget {

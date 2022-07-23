@@ -1,4 +1,4 @@
-import 'package:circle_coffee/splashscreen_view.dart';
+import 'package:s2r_kitchen/splashscreen_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 

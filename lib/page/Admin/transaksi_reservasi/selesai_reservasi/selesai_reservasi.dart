@@ -1,8 +1,8 @@
 import 'dart:io';
 
-import 'package:circle_coffee/helpers/currency_format.dart';
-import 'package:circle_coffee/page/Admin/transaksi_reservasi/detail_transaksi_reservasi/detail_transaksi_reservasi.dart';
-import 'package:circle_coffee/services/api_service.dart';
+import 'package:s2r_kitchen/helpers/currency_format.dart';
+import 'package:s2r_kitchen/page/Admin/transaksi_reservasi/detail_transaksi_reservasi/detail_transaksi_reservasi.dart';
+import 'package:s2r_kitchen/services/api_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';

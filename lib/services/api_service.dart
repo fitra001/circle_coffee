@@ -1,25 +1,22 @@
 import 'dart:convert';
 import 'dart:typed_data';
-import 'package:circle_coffee/models/kategori_model.dart';
-import 'package:circle_coffee/models/keranjang_model.dart';
-import 'package:circle_coffee/models/menu_model.dart';
-import 'package:circle_coffee/models/user_model.dart';
+import 'package:s2r_kitchen/models/kategori_model.dart';
+import 'package:s2r_kitchen/models/keranjang_model.dart';
+import 'package:s2r_kitchen/models/menu_model.dart';
+import 'package:s2r_kitchen/models/user_model.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart';
 import 'package:image_picker/image_picker.dart';
 
 class ApiService {
-  static const String url = "https://circlecoffee.000webhostapp.com";
-  // static const String url = "http://localhost/backend/circle_coffee_ci";
+  // static const String url = "https://s2rkitchen.000webhostapp.com"; // Online
+  static const String url = "http://192.168.57.1/backend/s2r_kitchen_ci"; // Local Host / XAMPP
   static const String baseUrl = url + '/api';
-  // static const String baseUrl = "http://localhost:3000";
-  // static const String baseUrl = "https://circle-coffee-001.herokuapp.com";
+  
   static const String imageKategoriUrl = url + '/images/kategori/';
   static const String imageMenuUrl = url + '/images/menu/';
   static const String imageProfilUrl = url + '/images/profil/';
   static const String imageReservasiUrl = url + '/images/reservasi/';
-  // static const String imageKategoriUrl = baseUrl + '/images/kategori/';
-  // static const String imageMenuUrl = baseUrl + '/images/menu/';
 
   Client client = Client();
 
@@ -49,6 +46,13 @@ class ApiService {
 
     Map<String, dynamic> res = json.decode(response.body);
     return res;
+  }
+
+  Future<dynamic> getkadaluarsa() async {
+    final response = await client.get(
+      Uri.parse(baseUrl + '/kadaluarsa')
+    );
+    return response;
   }
 
   Future<List<User>?> getAllUser() async {
@@ -179,6 +183,7 @@ class ApiService {
   }
 
   Future<Menu?> getDetailMenuByIdMenu(String idMenu) async {
+    getkadaluarsa();
     final response = await client.get(Uri.parse(baseUrl + '/menu/' + idMenu));
     if (response.statusCode == 200) {
       return singleMenuFromJson(response.body);
@@ -197,7 +202,6 @@ class ApiService {
   }
 
   Future<dynamic> updateMenu(dynamic menu, [XFile? image]) async {
-    
     MultipartRequest request = MultipartRequest("POST", Uri.parse(baseUrl + '/menu/update'));
     request.headers.addAll({
       'Content-Type': 'multipart/form-data'
@@ -342,6 +346,7 @@ class ApiService {
   }
 
   Future<dynamic> getPesananOrder(String idUser) async {
+    getkadaluarsa();
     final response = await client.post(Uri.parse(baseUrl + '/order/pesanan'),
         headers: {'Content-Type': 'application/json'},
         body: json.encode({'id_user': idUser}));

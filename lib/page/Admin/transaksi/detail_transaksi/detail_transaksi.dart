@@ -1,11 +1,11 @@
 import 'dart:io';
 
-import 'package:circle_coffee/helpers/currency_format.dart';
-import 'package:circle_coffee/library/my_shared_pref.dart';
-import 'package:circle_coffee/models/user_model.dart';
-import 'package:circle_coffee/page/Admin/admin.dart';
-import 'package:circle_coffee/page/HomeUser/detail_item/detail_item.dart';
-import 'package:circle_coffee/services/api_service.dart';
+import 'package:s2r_kitchen/helpers/currency_format.dart';
+import 'package:s2r_kitchen/library/my_shared_pref.dart';
+import 'package:s2r_kitchen/models/user_model.dart';
+import 'package:s2r_kitchen/page/Admin/admin.dart';
+import 'package:s2r_kitchen/page/HomeUser/detail_item/detail_item.dart';
+import 'package:s2r_kitchen/services/api_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -262,14 +262,14 @@ class _DetailTransaksiState extends State<DetailTransaksi> {
   }) async {
     String url() {
       if (kIsWeb) {
-        return "https://api.whatsapp.com/send?phone=$phone=${Uri.parse(message!)}"; // new line
+        return "https://api.whatsapp.com/send?phone=$phone&message=${Uri.parse(message!)}"; // new line
       }else{
         if (Platform.isIOS) {
           // add the [https]
           return "https://wa.me/$phone/?text=${Uri.parse(message!)}"; // new line
         } else {
           // add the [https]
-          return "https://api.whatsapp.com/send?phone=$phone=${Uri.parse(message!)}"; // new line
+          return "https://api.whatsapp.com/send?phone=$phone&message=${Uri.parse(message!)}"; // new line
         }
       }
     }

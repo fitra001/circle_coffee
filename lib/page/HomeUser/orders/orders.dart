@@ -1,5 +1,5 @@
-import 'package:circle_coffee/page/HomeUser/orders/pesanan/pesanan.dart';
-import 'package:circle_coffee/page/HomeUser/orders/riwayat/riwayat.dart';
+import 'package:s2r_kitchen/page/HomeUser/orders/pesanan/pesanan.dart';
+import 'package:s2r_kitchen/page/HomeUser/orders/riwayat/riwayat.dart';
 import 'package:flutter/material.dart';
 
 class Orders extends StatefulWidget {

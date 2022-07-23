@@ -1,7 +1,7 @@
-import 'package:circle_coffee/library/my_shared_pref.dart';
-import 'package:circle_coffee/models/user_model.dart';
-import 'package:circle_coffee/page/HomeUser/profil/ubah_profil/ubah_profil.dart';
-import 'package:circle_coffee/splashscreen_view.dart';
+import 'package:s2r_kitchen/library/my_shared_pref.dart';
+import 'package:s2r_kitchen/models/user_model.dart';
+import 'package:s2r_kitchen/page/HomeUser/profil/ubah_profil/ubah_profil.dart';
+import 'package:s2r_kitchen/splashscreen_view.dart';
 import 'package:flutter/material.dart';
 
 class Profil extends StatefulWidget {
