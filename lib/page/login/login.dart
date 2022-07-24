@@ -55,112 +55,119 @@ class _LoginState extends State<Login> {
               },
               iconSize: 30,
             ),
-            Column(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                TextFormField(
-                  controller: _emailController,
-                  style: const TextStyle(fontFamily: 'sans serif'),
-                  decoration: const InputDecoration(
-                    labelText: 'Email',
-                    prefixIcon: Icon(CupertinoIcons.person),
-                    enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Color(0x99FFC107)),
-                        borderRadius: BorderRadius.all(Radius.circular(20.0))),
-                    border: OutlineInputBorder(
-                        borderSide: BorderSide(color: Color(0x99FFC107)),
-                        borderRadius: BorderRadius.all(Radius.circular(20.0))),
-                  ),
-                ),
-                const SizedBox(
-                  height: 16,
-                ),
-                TextFormField(
-                  controller: _passController,
-                  style: const TextStyle(
-                    fontFamily: 'sans serif',
-                  ),
-                  decoration: InputDecoration(
-                      labelText: 'Password',
-                      prefixIcon: const Icon(CupertinoIcons.lock),
-                      enabledBorder: const OutlineInputBorder(
+            Container(
+              decoration: const BoxDecoration(
+                color: Color.fromARGB(230, 255, 255, 251),
+                borderRadius: BorderRadius.all(Radius.circular(20))
+              ),
+              padding: const EdgeInsets.all(8),
+              child: Column(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  TextFormField(
+                    controller: _emailController,
+                    style: const TextStyle(fontFamily: 'sans serif'),
+                    decoration: const InputDecoration(
+                      labelText: 'Email',
+                      prefixIcon: Icon(CupertinoIcons.person),
+                      enabledBorder: OutlineInputBorder(
                           borderSide: BorderSide(color: Color(0x99FFC107)),
-                          borderRadius:
-                              BorderRadius.all(Radius.circular(20.0))),
-                      border: const OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(20.0))),
+                      border: OutlineInputBorder(
                           borderSide: BorderSide(color: Color(0x99FFC107)),
-                          borderRadius:
-                              BorderRadius.all(Radius.circular(20.0))),
-                      suffixIcon: InkWell(
-                          onTap: _togglePasswordView,
-                          child: Icon(_isHidden
-                              ? CupertinoIcons.eye_fill
-                              : CupertinoIcons.eye_slash))),
-                  obscureText: _isHidden,
-                ),
-                const SizedBox(
-                  height: 16,
-                ),
-                Container(
-                  width: double.infinity,
-                  child: isLoading
-                      ? const Center(
-                          child: CircularProgressIndicator(),
-                        )
-                      : TextButton(
-                          style: TextButton.styleFrom(
-                            padding: const EdgeInsets.all(20),
-                            backgroundColor: const Color(0xEE000000),
-                            shape: RoundedRectangleBorder(
-                              side: const BorderSide(
-                                  color: Color(0xFFFFC107),
-                                  width: 1,
-                                  style: BorderStyle.solid),
-                              borderRadius: BorderRadius.circular(20),
+                          borderRadius: BorderRadius.all(Radius.circular(20.0))),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 16,
+                  ),
+                  TextFormField(
+                    controller: _passController,
+                    style: const TextStyle(
+                      fontFamily: 'sans serif',
+                    ),
+                    decoration: InputDecoration(
+                        labelText: 'Password',
+                        prefixIcon: const Icon(CupertinoIcons.lock),
+                        enabledBorder: const OutlineInputBorder(
+                            borderSide: BorderSide(color: Color(0x99FFC107)),
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(20.0))),
+                        border: const OutlineInputBorder(
+                            borderSide: BorderSide(color: Color(0x99FFC107)),
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(20.0))),
+                        suffixIcon: InkWell(
+                            onTap: _togglePasswordView,
+                            child: Icon(_isHidden
+                                ? CupertinoIcons.eye_fill
+                                : CupertinoIcons.eye_slash))),
+                    obscureText: _isHidden,
+                  ),
+                  const SizedBox(
+                    height: 16,
+                  ),
+                  Container(
+                    width: double.infinity,
+                    child: isLoading
+                        ? const Center(
+                            child: CircularProgressIndicator(),
+                          )
+                        : TextButton(
+                            style: TextButton.styleFrom(
+                              padding: const EdgeInsets.all(20),
+                              backgroundColor: const Color(0xEE000000),
+                              shape: RoundedRectangleBorder(
+                                side: const BorderSide(
+                                    color: Color(0xFFFFC107),
+                                    width: 1,
+                                    style: BorderStyle.solid),
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              // shape: StadiumBorder()
                             ),
-                            // shape: StadiumBorder()
-                          ),
-                          onPressed: () async {
-                            setState(() {
-                              isLoading = true;
-                            });
-                            User user;
-                            final res = await ApiService().login(
-                                email: _emailController.text,
-                                pass: _passController.text);
-
-                            if (res['success']) {
-                              user = userFromJson(res['data']);
-                              
-                              _mySharedPref.setModel(user);
-                              _mySharedPref.setLogin(true);
-                              Fluttertoast.showToast(msg: res['message']);
-                              _mySharedPref.getModel().then((value) => {
-                                if(value!.role_id == "3") {
-                                  Navigator.pushReplacement(context,
-                                    MaterialPageRoute(builder: (context) => const Home())
-                                  )
-                                // }else if(value.role_id == "2"){
-                                }else {
-                                  Navigator.pushReplacement(context,
-                                    MaterialPageRoute(builder: (context) => const Admin())
-                                  )
-                                }
-                              });
-                            }else{
+                            onPressed: () async {
                               setState(() {
-                                isLoading = false;
+                                isLoading = true;
                               });
-                              Fluttertoast.showToast(msg: res['message']);
-                            }
-                          },
-                          child: const Text(
-                            "MASUK",
-                            style: TextStyle(fontSize: 18, color: Colors.white),
-                          )),
-                ),
-              ],
+                              User user;
+                              final res = await ApiService().login(
+                                  email: _emailController.text,
+                                  pass: _passController.text);
+
+                              if (res['success']) {
+                                user = userFromJson(res['data']);
+                                
+                                _mySharedPref.setModel(user);
+                                _mySharedPref.setLogin(true);
+                                Fluttertoast.showToast(msg: res['message']);
+                                _mySharedPref.getModel().then((value) => {
+                                  if(value!.role_id == "3") {
+                                    Navigator.pushReplacement(context,
+                                      MaterialPageRoute(builder: (context) => const Home())
+                                    )
+                                  // }else if(value.role_id == "2"){
+                                  }else {
+                                    Navigator.pushReplacement(context,
+                                      MaterialPageRoute(builder: (context) => const Admin())
+                                    )
+                                  }
+                                });
+                              }else{
+                                setState(() {
+                                  isLoading = false;
+                                });
+                                Fluttertoast.showToast(msg: res['message']);
+                              }
+                            },
+                            child: const Text(
+                              "MASUK",
+                              style: TextStyle(fontSize: 18, color: Colors.white),
+                            )),
+                  ),
+                ],
+              ),
             ),
           ],
         ),

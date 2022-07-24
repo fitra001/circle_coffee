@@ -16,7 +16,7 @@ class MyApp extends StatelessWidget {
       DeviceOrientation.portraitDown
     ]);
     return MaterialApp(
-      title: 'Circle Coffee',
+      title: 'S2R Kitchen',
       theme: ThemeData(
         primarySwatch: Colors.blue,
         primaryColor: const Color(0xffFFC107),

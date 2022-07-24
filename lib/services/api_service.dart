@@ -9,8 +9,8 @@ import 'package:http/http.dart';
 import 'package:image_picker/image_picker.dart';
 
 class ApiService {
-  // static const String url = "https://s2rkitchen.000webhostapp.com"; // Online
-  static const String url = "http://192.168.57.1/backend/s2r_kitchen_ci"; // Local Host / XAMPP
+  static const String url = "https://s2rkitchen1.000webhostapp.com"; // Online
+  // static const String url = "http://192.168.57.1/backend/s2r_kitchen_ci"; // Local Host / XAMPP
   static const String baseUrl = url + '/api';
   
   static const String imageKategoriUrl = url + '/images/kategori/';

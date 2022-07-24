@@ -242,7 +242,7 @@ class _DashboardState extends State<Dashboard> {
                           ],
                         ),
                         Text(
-                          totalPenjualan == null ? "0" : totalPenjualan?['bulan'] ?? 0,
+                          totalPenjualan == null ? "0" : totalPenjualan?['bulan'] ?? "0",
                           style: const TextStyle(fontSize: 24),
                         )
                       ],
@@ -270,7 +270,7 @@ class _DashboardState extends State<Dashboard> {
                           ],
                         ),
                         Text(
-                            totalPenjualan == null ? "0" : totalPenjualan?['hari'] ?? 0, 
+                            totalPenjualan == null ? "0" : totalPenjualan?['hari'] ?? "0", 
                           style: const TextStyle(fontSize: 24)
                         )
                       ],

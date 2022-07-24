@@ -83,7 +83,7 @@ class _ProfilState extends State<Profil> {
                 'No Telp',
                 style: TextStyle(fontSize: 18),
               ),
-              Text(user!.no_telp.toString(), style: const TextStyle(fontSize: 24)),
+              Text("+"+user!.no_telp.toString(), style: const TextStyle(fontSize: 24)),
               Container(
                 decoration: const BoxDecoration(color: Colors.grey),
                 height: 2,

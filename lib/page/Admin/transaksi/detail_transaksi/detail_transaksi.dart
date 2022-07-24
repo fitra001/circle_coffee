@@ -247,7 +247,11 @@ class _DetailTransaksiState extends State<DetailTransaksi> {
             message: 'Total Pesanan ${transaksi['total']}, ${transaksi['status']}'
           )
         },
-        child: Image.asset('assets/icons/icon-whatsapp.gif'),
+        child: ClipRRect(
+          borderRadius: const BorderRadius.all(Radius.circular(40)),
+          clipBehavior: Clip.antiAlias,
+          child: Image.asset('assets/icons/icon-whatsapp.gif')
+        ),
       ),
       bottomNavigationBar: (transaksi['status'] == 'Belum Bayar') 
         ? buttonKonfirmasi('BAYAR PESANAN', 'Diproses') : (transaksi['status'] == 'Diproses') 
@@ -261,17 +265,19 @@ class _DetailTransaksiState extends State<DetailTransaksi> {
     @required String? message,
   }) async {
     String url() {
-      if (kIsWeb) {
-        return "https://api.whatsapp.com/send?phone=$phone&message=${Uri.parse(message!)}"; // new line
-      }else{
+      // if (kIsWeb) {
+      //   return "https://api.whatsapp.com/send?phone=$phone&message=${Uri.parse(message!)}"; // new line
+      // }else{
         if (Platform.isIOS) {
           // add the [https]
           return "https://wa.me/$phone/?text=${Uri.parse(message!)}"; // new line
         } else {
           // add the [https]
-          return "https://api.whatsapp.com/send?phone=$phone&message=${Uri.parse(message!)}"; // new line
+          
+          return "whatsapp://send?phone=$phone&text=${Uri.parse(message!)}"; 
+          // return "https://api.whatsapp.com/send?phone=$phone&message=${Uri.parse(message!)}"; // new line
         }
-      }
+      // }
     }
 
     if (await canLaunchUrl(Uri.parse(url()))) {

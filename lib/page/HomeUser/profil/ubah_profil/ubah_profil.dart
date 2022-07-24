@@ -158,14 +158,23 @@ class _UbahProfil extends State<UbahProfil>{
               TextFormField(
                 controller: _noTelpController,
                 style: const TextStyle(fontFamily: 'sans serif'),
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   labelText: 'No Telpon',
-                  prefixIcon: Icon(CupertinoIcons.phone),
-                  enabledBorder: OutlineInputBorder(
+                  prefixIcon: SizedBox(
+                    width: 0,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: const [
+                        Icon(CupertinoIcons.phone),
+                        Text("+")
+                      ],
+                    ),
+                  ),
+                  enabledBorder: const OutlineInputBorder(
                     borderSide: BorderSide(color: Color(0x99FFC107)),
                     borderRadius: BorderRadius.all(Radius.circular(20.0))
                   ),
-                  border: OutlineInputBorder(
+                  border: const OutlineInputBorder(
                     borderSide: BorderSide(color: Color(0x99FFC107)),
                     borderRadius: BorderRadius.all(Radius.circular(20.0))
                   ),
