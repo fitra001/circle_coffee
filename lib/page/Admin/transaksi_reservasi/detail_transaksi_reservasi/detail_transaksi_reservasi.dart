@@ -25,6 +25,7 @@ class _DetailTransaksiState extends State<DetailTransaksiReservasi> {
   bool isLoading = true;
   User? user;
   TextEditingController _totalBayarController = TextEditingController();
+  String pesanChat = "";
   @override
   void initState() {
     // TODO: implement initState
@@ -58,6 +59,7 @@ class _DetailTransaksiState extends State<DetailTransaksiReservasi> {
       setState(() {
         reservasi = res['data'];
         isLoading = false;
+        pesanChat = "Total Pesanan ${reservasi['total']}, ${reservasi['status']}";
       });
     }
   }
@@ -251,7 +253,7 @@ class _DetailTransaksiState extends State<DetailTransaksiReservasi> {
         onPressed: () => {
           launchWhatsApp(
             phone: reservasi['no_telp'], 
-            message: 'Total Pesanan ${reservasi['total']}, ${reservasi['status']}'
+            message: pesanChat
           )
         },
         child:  ClipRRect(
@@ -353,8 +355,7 @@ class _DetailTransaksiState extends State<DetailTransaksiReservasi> {
                     // if(transaksi['status'] !='Belum Bayar'){
                       launchWhatsApp(
                         phone: reservasi['no_telp'],
-                        message:
-                          'Total Pesanan ${reservasi['total']}, ${status}'
+                        message: pesanChat
                       );
                     // }
                     Navigator.pushReplacement(context, 

@@ -276,16 +276,18 @@ class _PesananSelesaiState extends State<PesananSelesai> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
-                          data[index]['status'] +
-                              ' (' +
-                              data[index]['petugas']['nama'] +
-                              ')',
-                          style: const TextStyle(fontSize: 18),
+                        Flexible(
+                          child: Text(
+                            data[index]['status'] +
+                                ' (' +
+                                data[index]['petugas']['nama'] +
+                                ')',
+                            style: const TextStyle(fontSize: 18),
+                          ),
                         ),
                         Text(
                           data[index]['tgl_transaksi'],
-                          style: const TextStyle(fontSize: 18),
+                          style: const TextStyle(fontSize: 16),
                         ),
                       ],
                     ),

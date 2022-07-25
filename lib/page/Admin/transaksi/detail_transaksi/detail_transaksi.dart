@@ -25,6 +25,7 @@ class _DetailTransaksiState extends State<DetailTransaksi> {
   List<dynamic> item = <dynamic>[];
   bool isLoading = true;
   User? user;
+  String pesanChat = "";
 
   @override
   void initState() {
@@ -49,8 +50,11 @@ class _DetailTransaksiState extends State<DetailTransaksi> {
       item = data['data'];
       transaksi = data['transaksi'];
       isLoading = false;
+      print(transaksi);
+      pesanChat = "Total Pesanan ${transaksi['total']}, ${transaksi['status']}";
     });
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -244,7 +248,7 @@ class _DetailTransaksiState extends State<DetailTransaksi> {
         onPressed: () => {
           launchWhatsApp(
             phone: transaksi['no_telp'], 
-            message: 'Total Pesanan ${transaksi['total']}, ${transaksi['status']}'
+            message: pesanChat
           )
         },
         child: ClipRRect(
@@ -346,8 +350,7 @@ class _DetailTransaksiState extends State<DetailTransaksi> {
                     // if(transaksi['status'] !='Belum Bayar'){
                       launchWhatsApp(
                         phone: transaksi['no_telp'],
-                        message:
-                          'Total Pesanan ${transaksi['total']}, ${status}'
+                        message: pesanChat
                       );
                     // }
                     Navigator.pushReplacement(context, 
