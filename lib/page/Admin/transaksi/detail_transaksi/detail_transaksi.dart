@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:s2r_kitchen/helpers/currency_format.dart';
@@ -26,6 +27,7 @@ class _DetailTransaksiState extends State<DetailTransaksi> {
   bool isLoading = true;
   User? user;
   String pesanChat = "";
+  String lItemChat = "";
 
   @override
   void initState() {
@@ -50,8 +52,14 @@ class _DetailTransaksiState extends State<DetailTransaksi> {
       item = data['data'];
       transaksi = data['transaksi'];
       isLoading = false;
-      print(transaksi);
-      pesanChat = "Total Pesanan ${transaksi['total']}, ${transaksi['status']}";
+
+      lItemChat = item.map((e) => e['menu']).toString();
+      
+      if (transaksi['status'] == "Belum Bayar") {
+        pesanChat = "Hallo *${transaksi['nama']}* dengan nomor ${transaksi['no_telp']} Pesanan *$lItemChat* ditanggal ${transaksi['tgl_transaksi'].replaceAll(':','.')} *${transaksi['status']}* , Silahkan melakukan pembayaran dengan total *Rp. ${transaksi['total']}* , Dengan Batas pembayaran *${transaksi['kadaluwarsa']?.replaceAll(':','.')}* ";
+      }else{
+        pesanChat = "Hallo *${transaksi['nama']}* dengan nomor ${transaksi['no_telp']} Pesanan *$lItemChat* ditanggal ${transaksi['tgl_transaksi'].replaceAll(':','.')} , *${transaksi['status']}*";
+      }
     });
   }
 
@@ -283,7 +291,7 @@ class _DetailTransaksiState extends State<DetailTransaksi> {
         }
       // }
     }
-
+    
     if (await canLaunchUrl(Uri.parse(url()))) {
       await launchUrl(Uri.parse(url()));
     } else {
@@ -350,7 +358,7 @@ class _DetailTransaksiState extends State<DetailTransaksi> {
                     // if(transaksi['status'] !='Belum Bayar'){
                       launchWhatsApp(
                         phone: transaksi['no_telp'],
-                        message: pesanChat
+                        message: "Hallo *${transaksi['nama']}* dengan nomor ${transaksi['no_telp']} Pesanan *$lItemChat* ditanggal ${transaksi['tgl_transaksi'].replaceAll(':','.')} , *$status*"
                       );
                     // }
                     Navigator.pushReplacement(context, 
